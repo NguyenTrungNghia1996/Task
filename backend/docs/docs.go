@@ -4,31 +4,28 @@ package docs
 import "github.com/swaggo/swag"
 
 const docTemplate = `{
-    "schemes": [
-        "http",
-        "https"
-    ],
+    "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
-        "description": "\u0110\u1eb7c t\u1ea3 API \u1ee9ng d\u1ee5ng qu\u1ea3n l\u00fd c\u00f4ng vi\u1ec7c nhi\u1ec1u c\u1ea5p (Golang Fiber + PostgreSQL)",
-        "title": "Task Management Multi-Level API",
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "\u0110\u1ed9i ng\u0169 ph\u00e1t tri\u1ec3n",
+            "name": "Đội ngũ phát triển",
             "email": "support@example.com"
         },
         "license": {
             "name": "MIT",
             "url": "https://opensource.org/licenses/MIT"
         },
-        "version": "1.1"
+        "version": "{{.Version}}"
     },
-    "host": "localhost:8080",
-    "basePath": "/api/v1",
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "X\u00e1c th\u1ef1c t\u00e0i kho\u1ea3n b\u1eb1ng username/password v\u00e0 nh\u1eadn JWT Access Token",
+                "description": "Xác thực tài khoản bằng username/password và nhận JWT Access Token",
                 "consumes": [
                     "application/json"
                 ],
@@ -38,10 +35,10 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "\u0110\u0103ng nh\u1eadp h\u1ec7 th\u1ed1ng",
+                "summary": "Đăng nhập hệ thống",
                 "parameters": [
                     {
-                        "description": "Th\u00f4ng tin t\u00e0i kho\u1ea3n",
+                        "description": "Thông tin tài khoản",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -81,13 +78,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/auth/logout": {
             "post": {
-                "description": "Thu h\u1ed3i Refresh Token hi\u1ec7n t\u1ea1i",
+                "description": "Thu hồi Refresh Token hiện tại",
                 "consumes": [
                     "application/json"
                 ],
@@ -97,7 +93,7 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "\u0110\u0103ng xu\u1ea5t",
+                "summary": "Đăng xuất",
                 "parameters": [
                     {
                         "description": "Refresh Token",
@@ -127,20 +123,24 @@ const docTemplate = `{
                             ]
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/auth/me": {
             "get": {
-                "description": "L\u1ea5y th\u00f4ng tin c\u00e1 nh\u00e2n v\u00e0 vai tr\u00f2 c\u1ee7a ng\u01b0\u1eddi d\u00f9ng \u0111ang \u0111\u0103ng nh\u1eadp",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy thông tin cá nhân và vai trò của người dùng đang đăng nhập",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Th\u00f4ng tin t\u00e0i kho\u1ea3n hi\u1ec7n t\u1ea1i",
+                "summary": "Thông tin tài khoản hiện tại",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -171,7 +171,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "D\u00f9ng Refresh Token h\u1ee3p l\u1ec7 \u0111\u1ec3 c\u1ea5p m\u1edbi Access Token",
+                "description": "Dùng Refresh Token hợp lệ để cấp mới Access Token",
                 "consumes": [
                     "application/json"
                 ],
@@ -181,7 +181,7 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "L\u00e0m m\u1edbi Access Token",
+                "summary": "Làm mới Access Token",
                 "parameters": [
                     {
                         "description": "Refresh Token",
@@ -224,20 +224,24 @@ const docTemplate = `{
                             "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/menus": {
             "get": {
-                "description": "L\u1ea5y to\u00e0n b\u1ed9 c\u00e2y menu kh\u00f4ng l\u1ecdc quy\u1ec1n \u0111\u1ec3 ph\u1ee5c v\u1ee5 m\u00e0n h\u00ecnh c\u1ea5u h\u00ecnh Menu",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy toàn bộ cây menu không lọc quyền để phục vụ màn hình cấu hình Menu",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Menus"
                 ],
-                "summary": "Danh s\u00e1ch to\u00e0n b\u1ed9 Menu h\u1ec7 th\u1ed1ng (D\u00e0nh cho Qu\u1ea3n tr\u1ecb vi\u00ean)",
+                "summary": "Danh sách toàn bộ Menu hệ thống (Dành cho Quản trị viên)",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -263,7 +267,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Qu\u1ea3n tr\u1ecb vi\u00ean th\u00eam menu m\u1edbi v\u00e0o c\u00e2y \u0111i\u1ec1u h\u01b0\u1edbng",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Quản trị viên thêm menu mới vào cây điều hướng",
                 "consumes": [
                     "application/json"
                 ],
@@ -273,10 +282,10 @@ const docTemplate = `{
                 "tags": [
                     "Menus"
                 ],
-                "summary": "Th\u00eam m\u1edbi m\u1ee5c Menu",
+                "summary": "Thêm mới mục Menu",
                 "parameters": [
                     {
-                        "description": "Th\u00f4ng tin menu m\u1edbi",
+                        "description": "Thông tin menu mới",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -315,14 +324,19 @@ const docTemplate = `{
         },
         "/menus/user-menus": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch menu d\u1ea1ng c\u00e2y ph\u00e2n c\u1ea5p \u0111\u00e3 \u0111\u01b0\u1ee3c l\u1ecdc theo quy\u1ec1n c\u1ee7a user, \u0111\u1ecbnh d\u1ea1ng chu\u1ea9n :items c\u1ee7a Ant Design a-menu",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách menu dạng cây phân cấp đã được lọc theo quyền của user, định dạng chuẩn :items của Ant Design a-menu",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Menus"
                 ],
-                "summary": "L\u1ea5y c\u00e2y Menu \u0111\u1ed9ng cho ng\u01b0\u1eddi d\u00f9ng hi\u1ec7n t\u1ea1i (Chu\u1ea9n Ant Design)",
+                "summary": "Lấy cây Menu động cho người dùng hiện tại (Chuẩn Ant Design)",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -350,14 +364,19 @@ const docTemplate = `{
         },
         "/menus/{menuId}": {
             "delete": {
-                "description": "X\u00f3a menu kh\u1ecfi c\u00e2y \u0111i\u1ec1u h\u01b0\u1edbng (ch\u1ec9 x\u00f3a \u0111\u01b0\u1ee3c menu l\u00e1 kh\u00f4ng c\u00f3 menu con)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Xóa menu khỏi cây điều hướng (chỉ xóa được menu lá không có menu con)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Menus"
                 ],
-                "summary": "X\u00f3a m\u1ee5c Menu",
+                "summary": "Xóa mục Menu",
                 "parameters": [
                     {
                         "type": "string",
@@ -389,7 +408,12 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "S\u1eeda t\u00ean, icon, \u0111\u01b0\u1eddng d\u1eabn, quy\u1ec1n y\u00eau c\u1ea7u ho\u1eb7c v\u1ecb tr\u00ed c\u1ee7a menu",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sửa tên, icon, đường dẫn, quyền yêu cầu hoặc vị trí của menu",
                 "consumes": [
                     "application/json"
                 ],
@@ -399,7 +423,7 @@ const docTemplate = `{
                 "tags": [
                     "Menus"
                 ],
-                "summary": "C\u1eadp nh\u1eadt m\u1ee5c Menu",
+                "summary": "Cập nhật mục Menu",
                 "parameters": [
                     {
                         "type": "string",
@@ -409,7 +433,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Th\u00f4ng tin c\u1eadp nh\u1eadt",
+                        "description": "Thông tin cập nhật",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -454,30 +478,35 @@ const docTemplate = `{
         },
         "/notifications": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch th\u00f4ng b\u00e1o c\u1ee7a ng\u01b0\u1eddi d\u00f9ng hi\u1ec7n t\u1ea1i c\u00f3 ph\u00e2n trang v\u00e0 l\u1ecdc ch\u01b0a \u0111\u1ecdc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách thông báo của người dùng hiện tại có phân trang và lọc chưa đọc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Notifications"
                 ],
-                "summary": "Danh s\u00e1ch th\u00f4ng b\u00e1o",
+                "summary": "Danh sách thông báo",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Trang (m\u1eb7c \u0111\u1ecbnh 1)",
+                        "description": "Trang (mặc định 1)",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "S\u1ed1 l\u01b0\u1ee3ng (m\u1eb7c \u0111\u1ecbnh 20)",
+                        "description": "Số lượng (mặc định 20)",
                         "name": "page_size",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
-                        "description": "Ch\u1ec9 l\u1ea5y th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc",
+                        "description": "Chỉ lấy thông báo chưa đọc",
                         "name": "unread_only",
                         "in": "query"
                     }
@@ -518,14 +547,19 @@ const docTemplate = `{
         },
         "/notifications/read-all": {
             "post": {
-                "description": "Chuy\u1ec3n to\u00e0n b\u1ed9 th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc c\u1ee7a ng\u01b0\u1eddi d\u00f9ng sang tr\u1ea1ng th\u00e1i \u0111\u00e3 \u0111\u1ecdc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chuyển toàn bộ thông báo chưa đọc của người dùng sang trạng thái đã đọc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Notifications"
                 ],
-                "summary": "\u0110\u00e1nh d\u1ea5u t\u1ea5t c\u1ea3 th\u00f4ng b\u00e1o \u0111\u00e3 \u0111\u1ecdc",
+                "summary": "Đánh dấu tất cả thông báo đã đọc",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -556,27 +590,37 @@ const docTemplate = `{
         },
         "/notifications/stream": {
             "get": {
-                "description": "M\u1edf k\u1ebft n\u1ed1i SSE l\u1eafng nghe th\u00f4ng b\u00e1o t\u1ee9c th\u1eddi",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mở kết nối SSE lắng nghe thông báo tức thời",
                 "produces": [
                     "text/event-stream"
                 ],
                 "tags": [
                     "Notifications"
                 ],
-                "summary": "Server-Sent Events (SSE) \u0111\u1ea9y th\u00f4ng b\u00e1o th\u1eddi gian th\u1ef1c",
+                "summary": "Server-Sent Events (SSE) đẩy thông báo thời gian thực",
                 "responses": {}
             }
         },
         "/notifications/unread-count": {
             "get": {
-                "description": "L\u1ea5y t\u1ed5ng s\u1ed1 th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc c\u1ee7a ng\u01b0\u1eddi d\u00f9ng hi\u1ec7n t\u1ea1i",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy tổng số thông báo chưa đọc của người dùng hiện tại",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Notifications"
                 ],
-                "summary": "S\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc",
+                "summary": "Số lượng thông báo chưa đọc",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -607,18 +651,23 @@ const docTemplate = `{
         },
         "/notifications/{notificationId}": {
             "patch": {
-                "description": "\u0110\u00e1nh d\u1ea5u th\u00f4ng b\u00e1o c\u1ee5 th\u1ec3 l\u00e0 \u0111\u00e3 \u0111\u1ecdc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Đánh dấu thông báo cụ thể là đã đọc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Notifications"
                 ],
-                "summary": "\u0110\u00e1nh d\u1ea5u m\u1ed9t th\u00f4ng b\u00e1o \u0111\u00e3 \u0111\u1ecdc",
+                "summary": "Đánh dấu một thông báo đã đọc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID th\u00f4ng b\u00e1o (UUID)",
+                        "description": "ID thông báo (UUID)",
                         "name": "notificationId",
                         "in": "path",
                         "required": true
@@ -666,14 +715,19 @@ const docTemplate = `{
         },
         "/permissions": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch quy\u1ec1n \u0111\u01b0\u1ee3c gom nh\u00f3m theo ph\u00e2n h\u1ec7 (module) cho b\u1ea3ng ma tr\u1eadn ph\u00e2n quy\u1ec1n",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách quyền được gom nhóm theo phân hệ (module) cho bảng ma trận phân quyền",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "Danh s\u00e1ch t\u1ea5t c\u1ea3 quy\u1ec1n h\u1ec7 th\u1ed1ng",
+                "summary": "Danh sách tất cả quyền hệ thống",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -705,7 +759,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Qu\u1ea3n tr\u1ecb vi\u00ean \u0111\u0103ng k\u00fd th\u00eam m\u00e3 quy\u1ec1n m\u1edbi v\u00e0o h\u1ec7 th\u1ed1ng",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Quản trị viên đăng ký thêm mã quyền mới vào hệ thống",
                 "consumes": [
                     "application/json"
                 ],
@@ -715,10 +774,10 @@ const docTemplate = `{
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "Th\u00eam quy\u1ec1n ch\u1ee9c n\u0103ng m\u1edbi",
+                "summary": "Thêm quyền chức năng mới",
                 "parameters": [
                     {
-                        "description": "Th\u00f4ng tin quy\u1ec1n m\u1edbi",
+                        "description": "Thông tin quyền mới",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -757,14 +816,19 @@ const docTemplate = `{
         },
         "/permissions/options": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch quy\u1ec1n {value, label, module} cho component a-select khi t\u1ea1o/s\u1eeda Menu",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách quyền {value, label, module} cho component a-select khi tạo/sửa Menu",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "Danh s\u00e1ch quy\u1ec1n d\u1ea1ng Options cho Ant Design Select",
+                "summary": "Danh sách quyền dạng Options cho Ant Design Select",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -792,14 +856,19 @@ const docTemplate = `{
         },
         "/roles": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch c\u00e1c vai tr\u00f2 \u0111\u1ec3 qu\u1ea3n l\u00fd ph\u00e2n quy\u1ec1n",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách các vai trò để quản lý phân quyền",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "Danh s\u00e1ch vai tr\u00f2 h\u1ec7 th\u1ed1ng",
+                "summary": "Danh sách vai trò hệ thống",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -827,18 +896,23 @@ const docTemplate = `{
         },
         "/roles/{roleId}/permissions": {
             "get": {
-                "description": "L\u1ea5y chi ti\u1ebft vai tr\u00f2 k\u00e8m to\u00e0n b\u1ed9 c\u00e1c quy\u1ec1n ch\u1ee9c n\u0103ng \u0111ang \u0111\u01b0\u1ee3c g\u00e1n",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy chi tiết vai trò kèm toàn bộ các quyền chức năng đang được gán",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "L\u1ea5y danh s\u00e1ch quy\u1ec1n c\u1ee7a m\u1ed9t vai tr\u00f2",
+                "summary": "Lấy danh sách quyền của một vai trò",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID vai tr\u00f2 (UUID)",
+                        "description": "ID vai trò (UUID)",
                         "name": "roleId",
                         "in": "path",
                         "required": true
@@ -872,7 +946,12 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Thay th\u1ebf to\u00e0n b\u1ed9 danh s\u00e1ch quy\u1ec1n c\u1ee7a m\u1ed9t vai tr\u00f2 b\u1eb1ng danh s\u00e1ch m\u00e3 quy\u1ec1n m\u1edbi",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Thay thế toàn bộ danh sách quyền của một vai trò bằng danh sách mã quyền mới",
                 "consumes": [
                     "application/json"
                 ],
@@ -882,17 +961,17 @@ const docTemplate = `{
                 "tags": [
                     "RBAC"
                 ],
-                "summary": "C\u1eadp nh\u1eadt t\u1eadp quy\u1ec1n cho m\u1ed9t vai tr\u00f2",
+                "summary": "Cập nhật tập quyền cho một vai trò",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID vai tr\u00f2 (UUID)",
+                        "description": "ID vai trò (UUID)",
                         "name": "roleId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Danh s\u00e1ch m\u00e3 quy\u1ec1n m\u1edbi",
+                        "description": "Danh sách mã quyền mới",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -919,60 +998,65 @@ const docTemplate = `{
         },
         "/tasks": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch c\u00f4ng vi\u1ec7c c\u00f3 l\u1ecdc, ph\u00e2n trang v\u00e0 s\u1eafp x\u1ebfp",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách công việc có lọc, phân trang và sắp xếp",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Danh s\u00e1ch c\u00f4ng vi\u1ec7c",
+                "summary": "Danh sách công việc",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Trang hi\u1ec7n t\u1ea1i (m\u1eb7c \u0111\u1ecbnh 1)",
+                        "description": "Trang hiện tại (mặc định 1)",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "S\u1ed1 l\u01b0\u1ee3ng m\u1ed7i trang (m\u1eb7c \u0111\u1ecbnh 20, t\u1ed1i \u0111a 100)",
+                        "description": "Số lượng mỗi trang (mặc định 20, tối đa 100)",
                         "name": "page_size",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "T\u00ecm ki\u1ebfm theo ti\u00eau \u0111\u1ec1 ho\u1eb7c m\u00e3",
+                        "description": "Tìm kiếm theo tiêu đề hoặc mã",
                         "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "L\u1ecdc theo tr\u1ea1ng th\u00e1i",
+                        "description": "Lọc theo trạng thái",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "L\u1ecdc theo m\u1ee9c \u0111\u1ed9 \u01b0u ti\u00ean",
+                        "description": "Lọc theo mức độ ưu tiên",
                         "name": "priority",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
-                        "description": "Ch\u1ec9 l\u1ea5y c\u00f4ng vi\u1ec7c qu\u00e1 h\u1ea1n",
+                        "description": "Chỉ lấy công việc quá hạn",
                         "name": "overdue",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "S\u1eafp x\u1ebfp theo tr\u01b0\u1eddng (created_at, due_at, priority...)",
+                        "description": "Sắp xếp theo trường (created_at, due_at, priority...)",
                         "name": "sort_by",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Th\u1ee9 t\u1ef1 s\u1eafp x\u1ebfp (asc ho\u1eb7c desc)",
+                        "description": "Thứ tự sắp xếp (asc hoặc desc)",
                         "name": "sort_order",
                         "in": "query"
                     }
@@ -1011,7 +1095,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "T\u1ea1o m\u1ed9t nhi\u1ec7m v\u1ee5 g\u1ed1c m\u1edbi v\u00e0 kh\u1edfi t\u1ea1o ph\u00e2n c\u00f4ng ban \u0111\u1ea7u",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tạo một nhiệm vụ gốc mới và khởi tạo phân công ban đầu",
                 "consumes": [
                     "application/json"
                 ],
@@ -1021,10 +1110,10 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "T\u1ea1o nhi\u1ec7m v\u1ee5 g\u1ed1c",
+                "summary": "Tạo nhiệm vụ gốc",
                 "parameters": [
                     {
-                        "description": "D\u1eef li\u1ec7u t\u1ea1o nhi\u1ec7m v\u1ee5",
+                        "description": "Dữ liệu tạo nhiệm vụ",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1075,18 +1164,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}": {
             "get": {
-                "description": "L\u1ea5y th\u00f4ng tin chi ti\u1ebft m\u1ed9t c\u00f4ng vi\u1ec7c k\u00e8m ph\u00e2n c\u00f4ng",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy thông tin chi tiết một công việc kèm phân công",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Chi ti\u1ebft c\u00f4ng vi\u1ec7c",
+                "summary": "Chi tiết công việc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1120,18 +1214,23 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "X\u00f3a m\u1ec1m ho\u1eb7c h\u1ee7y c\u00f4ng vi\u1ec7c theo ch\u00ednh s\u00e1ch RESTful",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Xóa mềm hoặc hủy công việc theo chính sách RESTful",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "X\u00f3a/H\u1ee7y c\u00f4ng vi\u1ec7c theo ch\u00ednh s\u00e1ch REST",
+                "summary": "Xóa/Hủy công việc theo chính sách REST",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1171,7 +1270,12 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "S\u1eeda th\u00f4ng tin c\u00f4ng vi\u1ec7c, b\u1eaft bu\u1ed9c truy\u1ec1n tr\u01b0\u1eddng version \u0111\u1ec3 ch\u1ed1ng ghi \u0111\u00e8 \u0111\u1ed3ng th\u1eddi",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sửa thông tin công việc, bắt buộc truyền trường version để chống ghi đè đồng thời",
                 "consumes": [
                     "application/json"
                 ],
@@ -1181,17 +1285,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "C\u1eadp nh\u1eadt c\u00f4ng vi\u1ec7c (Optimistic Locking)",
+                "summary": "Cập nhật công việc (Optimistic Locking)",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "D\u1eef li\u1ec7u c\u1eadp nh\u1eadt k\u00e8m version",
+                        "description": "Dữ liệu cập nhật kèm version",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1242,18 +1346,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/assignments": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch ng\u01b0\u1eddi ho\u1eb7c ph\u00f2ng ban \u0111\u01b0\u1ee3c giao vi\u1ec7c",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách người hoặc phòng ban được giao việc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Danh s\u00e1ch ph\u00e2n c\u00f4ng c\u00f4ng vi\u1ec7c",
+                "summary": "Danh sách phân công công việc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1296,7 +1405,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Giao c\u00f4ng vi\u1ec7c cho ng\u01b0\u1eddi ho\u1eb7c ph\u00f2ng ban m\u1edbi",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Giao công việc cho người hoặc phòng ban mới",
                 "consumes": [
                     "application/json"
                 ],
@@ -1306,17 +1420,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Ph\u00e2n c\u00f4ng th\u00eam ng\u01b0\u1eddi ho\u1eb7c ph\u00f2ng ban",
+                "summary": "Phân công thêm người hoặc phòng ban",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "D\u1eef li\u1ec7u ph\u00e2n c\u00f4ng",
+                        "description": "Dữ liệu phân công",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1367,25 +1481,30 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/assignments/{assignmentId}": {
             "delete": {
-                "description": "G\u1ee1 b\u1ecf m\u1ed9t ph\u00e2n c\u00f4ng kh\u1ecfi c\u00f4ng vi\u1ec7c",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gỡ bỏ một phân công khỏi công việc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "X\u00f3a ph\u00e2n c\u00f4ng c\u00f4ng vi\u1ec7c",
+                "summary": "Xóa phân công công việc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "ID ph\u00e2n c\u00f4ng (UUID)",
+                        "description": "ID phân công (UUID)",
                         "name": "assignmentId",
                         "in": "path",
                         "required": true
@@ -1415,7 +1534,12 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/cancellations": {
             "post": {
-                "description": "H\u1ee7y c\u00f4ng vi\u1ec7c theo th\u1ea9m quy\u1ec1n c\u00f3 k\u00e8m l\u00fd do",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Hủy công việc theo thẩm quyền có kèm lý do",
                 "consumes": [
                     "application/json"
                 ],
@@ -1425,17 +1549,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "H\u1ee7y c\u00f4ng vi\u1ec7c",
+                "summary": "Hủy công việc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "L\u00fd do h\u1ee7y",
+                        "description": "Lý do hủy",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1486,18 +1610,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/children": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch c\u00e1c c\u00f4ng vi\u1ec7c con tr\u1ef1c ti\u1ebfp c\u1ee7a m\u1ed9t nhi\u1ec7m v\u1ee5",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách các công việc con trực tiếp của một nhiệm vụ",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Danh s\u00e1ch c\u00f4ng vi\u1ec7c con tr\u1ef1c ti\u1ebfp",
+                "summary": "Danh sách công việc con trực tiếp",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c cha (UUID)",
+                        "description": "ID công việc cha (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1528,7 +1657,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "T\u1ea1o c\u00f4ng vi\u1ec7c con theo c\u00e2y ph\u00e2n c\u1ea5p (r\u00e0ng bu\u1ed9c th\u1eddi h\u1ea1n n\u1eb1m trong h\u1ea1n cha)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tạo công việc con theo cây phân cấp (ràng buộc thời hạn nằm trong hạn cha)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1538,17 +1672,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "T\u1ea1o c\u00f4ng vi\u1ec7c con",
+                "summary": "Tạo công việc con",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c cha (UUID)",
+                        "description": "ID công việc cha (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "D\u1eef li\u1ec7u c\u00f4ng vi\u1ec7c con",
+                        "description": "Dữ liệu công việc con",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1605,18 +1739,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/comments": {
             "get": {
-                "description": "L\u1ea5y danh s\u00e1ch trao \u0111\u1ed5i, b\u00ecnh lu\u1eadn trong c\u00f4ng vi\u1ec7c",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách trao đổi, bình luận trong công việc",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Danh s\u00e1ch b\u00ecnh lu\u1eadn",
+                "summary": "Danh sách bình luận",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1659,7 +1798,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Th\u00eam b\u00ecnh lu\u1eadn m\u1edbi v\u00e0o c\u00f4ng vi\u1ec7c",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Thêm bình luận mới vào công việc",
                 "consumes": [
                     "application/json"
                 ],
@@ -1669,17 +1813,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Th\u00eam b\u00ecnh lu\u1eadn",
+                "summary": "Thêm bình luận",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "N\u1ed9i dung b\u00ecnh lu\u1eadn",
+                        "description": "Nội dung bình luận",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1730,7 +1874,12 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/events": {
             "get": {
-                "description": "L\u1ea5y to\u00e0n b\u1ed9 l\u1ecbch s\u1eed s\u1ef1 ki\u1ec7n ki\u1ec3m to\u00e1n nghi\u1ec7p v\u1ee5 c\u1ee7a c\u00f4ng vi\u1ec7c",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy toàn bộ lịch sử sự kiện kiểm toán nghiệp vụ của công việc",
                 "produces": [
                     "application/json"
                 ],
@@ -1741,7 +1890,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1786,7 +1935,12 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/reopen": {
             "post": {
-                "description": "Ch\u1ec9 ng\u01b0\u1eddi nghi\u1ec7m thu g\u1ea7n nh\u1ea5t ho\u1eb7c c\u1ea5p qu\u1ea3n l\u00fd cao h\u01a1n \u0111\u01b0\u1ee3c ph\u00e9p; b\u1eaft bu\u1ed9c c\u00f3 l\u00fd do",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chỉ người nghiệm thu gần nhất hoặc cấp quản lý cao hơn được phép; bắt buộc có lý do",
                 "consumes": [
                     "application/json"
                 ],
@@ -1796,17 +1950,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "M\u1edf l\u1ea1i c\u00f4ng vi\u1ec7c \u0111\u00e3 ho\u00e0n th\u00e0nh",
+                "summary": "Mở lại công việc đã hoàn thành",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "L\u00fd do m\u1edf l\u1ea1i",
+                        "description": "Lý do mở lại",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1863,18 +2017,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/reviews": {
             "get": {
-                "description": "L\u1ea5y to\u00e0n b\u1ed9 l\u1ecbch s\u1eed c\u00e1c l\u1ea7n nghi\u1ec7m thu ho\u1eb7c y\u00eau c\u1ea7u b\u1ed5 sung",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy toàn bộ lịch sử các lần nghiệm thu hoặc yêu cầu bổ sung",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "L\u1ecbch s\u1eed nghi\u1ec7m thu",
+                "summary": "Lịch sử nghiệm thu",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -1917,7 +2076,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "\u0110\u00e1nh gi\u00e1 k\u1ebft qu\u1ea3 c\u00f4ng vi\u1ec7c (ch\u1ec9 approved khi to\u00e0n b\u1ed9 vi\u1ec7c con b\u1eaft bu\u1ed9c \u0111\u00e3 ho\u00e0n th\u00e0nh)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Đánh giá kết quả công việc (chỉ approved khi toàn bộ việc con bắt buộc đã hoàn thành)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1927,17 +2091,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Nghi\u1ec7m thu ho\u1eb7c y\u00eau c\u1ea7u b\u1ed5 sung",
+                "summary": "Nghiệm thu hoặc yêu cầu bổ sung",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Quy\u1ebft \u0111\u1ecbnh nghi\u1ec7m thu",
+                        "description": "Quyết định nghiệm thu",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1994,18 +2158,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/tree": {
             "get": {
-                "description": "L\u1ea5y c\u00e2y ph\u00e2n c\u1ea5p ho\u00e0n ch\u1ec9nh t\u1eeb c\u00f4ng vi\u1ec7c hi\u1ec7n t\u1ea1i xu\u1ed1ng c\u00e1c c\u1ea5p con ch\u00e1u",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy cây phân cấp hoàn chỉnh từ công việc hiện tại xuống các cấp con cháu",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "C\u00e2y ph\u00e2n c\u1ea5p c\u00f4ng vi\u1ec7c",
+                "summary": "Cây phân cấp công việc",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -2035,18 +2204,23 @@ const docTemplate = `{
         },
         "/tasks/{taskId}/updates": {
             "get": {
-                "description": "L\u1ea5y to\u00e0n b\u1ed9 c\u00e1c l\u1ea7n b\u00e1o c\u00e1o ti\u1ebfn \u0111\u1ed9 k\u00e8m ng\u01b0\u1eddi g\u1eedi v\u00e0 t\u1ec7p \u0111\u00ednh k\u00e8m",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy toàn bộ các lần báo cáo tiến độ kèm người gửi và tệp đính kèm",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "L\u1ecbch s\u1eed b\u00e1o c\u00e1o ti\u1ebfn \u0111\u1ed9",
+                "summary": "Lịch sử báo cáo tiến độ",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -2089,7 +2263,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "G\u1eedi b\u00e1o c\u00e1o ti\u1ebfn \u0111\u1ed9 v\u00e0 k\u00edch ho\u1ea1t t\u1ef1 \u0111\u1ed9ng t\u00ednh to\u00e1n t\u1ed5ng h\u1ee3p ti\u1ebfn \u0111\u1ed9 cha",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gửi báo cáo tiến độ và kích hoạt tự động tính toán tổng hợp tiến độ cha",
                 "consumes": [
                     "application/json"
                 ],
@@ -2099,17 +2278,17 @@ const docTemplate = `{
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "B\u00e1o c\u00e1o ti\u1ebfn \u0111\u1ed9",
+                "summary": "Báo cáo tiến độ",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID c\u00f4ng vi\u1ec7c (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "N\u1ed9i dung b\u00e1o c\u00e1o ti\u1ebfn \u0111\u1ed9",
+                        "description": "Nội dung báo cáo tiến độ",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2253,7 +2432,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "label": {
-                    "description": "vd: \"T\u1ea5t c\u1ea3 c\u00f4ng vi\u1ec7c\"",
+                    "description": "vd: \"Tất cả công việc\"",
                     "type": "string"
                 },
                 "path": {
@@ -2404,11 +2583,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "label": {
-                    "description": "vd: \"Xem danh s\u00e1ch c\u00f4ng vi\u1ec7c (tasks:view)\"",
+                    "description": "vd: \"Xem danh sách công việc (tasks:view)\"",
                     "type": "string"
                 },
                 "module": {
-                    "description": "vd: \"Qu\u1ea3n l\u00fd c\u00f4ng vi\u1ec7c\"",
+                    "description": "vd: \"Quản lý công việc\"",
                     "type": "string"
                 },
                 "value": {
@@ -3015,7 +3194,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "description": "pending -> active",
+                    "description": "pending -\u003e active",
                     "type": "string"
                 },
                 "task_id": {
@@ -3248,17 +3427,12 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "BearerAuth": {
-            "description": "Nh\u1eadp token theo c\u00fa ph\u00e1p: Bearer {your_jwt_token}",
+            "description": "Nhập token theo cú pháp: Bearer {your_jwt_token}",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
         }
-    },
-    "security": [
-        {
-            "BearerAuth": []
-        }
-    ]
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
