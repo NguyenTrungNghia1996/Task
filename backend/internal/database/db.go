@@ -24,8 +24,27 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 		gormLogLevel = logger.Info
 	}
 
+	// Đặt ngưỡng cảnh báo Slow SQL:
+	// Khi chạy local kết nối tới VPS Database từ xa, độ trễ mạng vật lý Internet (RTT) mất ~120-220ms.
+	// Đặt ngưỡng 500ms cho kết nối remote để tránh cảnh báo nhầm do độ trễ đường truyền mạng.
+	slowThreshold := 200 * time.Millisecond
+	if cfg.DBHost != "localhost" && cfg.DBHost != "127.0.0.1" {
+		slowThreshold = 500 * time.Millisecond
+	}
+
+	customLogger := logger.New(
+		log.New(log.Writer(), "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold:             slowThreshold,
+			LogLevel:                  gormLogLevel,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  true,
+		},
+	)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(gormLogLevel),
+		Logger:                 customLogger,
+		SkipDefaultTransaction: true, // Bỏ transaction mặc định cho single create/update giúp giảm số lượt gửi nhận mạng (RTT)
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
