@@ -1,0 +1,25 @@
+version: '3.8'
+
+# ==============================================================================
+# Docker Compose cho API Backend (Triển khai trên VPS App khi tách rời DB)
+#
+# Cách sử dụng:
+# 1. Cấu hình tệp .env trên VPS này:
+#    - DB_HOST: Địa chỉ IP/domain của VPS Database
+#    - DB_PORT, DB_USER, DB_PASSWORD khớp với VPS Database
+# 2. Chạy lệnh:
+#    docker compose -f compose.app.yaml up -d --build
+# ==============================================================================
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskmgmt-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+

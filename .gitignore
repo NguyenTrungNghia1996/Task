@@ -1,0 +1,35 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+!*.env.example
+
+# Binaries & Build artifacts
+bin/
+tmp/
+*.exe
+*.dll
+*.so
+*.dylib
+api
+seed
+build-errors.log
+
+# Dependencies
+vendor/
+node_modules/
+
+# Logs & temp
+*.log
+*.out
+*.test
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

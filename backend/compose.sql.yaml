@@ -1,0 +1,54 @@
+version: '3.8'
+
+# ==============================================================================
+# Docker Compose chạy PostgreSQL & Adminer (Bản Test / Dev)
+# - Không cần tệp .env (toàn bộ cấu hình đã được gán sẵn giá trị mặc định)
+# - Có sẵn giao diện quản trị Web Adminer trên cổng 8088
+#
+# Cách chạy:
+#   docker compose -f compose.sql.yaml up -d
+#
+# Truy cập Adminer qua trình duyệt:
+#   http://<IP_VPS>:8088
+#   - Hệ quản trị: PostgreSQL
+#   - Máy chủ (Server): postgres
+#   - Người dùng: postgres
+#   - Mật khẩu: postgres
+#   - CSDL: taskmgmt
+# ==============================================================================
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskmgmt-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskmgmt
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d taskmgmt"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: taskmgmt-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "8088:8080"
+
+volumes:
+  postgres_data:
+    name: taskmgmt_postgres_data

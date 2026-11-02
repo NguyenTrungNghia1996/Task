@@ -1,0 +1,3691 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "Đặc tả API ứng dụng quản lý công việc nhiều cấp (Golang Fiber + PostgreSQL)",
+    "title": "Task Management Multi-Level API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "Đội ngũ phát triển",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "description": "Xác thực tài khoản bằng username/password và nhận JWT Access Token",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Đăng nhập hệ thống",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_auth.LoginResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "description": "Thông tin tài khoản",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_auth.LoginRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Thu hồi Refresh Token hiện tại",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Đăng xuất",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_auth.LogoutResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "description": "Refresh Token",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_auth.RefreshRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "description": "Lấy thông tin cá nhân và vai trò của người dùng đang đăng nhập",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Thông tin tài khoản hiện tại",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_auth.UserInfoResp"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "description": "Dùng Refresh Token hợp lệ để cấp mới Access Token",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Làm mới Access Token",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_auth.LoginResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "description": "Refresh Token",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_auth.RefreshRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus": {
+      "get": {
+        "description": "Lấy toàn bộ cây menu không lọc quyền để phục vụ màn hình cấu hình Menu",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Danh sách toàn bộ Menu hệ thống (Dành cho Quản trị viên)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.Menu"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Quản trị viên thêm menu mới vào cây điều hướng",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Thêm mới mục Menu",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Menu"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Thông tin menu mới",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_menus.CreateMenuRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus/user-menus": {
+      "get": {
+        "description": "Lấy danh sách menu dạng cây phân cấp đã được lọc theo quyền của user, định dạng chuẩn :items của Ant Design a-menu",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Lấy cây Menu động cho người dùng hiện tại (Chuẩn Ant Design)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/internal_modules_menus.AntdMenuItem"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus/{menuId}": {
+      "delete": {
+        "description": "Xóa menu khỏi cây điều hướng (chỉ xóa được menu lá không có menu con)",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Xóa mục Menu",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID Menu (UUID)",
+            "name": "menuId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Sửa tên, icon, đường dẫn, quyền yêu cầu hoặc vị trí của menu",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Cập nhật mục Menu",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID Menu (UUID)",
+            "name": "menuId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Menu"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Thông tin cập nhật",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_menus.UpdateMenuRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "description": "Lấy danh sách thông báo của người dùng hiện tại có phân trang và lọc chưa đọc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Danh sách thông báo",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Trang (mặc định 1)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Số lượng (mặc định 20)",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "Chỉ lấy thông báo chưa đọc",
+            "name": "unread_only",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.Notification"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_platform_response.PaginationMeta"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/read-all": {
+      "post": {
+        "description": "Chuyển toàn bộ thông báo chưa đọc của người dùng sang trạng thái đã đọc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Đánh dấu tất cả thông báo đã đọc",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_notifications.MarkAllReadResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/stream": {
+      "get": {
+        "description": "Mở kết nối SSE lắng nghe thông báo tức thời",
+        "produces": [
+          "text/event-stream"
+        ],
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Server-Sent Events (SSE) đẩy thông báo thời gian thực",
+        "responses": {}
+      }
+    },
+    "/notifications/unread-count": {
+      "get": {
+        "description": "Lấy tổng số thông báo chưa đọc của người dùng hiện tại",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Số lượng thông báo chưa đọc",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_notifications.UnreadCountResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{notificationId}": {
+      "patch": {
+        "description": "Đánh dấu thông báo cụ thể là đã đọc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Đánh dấu một thông báo đã đọc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID thông báo (UUID)",
+            "name": "notificationId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Notification"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/permissions": {
+      "get": {
+        "description": "Lấy danh sách quyền được gom nhóm theo phân hệ (module) cho bảng ma trận phân quyền",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Danh sách tất cả quyền hệ thống",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/internal_modules_rbac.ModuleGroupedPermissions"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Quản trị viên đăng ký thêm mã quyền mới vào hệ thống",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Thêm quyền chức năng mới",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Permission"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Thông tin quyền mới",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_rbac.CreatePermissionRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/permissions/options": {
+      "get": {
+        "description": "Lấy danh sách quyền {value, label, module} cho component a-select khi tạo/sửa Menu",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Danh sách quyền dạng Options cho Ant Design Select",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/internal_modules_rbac.PermissionOption"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "description": "Lấy danh sách các vai trò để quản lý phân quyền",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Danh sách vai trò hệ thống",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.Role"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles/{roleId}/permissions": {
+      "get": {
+        "description": "Lấy chi tiết vai trò kèm toàn bộ các quyền chức năng đang được gán",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Lấy danh sách quyền của một vai trò",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID vai trò (UUID)",
+            "name": "roleId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_rbac.RoleWithPermissionsResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Thay thế toàn bộ danh sách quyền của một vai trò bằng danh sách mã quyền mới",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC"
+        ],
+        "summary": "Cập nhật tập quyền cho một vai trò",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID vai trò (UUID)",
+            "name": "roleId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Danh sách mã quyền mới",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_rbac.UpdateRolePermissionsRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "description": "Lấy danh sách công việc có lọc, phân trang và sắp xếp",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Danh sách công việc",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Trang hiện tại (mặc định 1)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Số lượng mỗi trang (mặc định 20, tối đa 100)",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Tìm kiếm theo tiêu đề hoặc mã",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Lọc theo trạng thái",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Lọc theo mức độ ưu tiên",
+            "name": "priority",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "Chỉ lấy công việc quá hạn",
+            "name": "overdue",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Sắp xếp theo trường (created_at, due_at, priority...)",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Thứ tự sắp xếp (asc hoặc desc)",
+            "name": "sort_order",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_platform_response.PaginationMeta"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Tạo một nhiệm vụ gốc mới và khởi tạo phân công ban đầu",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Tạo nhiệm vụ gốc",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Dữ liệu tạo nhiệm vụ",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}": {
+      "get": {
+        "description": "Lấy thông tin chi tiết một công việc kèm phân công",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Chi tiết công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Xóa mềm hoặc hủy công việc theo chính sách RESTful",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Xóa/Hủy công việc theo chính sách REST",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Sửa thông tin công việc, bắt buộc truyền trường version để chống ghi đè đồng thời",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Cập nhật công việc (Optimistic Locking)",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Dữ liệu cập nhật kèm version",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.UpdateTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/assignments": {
+      "get": {
+        "description": "Lấy danh sách người hoặc phòng ban được giao việc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Danh sách phân công công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskAssignment"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Giao công việc cho người hoặc phòng ban mới",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Phân công thêm người hoặc phòng ban",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.TaskAssignment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Dữ liệu phân công",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateAssignmentRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/assignments/{assignmentId}": {
+      "delete": {
+        "description": "Gỡ bỏ một phân công khỏi công việc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Xóa phân công công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "ID phân công (UUID)",
+            "name": "assignmentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/cancellations": {
+      "post": {
+        "description": "Hủy công việc theo thẩm quyền có kèm lý do",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Hủy công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Lý do hủy",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CancelTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/children": {
+      "get": {
+        "description": "Lấy danh sách các công việc con trực tiếp của một nhiệm vụ",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Danh sách công việc con trực tiếp",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc cha (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Tạo công việc con theo cây phân cấp (ràng buộc thời hạn nằm trong hạn cha)",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Tạo công việc con",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc cha (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Dữ liệu công việc con",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateChildTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/comments": {
+      "get": {
+        "description": "Lấy danh sách trao đổi, bình luận trong công việc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Danh sách bình luận",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskComment"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Thêm bình luận mới vào công việc",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Thêm bình luận",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.TaskComment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Nội dung bình luận",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateCommentRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/events": {
+      "get": {
+        "description": "Lấy toàn bộ lịch sử sự kiện kiểm toán nghiệp vụ của công việc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Audit timeline",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskEvent"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/reopen": {
+      "post": {
+        "description": "Chỉ người nghiệm thu gần nhất hoặc cấp quản lý cao hơn được phép; bắt buộc có lý do",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Mở lại công việc đã hoàn thành",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Lý do mở lại",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.ReopenTaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/reviews": {
+      "get": {
+        "description": "Lấy toàn bộ lịch sử các lần nghiệm thu hoặc yêu cầu bổ sung",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Lịch sử nghiệm thu",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskReview"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Đánh giá kết quả công việc (chỉ approved khi toàn bộ việc con bắt buộc đã hoàn thành)",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Nghiệm thu hoặc yêu cầu bổ sung",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.TaskReview"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Quyết định nghiệm thu",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateTaskReviewRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/tree": {
+      "get": {
+        "description": "Lấy cây phân cấp hoàn chỉnh từ công việc hiện tại xuống các cấp con cháu",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Cây phân cấp công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/updates": {
+      "get": {
+        "description": "Lấy toàn bộ các lần báo cáo tiến độ kèm người gửi và tệp đính kèm",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Lịch sử báo cáo tiến độ",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskUpdate"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Gửi báo cáo tiến độ và kích hoạt tự động tính toán tổng hợp tiến độ cha",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Báo cáo tiến độ",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID công việc (UUID)",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/taskmgmt_internal_model.TaskUpdate"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Nội dung báo cáo tiến độ",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_tasks.CreateTaskUpdateRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Nhập JWT Access Token"
+      }
+    },
+    "schemas": {
+      "internal_modules_auth.LoginRequest": {
+        "type": "object",
+        "required": [
+          "password",
+          "username"
+        ],
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_auth.LoginResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/internal_modules_auth.UserInfoResp"
+          }
+        }
+      },
+      "internal_modules_auth.LogoutResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "internal_modules_auth.RefreshRequest": {
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_auth.UserInfoResp": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_menus.AntdMenuItem": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "description": "Menu con",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_modules_menus.AntdMenuItem"
+            }
+          },
+          "icon": {
+            "description": "vd: \"ProjectOutlined\"",
+            "type": "string"
+          },
+          "key": {
+            "description": "vd: \"/tasks/all\"",
+            "type": "string"
+          },
+          "label": {
+            "description": "vd: \"Tất cả công việc\"",
+            "type": "string"
+          },
+          "path": {
+            "description": "vd: \"/tasks/all\"",
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_menus.CreateMenuRequest": {
+        "type": "object",
+        "required": [
+          "code",
+          "title"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_hidden": {
+            "type": "boolean"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "required_permission": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          }
+        }
+      },
+      "internal_modules_menus.UpdateMenuRequest": {
+        "type": "object",
+        "properties": {
+          "icon": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_hidden": {
+            "type": "boolean"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "required_permission": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          }
+        }
+      },
+      "internal_modules_notifications.MarkAllReadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "updated_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "internal_modules_notifications.UnreadCountResponse": {
+        "type": "object",
+        "properties": {
+          "unread_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "internal_modules_rbac.CreatePermissionRequest": {
+        "type": "object",
+        "required": [
+          "code",
+          "module",
+          "name"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 3
+          },
+          "description": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2
+          }
+        }
+      },
+      "internal_modules_rbac.ModuleGroupedPermissions": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.Permission"
+            }
+          }
+        }
+      },
+      "internal_modules_rbac.PermissionOption": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "description": "vd: \"Xem danh sách công việc (tasks:view)\"",
+            "type": "string"
+          },
+          "module": {
+            "description": "vd: \"Quản lý công việc\"",
+            "type": "string"
+          },
+          "value": {
+            "description": "vd: \"tasks:view\"",
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_rbac.RoleWithPermissionsResponse": {
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.Permission"
+            }
+          },
+          "role": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.Role"
+          }
+        }
+      },
+      "internal_modules_rbac.UpdateRolePermissionsRequest": {
+        "type": "object",
+        "required": [
+          "permission_codes"
+        ],
+        "properties": {
+          "permission_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "internal_modules_tasks.AssignmentInput": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "responsible_user_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "department"
+            ]
+          }
+        }
+      },
+      "internal_modules_tasks.CancelTaskRequest": {
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 5
+          }
+        }
+      },
+      "internal_modules_tasks.CreateAssignmentRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "assignment_role": {
+            "type": "string",
+            "enum": [
+              "responsible",
+              "supporting",
+              "observer"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_primary": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          },
+          "responsible_user_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "department"
+            ]
+          }
+        }
+      },
+      "internal_modules_tasks.CreateChildTaskRequest": {
+        "type": "object",
+        "required": [
+          "initial_assignment",
+          "title"
+        ],
+        "properties": {
+          "approval_required": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": "string"
+          },
+          "initial_assignment": {
+            "$ref": "#/components/schemas/internal_modules_tasks.AssignmentInput"
+          },
+          "priority": {
+            "type": "integer",
+            "maximum": 3,
+            "minimum": 1
+          },
+          "start_at": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "internal_modules_tasks.CreateCommentRequest": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_tasks.CreateTaskRequest": {
+        "type": "object",
+        "required": [
+          "initial_assignment",
+          "title"
+        ],
+        "properties": {
+          "approval_required": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": "string"
+          },
+          "initial_assignment": {
+            "$ref": "#/components/schemas/internal_modules_tasks.AssignmentInput"
+          },
+          "priority": {
+            "type": "integer",
+            "maximum": 3,
+            "minimum": 1
+          },
+          "start_at": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "internal_modules_tasks.CreateTaskReviewRequest": {
+        "type": "object",
+        "required": [
+          "decision",
+          "update_id"
+        ],
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "revision_required"
+            ]
+          },
+          "update_id": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_tasks.CreateTaskUpdateRequest": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "attachment_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 0
+          }
+        }
+      },
+      "internal_modules_tasks.ReopenTaskRequest": {
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 5
+          }
+        }
+      },
+      "internal_modules_tasks.UpdateTaskRequest": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "maximum": 3,
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "version": {
+            "description": "Optimistic Locking",
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "taskmgmt_internal_model.Department": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.Department"
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "department_type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.Menu": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.Menu"
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_hidden": {
+            "type": "boolean"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "required_permission": {
+            "type": "string"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.Notification": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "read_at": {
+            "type": "string"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "recipient_id": {
+            "type": "string"
+          },
+          "task": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.Permission": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.Role": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.Task": {
+        "type": "object",
+        "properties": {
+          "approval_required": {
+            "type": "boolean"
+          },
+          "assignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.TaskAssignment"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.Task"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "progress": {
+            "type": "integer"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.TaskReview"
+            }
+          },
+          "root_task_id": {
+            "type": "string"
+          },
+          "start_at": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "updates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.TaskUpdate"
+            }
+          },
+          "version": {
+            "type": "integer"
+          },
+          "weight": {
+            "type": "integer"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskAssignment": {
+        "type": "object",
+        "properties": {
+          "assigned_by": {
+            "type": "string"
+          },
+          "assignee_department": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.Department"
+          },
+          "assignee_department_id": {
+            "type": "string"
+          },
+          "assignee_user": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "assignee_user_id": {
+            "type": "string"
+          },
+          "assignment_role": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_primary": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "responsible_user": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "responsible_user_id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskAttachment": {
+        "type": "object",
+        "properties": {
+          "checksum": {
+            "type": "string"
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer"
+          },
+          "status": {
+            "description": "pending -> active",
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "update_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "uploaded_by": {
+            "type": "string"
+          },
+          "uploader": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskComment": {
+        "type": "object",
+        "properties": {
+          "author": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "author_id": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskEvent": {
+        "type": "object",
+        "properties": {
+          "actor": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "actor_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskReview": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "reviewed_at": {
+            "type": "string"
+          },
+          "reviewer": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "reviewer_id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "update": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.TaskUpdate"
+          },
+          "update_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.TaskUpdate": {
+        "type": "object",
+        "properties": {
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/taskmgmt_internal_model.TaskAttachment"
+            }
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "integer"
+          },
+          "submitted_at": {
+            "type": "string"
+          },
+          "submitted_by": {
+            "type": "string"
+          },
+          "submitter": {
+            "$ref": "#/components/schemas/taskmgmt_internal_model.User"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_model.User": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_platform_response.ErrorDetails": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "details": {},
+          "message": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "taskmgmt_internal_platform_response.ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/taskmgmt_internal_platform_response.ErrorDetails"
+          }
+        }
+      },
+      "taskmgmt_internal_platform_response.PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          }
+        }
+      },
+      "taskmgmt_internal_platform_response.SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "meta": {}
+        }
+      }
+    }
+  }
+}

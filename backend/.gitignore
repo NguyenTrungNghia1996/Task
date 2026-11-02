@@ -1,0 +1,31 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+api
+seed
+tmp/
+build-errors.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.sql.example
+
+# Test & coverage
+*.out
+*.test
+
+# Editor & OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
