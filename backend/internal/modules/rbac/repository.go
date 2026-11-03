@@ -62,7 +62,7 @@ func (r *Repository) GetRolePermissions(roleID uuid.UUID) ([]model.Permission, e
 	var perms []model.Permission
 	err := r.db.Table("permissions").
 		Joins("JOIN role_permissions ON role_permissions.permission_id = permissions.id").
-		Where("role_permissions.role_id = ?", roleID).
+		Where("role_permissions.role_id = ? AND role_permissions.deleted_at IS NULL", roleID).
 		Order("permissions.module ASC, permissions.code ASC").
 		Find(&perms).Error
 	return perms, err
@@ -70,8 +70,8 @@ func (r *Repository) GetRolePermissions(roleID uuid.UUID) ([]model.Permission, e
 
 func (r *Repository) SetRolePermissions(roleID uuid.UUID, permissionCodes []string) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
-		// 1. Xóa các quyền cũ của role
-		if err := tx.Where("role_id = ?", roleID).Delete(&model.RolePermission{}).Error; err != nil {
+		// 1. Xóa các quyền cũ của role (hard delete bảng trung gian)
+		if err := tx.Unscoped().Where("role_id = ?", roleID).Delete(&model.RolePermission{}).Error; err != nil {
 			return err
 		}
 
@@ -121,7 +121,7 @@ func (r *Repository) GetPermissionsForRoles(roles []string) ([]string, error) {
 	err := r.db.Table("role_permissions").
 		Joins("JOIN roles ON roles.id = role_permissions.role_id").
 		Joins("JOIN permissions ON permissions.id = role_permissions.permission_id").
-		Where("roles.code IN ?", roles).
+		Where("roles.code IN ? AND role_permissions.deleted_at IS NULL AND roles.deleted_at IS NULL AND permissions.deleted_at IS NULL", roles).
 		Pluck("DISTINCT permissions.code", &perms).Error
 	return perms, err
 }

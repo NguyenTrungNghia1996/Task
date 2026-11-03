@@ -26,7 +26,7 @@ func RequirePermission(db *gorm.DB, requiredPerms ...string) fiber.Handler {
 		err := db.Table("role_permissions").
 			Joins("JOIN roles ON roles.id = role_permissions.role_id").
 			Joins("JOIN permissions ON permissions.id = role_permissions.permission_id").
-			Where("roles.code IN ? AND permissions.code IN ?", userRoles, requiredPerms).
+			Where("roles.code IN ? AND permissions.code IN ? AND role_permissions.deleted_at IS NULL AND roles.deleted_at IS NULL AND permissions.deleted_at IS NULL", userRoles, requiredPerms).
 			Count(&count).Error
 
 		if err != nil || count == 0 {
