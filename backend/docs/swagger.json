@@ -41,7 +41,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.LoginRequest"
+                            "$ref": "#/definitions/internal_modules_auth.LoginRequest"
                         }
                     }
                 ],
@@ -51,13 +51,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/auth.LoginResponse"
+                                            "$ref": "#/definitions/internal_modules_auth.LoginResponse"
                                         }
                                     }
                                 }
@@ -67,13 +67,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -98,7 +98,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/auth.RefreshRequest"
+                            "$ref": "#/definitions/internal_modules_auth.RefreshRequest"
                         }
                     }
                 ],
@@ -108,13 +108,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/auth.LogoutResponse"
+                                            "$ref": "#/definitions/internal_modules_auth.LogoutResponse"
                                         }
                                     }
                                 }
@@ -145,13 +145,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/auth.UserInfoResp"
+                                            "$ref": "#/definitions/internal_modules_auth.UserInfoResp"
                                         }
                                     }
                                 }
@@ -161,7 +161,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -187,7 +187,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.RefreshRequest"
+                            "$ref": "#/definitions/internal_modules_auth.RefreshRequest"
                         }
                     }
                 ],
@@ -197,13 +197,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/auth.LoginResponse"
+                                            "$ref": "#/definitions/internal_modules_auth.LoginResponse"
                                         }
                                     }
                                 }
@@ -213,13 +213,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -254,7 +254,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -262,7 +262,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/reports.MyTaskItem"
+                                                "$ref": "#/definitions/internal_modules_reports.MyTaskItem"
                                             }
                                         }
                                     }
@@ -294,13 +294,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/reports.DashboardSummaryResponse"
+                                            "$ref": "#/definitions/internal_modules_reports.DashboardSummaryResponse"
                                         }
                                     }
                                 }
@@ -335,7 +335,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/departments.CreateDepartmentRequest"
+                            "$ref": "#/definitions/internal_modules_departments.CreateDepartmentRequest"
                         }
                     }
                 ],
@@ -345,13 +345,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_departments.DepartmentDetailResponse"
                                         }
                                     }
                                 }
@@ -382,7 +382,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -390,7 +390,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/departments.DepartmentOption"
+                                                "$ref": "#/definitions/internal_modules_departments.DepartmentOption"
                                             }
                                         }
                                     }
@@ -422,7 +422,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -430,7 +430,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/departments.DepartmentTreeNode"
+                                                "$ref": "#/definitions/internal_modules_departments.DepartmentTreeNode"
                                             }
                                         }
                                     }
@@ -471,13 +471,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_departments.DepartmentDetailResponse"
                                         }
                                     }
                                 }
@@ -513,7 +513,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     }
                 }
@@ -549,7 +549,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/departments.UpdateDepartmentRequest"
+                            "$ref": "#/definitions/internal_modules_departments.UpdateDepartmentRequest"
                         }
                     }
                 ],
@@ -559,13 +559,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_departments.DepartmentDetailResponse"
                                         }
                                     }
                                 }
@@ -605,7 +605,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -613,7 +613,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                                "$ref": "#/definitions/internal_modules_departments.DepartmentMemberDTO"
                                             }
                                         }
                                     }
@@ -654,7 +654,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/departments.AddDepartmentMemberRequest"
+                            "$ref": "#/definitions/internal_modules_departments.AddDepartmentMemberRequest"
                         }
                     }
                 ],
@@ -664,13 +664,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                            "$ref": "#/definitions/internal_modules_departments.DepartmentMemberDTO"
                                         }
                                     }
                                 }
@@ -715,7 +715,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     }
                 }
@@ -758,7 +758,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/departments.UpdateDepartmentMemberRequest"
+                            "$ref": "#/definitions/internal_modules_departments.UpdateDepartmentMemberRequest"
                         }
                     }
                 ],
@@ -768,13 +768,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                            "$ref": "#/definitions/internal_modules_departments.DepartmentMemberDTO"
                                         }
                                     }
                                 }
@@ -805,7 +805,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -813,7 +813,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Menu"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.Menu"
                                             }
                                         }
                                     }
@@ -847,7 +847,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/menus.CreateMenuRequest"
+                            "$ref": "#/definitions/internal_modules_menus.CreateMenuRequest"
                         }
                     }
                 ],
@@ -857,13 +857,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Menu"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Menu"
                                         }
                                     }
                                 }
@@ -873,7 +873,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -900,7 +900,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -908,7 +908,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/menus.AntdMenuItem"
+                                                "$ref": "#/definitions/internal_modules_menus.AntdMenuItem"
                                             }
                                         }
                                     }
@@ -947,19 +947,19 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -995,7 +995,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/menus.UpdateMenuRequest"
+                            "$ref": "#/definitions/internal_modules_menus.UpdateMenuRequest"
                         }
                     }
                 ],
@@ -1005,13 +1005,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Menu"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Menu"
                                         }
                                     }
                                 }
@@ -1021,13 +1021,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1074,7 +1074,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1082,11 +1082,11 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Notification"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.Notification"
                                             }
                                         },
                                         "meta": {
-                                            "$ref": "#/definitions/response.PaginationMeta"
+                                            "$ref": "#/definitions/taskmgmt_internal_platform_response.PaginationMeta"
                                         }
                                     }
                                 }
@@ -1096,7 +1096,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1123,13 +1123,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/notifications.MarkAllReadResponse"
+                                            "$ref": "#/definitions/internal_modules_notifications.MarkAllReadResponse"
                                         }
                                     }
                                 }
@@ -1139,7 +1139,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1184,13 +1184,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/notifications.UnreadCountResponse"
+                                            "$ref": "#/definitions/internal_modules_notifications.UnreadCountResponse"
                                         }
                                     }
                                 }
@@ -1200,7 +1200,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1251,13 +1251,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Notification"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Notification"
                                         }
                                     }
                                 }
@@ -1267,19 +1267,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1306,13 +1306,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Organization"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Organization"
                                         }
                                     }
                                 }
@@ -1343,7 +1343,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1351,7 +1351,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/rbac.ModuleGroupedPermissions"
+                                                "$ref": "#/definitions/internal_modules_rbac.ModuleGroupedPermissions"
                                             }
                                         }
                                     }
@@ -1362,7 +1362,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1391,7 +1391,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rbac.CreatePermissionRequest"
+                            "$ref": "#/definitions/internal_modules_rbac.CreatePermissionRequest"
                         }
                     }
                 ],
@@ -1401,13 +1401,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Permission"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Permission"
                                         }
                                     }
                                 }
@@ -1417,7 +1417,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1444,7 +1444,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1452,7 +1452,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/rbac.PermissionOption"
+                                                "$ref": "#/definitions/internal_modules_rbac.PermissionOption"
                                             }
                                         }
                                     }
@@ -1484,7 +1484,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1492,7 +1492,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/reports.DepartmentPerformanceItem"
+                                                "$ref": "#/definitions/internal_modules_reports.DepartmentPerformanceItem"
                                             }
                                         }
                                     }
@@ -1569,13 +1569,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/reports.TaskReportResponse"
+                                            "$ref": "#/definitions/internal_modules_reports.TaskReportResponse"
                                         }
                                     }
                                 }
@@ -1651,7 +1651,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1659,7 +1659,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Role"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.Role"
                                             }
                                         }
                                     }
@@ -1700,13 +1700,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/rbac.RoleWithPermissionsResponse"
+                                            "$ref": "#/definitions/internal_modules_rbac.RoleWithPermissionsResponse"
                                         }
                                     }
                                 }
@@ -1716,7 +1716,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1752,7 +1752,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rbac.UpdateRolePermissionsRequest"
+                            "$ref": "#/definitions/internal_modules_rbac.UpdateRolePermissionsRequest"
                         }
                     }
                 ],
@@ -1760,13 +1760,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1849,7 +1849,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1857,11 +1857,11 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Task"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                             }
                                         },
                                         "meta": {
-                                            "$ref": "#/definitions/response.PaginationMeta"
+                                            "$ref": "#/definitions/taskmgmt_internal_platform_response.PaginationMeta"
                                         }
                                     }
                                 }
@@ -1871,7 +1871,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1900,7 +1900,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskRequest"
                         }
                     }
                 ],
@@ -1910,13 +1910,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -1926,19 +1926,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -1974,13 +1974,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -1990,13 +1990,13 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2028,25 +2028,25 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2082,7 +2082,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.UpdateTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.UpdateTaskRequest"
                         }
                     }
                 ],
@@ -2092,13 +2092,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -2108,19 +2108,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2155,7 +2155,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2163,7 +2163,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskAssignment"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
                                             }
                                         }
                                     }
@@ -2203,7 +2203,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateAssignmentRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateAssignmentRequest"
                         }
                     }
                 ],
@@ -2213,13 +2213,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.TaskAssignment"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
                                         }
                                     }
                                 }
@@ -2263,7 +2263,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     }
                 }
@@ -2298,7 +2298,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2306,7 +2306,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskAttachment"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskAttachment"
                                             }
                                         }
                                     }
@@ -2349,7 +2349,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.ConfirmUploadRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.ConfirmUploadRequest"
                         }
                     }
                 ],
@@ -2357,13 +2357,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2401,7 +2401,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.PresignUploadRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.PresignUploadRequest"
                         }
                     }
                 ],
@@ -2411,13 +2411,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/tasks.PresignUploadResponse"
+                                            "$ref": "#/definitions/internal_modules_tasks.PresignUploadResponse"
                                         }
                                     }
                                 }
@@ -2427,7 +2427,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2473,13 +2473,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.TaskAttachment"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskAttachment"
                                         }
                                     }
                                 }
@@ -2489,7 +2489,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2529,13 +2529,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2582,7 +2582,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2620,7 +2620,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.BlockTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.BlockTaskRequest"
                         }
                     }
                 ],
@@ -2630,13 +2630,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -2646,7 +2646,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2683,7 +2683,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CancelTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CancelTaskRequest"
                         }
                     }
                 ],
@@ -2693,13 +2693,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -2738,7 +2738,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2746,7 +2746,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.Task"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                             }
                                         }
                                     }
@@ -2757,7 +2757,7 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2793,7 +2793,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateChildTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateChildTaskRequest"
                         }
                     }
                 ],
@@ -2803,13 +2803,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -2819,25 +2819,25 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2873,13 +2873,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -2889,13 +2889,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -2930,7 +2930,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2938,7 +2938,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskComment"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskComment"
                                             }
                                         }
                                     }
@@ -2978,7 +2978,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateCommentRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateCommentRequest"
                         }
                     }
                 ],
@@ -2988,13 +2988,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.TaskComment"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskComment"
                                         }
                                     }
                                 }
@@ -3033,7 +3033,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3041,7 +3041,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/tasks.TaskEventItem"
+                                                "$ref": "#/definitions/internal_modules_tasks.TaskEventItem"
                                             }
                                         }
                                     }
@@ -3084,7 +3084,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.MoveTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.MoveTaskRequest"
                         }
                     }
                 ],
@@ -3094,13 +3094,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3110,19 +3110,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3158,13 +3158,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3174,19 +3174,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3223,7 +3223,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.ReopenTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.ReopenTaskRequest"
                         }
                     }
                 ],
@@ -3233,13 +3233,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3249,7 +3249,7 @@
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3284,7 +3284,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3292,7 +3292,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskReview"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
                                             }
                                         }
                                     }
@@ -3332,7 +3332,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateTaskReviewRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskReviewRequest"
                         }
                     }
                 ],
@@ -3342,13 +3342,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.TaskReview"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
                                         }
                                     }
                                 }
@@ -3358,7 +3358,7 @@
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3394,13 +3394,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3410,7 +3410,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3446,13 +3446,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3462,13 +3462,13 @@
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3505,7 +3505,7 @@
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/tasks.UnblockTaskRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.UnblockTaskRequest"
                         }
                     }
                 ],
@@ -3515,13 +3515,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Task"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
                                         }
                                     }
                                 }
@@ -3531,7 +3531,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3566,7 +3566,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3574,7 +3574,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskUpdate"
+                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
                                             }
                                         }
                                     }
@@ -3615,7 +3615,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks.CreateTaskUpdateRequest"
+                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskUpdateRequest"
                         }
                     }
                 ],
@@ -3625,13 +3625,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.TaskUpdate"
+                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
                                         }
                                     }
                                 }
@@ -3641,13 +3641,13 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
                 }
@@ -3712,7 +3712,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3720,7 +3720,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/users.UserListItem"
+                                                "$ref": "#/definitions/internal_modules_users.UserListItem"
                                             }
                                         }
                                     }
@@ -3754,7 +3754,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users.CreateUserRequest"
+                            "$ref": "#/definitions/internal_modules_users.CreateUserRequest"
                         }
                     }
                 ],
@@ -3764,13 +3764,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/users.UserDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -3801,7 +3801,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -3809,7 +3809,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/users.UserOption"
+                                                "$ref": "#/definitions/internal_modules_users.UserOption"
                                             }
                                         }
                                     }
@@ -3850,13 +3850,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/users.UserDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -3896,7 +3896,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users.UpdateUserRequest"
+                            "$ref": "#/definitions/internal_modules_users.UpdateUserRequest"
                         }
                     }
                 ],
@@ -3906,13 +3906,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/users.UserDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -3954,7 +3954,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users.ResetPasswordRequest"
+                            "$ref": "#/definitions/internal_modules_users.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -3962,7 +3962,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.SuccessResponse"
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                         }
                     }
                 }
@@ -3997,7 +3997,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -4046,7 +4046,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users.SetUserRolesRequest"
+                            "$ref": "#/definitions/internal_modules_users.SetUserRolesRequest"
                         }
                     }
                 ],
@@ -4056,13 +4056,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.SuccessResponse"
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/users.UserDetailResponse"
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -4074,7 +4074,7 @@
         }
     },
     "definitions": {
-        "auth.LoginRequest": {
+        "internal_modules_auth.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -4089,7 +4089,7 @@
                 }
             }
         },
-        "auth.LoginResponse": {
+        "internal_modules_auth.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -4102,11 +4102,11 @@
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/auth.UserInfoResp"
+                    "$ref": "#/definitions/internal_modules_auth.UserInfoResp"
                 }
             }
         },
-        "auth.LogoutResponse": {
+        "internal_modules_auth.LogoutResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4117,7 +4117,7 @@
                 }
             }
         },
-        "auth.RefreshRequest": {
+        "internal_modules_auth.RefreshRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -4128,7 +4128,7 @@
                 }
             }
         },
-        "auth.UserInfoResp": {
+        "internal_modules_auth.UserInfoResp": {
             "type": "object",
             "properties": {
                 "email": {
@@ -4160,7 +4160,7 @@
                 }
             }
         },
-        "departments.AddDepartmentMemberRequest": {
+        "internal_modules_departments.AddDepartmentMemberRequest": {
             "type": "object",
             "required": [
                 "position_title",
@@ -4188,7 +4188,7 @@
                 }
             }
         },
-        "departments.CreateDepartmentRequest": {
+        "internal_modules_departments.CreateDepartmentRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -4225,7 +4225,7 @@
                 }
             }
         },
-        "departments.DepartmentDetailResponse": {
+        "internal_modules_departments.DepartmentDetailResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -4244,7 +4244,7 @@
                     "type": "boolean"
                 },
                 "leader": {
-                    "$ref": "#/definitions/departments.DepartmentLeaderDTO"
+                    "$ref": "#/definitions/internal_modules_departments.DepartmentLeaderDTO"
                 },
                 "member_count": {
                     "type": "integer"
@@ -4266,7 +4266,7 @@
                 }
             }
         },
-        "departments.DepartmentLeaderDTO": {
+        "internal_modules_departments.DepartmentLeaderDTO": {
             "type": "object",
             "properties": {
                 "full_name": {
@@ -4283,7 +4283,7 @@
                 }
             }
         },
-        "departments.DepartmentMemberDTO": {
+        "internal_modules_departments.DepartmentMemberDTO": {
             "type": "object",
             "properties": {
                 "department_id": {
@@ -4324,7 +4324,7 @@
                 }
             }
         },
-        "departments.DepartmentOption": {
+        "internal_modules_departments.DepartmentOption": {
             "type": "object",
             "properties": {
                 "code": {
@@ -4346,13 +4346,13 @@
                 }
             }
         },
-        "departments.DepartmentTreeNode": {
+        "internal_modules_departments.DepartmentTreeNode": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/departments.DepartmentTreeNode"
+                        "$ref": "#/definitions/internal_modules_departments.DepartmentTreeNode"
                     }
                 },
                 "code": {
@@ -4372,7 +4372,7 @@
                     "type": "string"
                 },
                 "leader": {
-                    "$ref": "#/definitions/departments.DepartmentLeaderDTO"
+                    "$ref": "#/definitions/internal_modules_departments.DepartmentLeaderDTO"
                 },
                 "member_count": {
                     "type": "integer"
@@ -4393,7 +4393,7 @@
                 }
             }
         },
-        "departments.UpdateDepartmentMemberRequest": {
+        "internal_modules_departments.UpdateDepartmentMemberRequest": {
             "type": "object",
             "properties": {
                 "effective_from": {
@@ -4414,7 +4414,7 @@
                 }
             }
         },
-        "departments.UpdateDepartmentRequest": {
+        "internal_modules_departments.UpdateDepartmentRequest": {
             "type": "object",
             "properties": {
                 "code": {
@@ -4446,14 +4446,14 @@
                 }
             }
         },
-        "menus.AntdMenuItem": {
+        "internal_modules_menus.AntdMenuItem": {
             "type": "object",
             "properties": {
                 "children": {
                     "description": "Menu con",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/menus.AntdMenuItem"
+                        "$ref": "#/definitions/internal_modules_menus.AntdMenuItem"
                     }
                 },
                 "icon": {
@@ -4474,7 +4474,7 @@
                 }
             }
         },
-        "menus.CreateMenuRequest": {
+        "internal_modules_menus.CreateMenuRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -4517,7 +4517,7 @@
                 }
             }
         },
-        "menus.UpdateMenuRequest": {
+        "internal_modules_menus.UpdateMenuRequest": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -4551,529 +4551,7 @@
                 }
             }
         },
-        "model.Department": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Department"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "department_type": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Menu": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Menu"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "is_hidden": {
-                    "type": "boolean"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "required_permission": {
-                    "type": "string"
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Notification": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "read_at": {
-                    "type": "string"
-                },
-                "recipient": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "recipient_id": {
-                    "type": "string"
-                },
-                "task": {
-                    "$ref": "#/definitions/model.Task"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Organization": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Permission": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "module": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Role": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Task": {
-            "type": "object",
-            "properties": {
-                "approval_required": {
-                    "type": "boolean"
-                },
-                "assignments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TaskAssignment"
-                    }
-                },
-                "attachments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TaskAttachment"
-                    }
-                },
-                "blocked_reason": {
-                    "type": "string"
-                },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Task"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "due_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_assigned": {
-                    "type": "boolean"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "parent": {
-                    "$ref": "#/definitions/model.Task"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "priority": {
-                    "type": "integer"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "reviews": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TaskReview"
-                    }
-                },
-                "root_task_id": {
-                    "type": "string"
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "start_at": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "updates": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TaskUpdate"
-                    }
-                },
-                "version": {
-                    "type": "integer"
-                },
-                "weight": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.TaskAssignment": {
-            "type": "object",
-            "properties": {
-                "assigned_by": {
-                    "type": "string"
-                },
-                "assignee_department": {
-                    "$ref": "#/definitions/model.Department"
-                },
-                "assignee_department_id": {
-                    "type": "string"
-                },
-                "assignee_user": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "assignee_user_id": {
-                    "type": "string"
-                },
-                "assignment_role": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_primary": {
-                    "type": "boolean"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "responsible_user": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "responsible_user_id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TaskAttachment": {
-            "type": "object",
-            "properties": {
-                "checksum": {
-                    "type": "string"
-                },
-                "content_type": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "file_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "size_bytes": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "pending -\u003e active",
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "update_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "uploaded_by": {
-                    "type": "string"
-                },
-                "uploader": {
-                    "$ref": "#/definitions/model.User"
-                }
-            }
-        },
-        "model.TaskComment": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "author_id": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TaskReview": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "decision": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "reviewed_at": {
-                    "type": "string"
-                },
-                "reviewer": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "reviewer_id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "update": {
-                    "$ref": "#/definitions/model.TaskUpdate"
-                },
-                "update_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TaskUpdate": {
-            "type": "object",
-            "properties": {
-                "attachments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.TaskAttachment"
-                    }
-                },
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "submitted_at": {
-                    "type": "string"
-                },
-                "submitted_by": {
-                    "type": "string"
-                },
-                "submitter": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "notifications.MarkAllReadResponse": {
+        "internal_modules_notifications.MarkAllReadResponse": {
             "type": "object",
             "properties": {
                 "success": {
@@ -5084,7 +4562,7 @@
                 }
             }
         },
-        "notifications.UnreadCountResponse": {
+        "internal_modules_notifications.UnreadCountResponse": {
             "type": "object",
             "properties": {
                 "unread_count": {
@@ -5092,7 +4570,7 @@
                 }
             }
         },
-        "rbac.CreatePermissionRequest": {
+        "internal_modules_rbac.CreatePermissionRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -5120,7 +4598,7 @@
                 }
             }
         },
-        "rbac.ModuleGroupedPermissions": {
+        "internal_modules_rbac.ModuleGroupedPermissions": {
             "type": "object",
             "properties": {
                 "module": {
@@ -5129,12 +4607,12 @@
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Permission"
+                        "$ref": "#/definitions/taskmgmt_internal_model.Permission"
                     }
                 }
             }
         },
-        "rbac.PermissionOption": {
+        "internal_modules_rbac.PermissionOption": {
             "type": "object",
             "properties": {
                 "label": {
@@ -5151,21 +4629,21 @@
                 }
             }
         },
-        "rbac.RoleWithPermissionsResponse": {
+        "internal_modules_rbac.RoleWithPermissionsResponse": {
             "type": "object",
             "properties": {
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Permission"
+                        "$ref": "#/definitions/taskmgmt_internal_model.Permission"
                     }
                 },
                 "role": {
-                    "$ref": "#/definitions/model.Role"
+                    "$ref": "#/definitions/taskmgmt_internal_model.Role"
                 }
             }
         },
-        "rbac.UpdateRolePermissionsRequest": {
+        "internal_modules_rbac.UpdateRolePermissionsRequest": {
             "type": "object",
             "required": [
                 "permission_codes"
@@ -5179,7 +4657,7 @@
                 }
             }
         },
-        "reports.DashboardSummaryResponse": {
+        "internal_modules_reports.DashboardSummaryResponse": {
             "type": "object",
             "properties": {
                 "assigned_tasks": {
@@ -5217,7 +4695,7 @@
                 }
             }
         },
-        "reports.DepartmentPerformanceItem": {
+        "internal_modules_reports.DepartmentPerformanceItem": {
             "type": "object",
             "properties": {
                 "avg_progress": {
@@ -5249,7 +4727,7 @@
                 }
             }
         },
-        "reports.MyTaskItem": {
+        "internal_modules_reports.MyTaskItem": {
             "type": "object",
             "properties": {
                 "code": {
@@ -5284,7 +4762,7 @@
                 }
             }
         },
-        "reports.TaskReportResponse": {
+        "internal_modules_reports.TaskReportResponse": {
             "type": "object",
             "properties": {
                 "avg_progress": {
@@ -5318,54 +4796,7 @@
                 }
             }
         },
-        "response.ErrorDetails": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "details": {},
-                "message": {
-                    "type": "string"
-                },
-                "request_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/response.ErrorDetails"
-                }
-            }
-        },
-        "response.PaginationMeta": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "total_pages": {
-                    "type": "integer"
-                }
-            }
-        },
-        "response.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "meta": {}
-            }
-        },
-        "tasks.AssignmentInput": {
+        "internal_modules_tasks.AssignmentInput": {
             "type": "object",
             "required": [
                 "id",
@@ -5387,7 +4818,7 @@
                 }
             }
         },
-        "tasks.BlockTaskRequest": {
+        "internal_modules_tasks.BlockTaskRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -5400,7 +4831,7 @@
                 }
             }
         },
-        "tasks.CancelTaskRequest": {
+        "internal_modules_tasks.CancelTaskRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -5413,7 +4844,7 @@
                 }
             }
         },
-        "tasks.ConfirmUploadRequest": {
+        "internal_modules_tasks.ConfirmUploadRequest": {
             "type": "object",
             "required": [
                 "attachment_id"
@@ -5427,7 +4858,7 @@
                 }
             }
         },
-        "tasks.CreateAssignmentRequest": {
+        "internal_modules_tasks.CreateAssignmentRequest": {
             "type": "object",
             "required": [
                 "id",
@@ -5463,7 +4894,7 @@
                 }
             }
         },
-        "tasks.CreateChildTaskRequest": {
+        "internal_modules_tasks.CreateChildTaskRequest": {
             "type": "object",
             "required": [
                 "title"
@@ -5479,7 +4910,7 @@
                     "type": "string"
                 },
                 "initial_assignment": {
-                    "$ref": "#/definitions/tasks.AssignmentInput"
+                    "$ref": "#/definitions/internal_modules_tasks.AssignmentInput"
                 },
                 "is_draft": {
                     "type": "boolean"
@@ -5505,7 +4936,7 @@
                 }
             }
         },
-        "tasks.CreateCommentRequest": {
+        "internal_modules_tasks.CreateCommentRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -5516,7 +4947,7 @@
                 }
             }
         },
-        "tasks.CreateTaskRequest": {
+        "internal_modules_tasks.CreateTaskRequest": {
             "type": "object",
             "required": [
                 "title"
@@ -5532,7 +4963,7 @@
                     "type": "string"
                 },
                 "initial_assignment": {
-                    "$ref": "#/definitions/tasks.AssignmentInput"
+                    "$ref": "#/definitions/internal_modules_tasks.AssignmentInput"
                 },
                 "is_draft": {
                     "type": "boolean"
@@ -5554,7 +4985,7 @@
                 }
             }
         },
-        "tasks.CreateTaskReviewRequest": {
+        "internal_modules_tasks.CreateTaskReviewRequest": {
             "type": "object",
             "required": [
                 "decision",
@@ -5576,7 +5007,7 @@
                 }
             }
         },
-        "tasks.CreateTaskUpdateRequest": {
+        "internal_modules_tasks.CreateTaskUpdateRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -5598,7 +5029,7 @@
                 }
             }
         },
-        "tasks.MoveTaskRequest": {
+        "internal_modules_tasks.MoveTaskRequest": {
             "type": "object",
             "required": [
                 "version"
@@ -5630,7 +5061,7 @@
                 }
             }
         },
-        "tasks.PresignUploadRequest": {
+        "internal_modules_tasks.PresignUploadRequest": {
             "type": "object",
             "required": [
                 "content_type",
@@ -5650,7 +5081,7 @@
                 }
             }
         },
-        "tasks.PresignUploadResponse": {
+        "internal_modules_tasks.PresignUploadResponse": {
             "type": "object",
             "properties": {
                 "attachment_id": {
@@ -5670,7 +5101,7 @@
                 }
             }
         },
-        "tasks.ReopenTaskRequest": {
+        "internal_modules_tasks.ReopenTaskRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -5683,7 +5114,7 @@
                 }
             }
         },
-        "tasks.TaskEventItem": {
+        "internal_modules_tasks.TaskEventItem": {
             "type": "object",
             "properties": {
                 "actor_id": {
@@ -5707,7 +5138,7 @@
                 }
             }
         },
-        "tasks.UnblockTaskRequest": {
+        "internal_modules_tasks.UnblockTaskRequest": {
             "type": "object",
             "properties": {
                 "note": {
@@ -5716,7 +5147,7 @@
                 }
             }
         },
-        "tasks.UpdateTaskRequest": {
+        "internal_modules_tasks.UpdateTaskRequest": {
             "type": "object",
             "required": [
                 "version"
@@ -5744,7 +5175,7 @@
                 }
             }
         },
-        "users.CreateUserRequest": {
+        "internal_modules_users.CreateUserRequest": {
             "type": "object",
             "required": [
                 "full_name",
@@ -5785,7 +5216,7 @@
                 }
             }
         },
-        "users.DepartmentInfo": {
+        "internal_modules_users.DepartmentInfo": {
             "type": "object",
             "properties": {
                 "id": {
@@ -5802,7 +5233,7 @@
                 }
             }
         },
-        "users.ResetPasswordRequest": {
+        "internal_modules_users.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "new_password"
@@ -5815,7 +5246,7 @@
                 }
             }
         },
-        "users.SetUserRolesRequest": {
+        "internal_modules_users.SetUserRolesRequest": {
             "type": "object",
             "required": [
                 "role_codes"
@@ -5829,7 +5260,7 @@
                 }
             }
         },
-        "users.UpdateUserRequest": {
+        "internal_modules_users.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "department_id": {
@@ -5852,7 +5283,7 @@
                 }
             }
         },
-        "users.UserDetailResponse": {
+        "internal_modules_users.UserDetailResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -5861,7 +5292,7 @@
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/users.DepartmentInfo"
+                        "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
                     }
                 },
                 "email": {
@@ -5890,14 +5321,14 @@
                 }
             }
         },
-        "users.UserListItem": {
+        "internal_modules_users.UserListItem": {
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string"
                 },
                 "department": {
-                    "$ref": "#/definitions/users.DepartmentInfo"
+                    "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
                 },
                 "email": {
                     "type": "string"
@@ -5922,7 +5353,7 @@
                 }
             }
         },
-        "users.UserOption": {
+        "internal_modules_users.UserOption": {
             "type": "object",
             "properties": {
                 "department_name": {
@@ -5945,6 +5376,575 @@
                     "description": "ID dùng cho \u003ca-select\u003e",
                     "type": "string"
                 }
+            }
+        },
+        "taskmgmt_internal_model.Department": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.Department"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Menu": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.Menu"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_hidden": {
+                    "type": "boolean"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "required_permission": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Notification": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "read_at": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "recipient_id": {
+                    "type": "string"
+                },
+                "task": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Organization": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Permission": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Role": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.Task": {
+            "type": "object",
+            "properties": {
+                "approval_required": {
+                    "type": "boolean"
+                },
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
+                    }
+                },
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.TaskAttachment"
+                    }
+                },
+                "blocked_reason": {
+                    "type": "string"
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_assigned": {
+                    "type": "boolean"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
+                    }
+                },
+                "root_task_id": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "start_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "updates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
+                    }
+                },
+                "version": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            }
+        },
+        "taskmgmt_internal_model.TaskAssignment": {
+            "type": "object",
+            "properties": {
+                "assigned_by": {
+                    "type": "string"
+                },
+                "assignee_department": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.Department"
+                },
+                "assignee_department_id": {
+                    "type": "string"
+                },
+                "assignee_user": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "assignee_user_id": {
+                    "type": "string"
+                },
+                "assignment_role": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "responsible_user": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "responsible_user_id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.TaskAttachment": {
+            "type": "object",
+            "properties": {
+                "checksum": {
+                    "type": "string"
+                },
+                "content_type": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "size_bytes": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "pending -\u003e active",
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "update_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "uploaded_by": {
+                    "type": "string"
+                },
+                "uploader": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                }
+            }
+        },
+        "taskmgmt_internal_model.TaskComment": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "author_id": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.TaskReview": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "reviewed_at": {
+                    "type": "string"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "reviewer_id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "update": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
+                },
+                "update_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.TaskUpdate": {
+            "type": "object",
+            "properties": {
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taskmgmt_internal_model.TaskAttachment"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "submitted_at": {
+                    "type": "string"
+                },
+                "submitted_by": {
+                    "type": "string"
+                },
+                "submitter": {
+                    "$ref": "#/definitions/taskmgmt_internal_model.User"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_model.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_platform_response.ErrorDetails": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "details": {},
+                "message": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskmgmt_internal_platform_response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorDetails"
+                }
+            }
+        },
+        "taskmgmt_internal_platform_response.PaginationMeta": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "taskmgmt_internal_platform_response.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {}
             }
         }
     },
