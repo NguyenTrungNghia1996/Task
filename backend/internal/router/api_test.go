@@ -658,6 +658,28 @@ func TestAPI_Dashboard_And_Reports(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, respPerf.StatusCode)
 	assert.NotNil(t, dataPerf["data"])
+
+	// 5. GET /reports/tasks/export (Excel)
+	reqExpTasks := httptest.NewRequest("GET", "/api/v1/reports/tasks/export", nil)
+	reqExpTasks.Header.Set("Authorization", "Bearer "+ctx.adminToken)
+	respExpTasks, err := ctx.app.Test(reqExpTasks, 10000)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respExpTasks.StatusCode)
+	assert.Contains(t, respExpTasks.Header.Get("Content-Type"), "spreadsheetml")
+	tasksXlsx, err := io.ReadAll(respExpTasks.Body)
+	require.NoError(t, err)
+	assert.Greater(t, len(tasksXlsx), 1000)
+
+	// 6. GET /reports/departments/export (Excel)
+	reqExpDepts := httptest.NewRequest("GET", "/api/v1/reports/departments/export", nil)
+	reqExpDepts.Header.Set("Authorization", "Bearer "+ctx.adminToken)
+	respExpDepts, err := ctx.app.Test(reqExpDepts, 10000)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respExpDepts.StatusCode)
+	assert.Contains(t, respExpDepts.Header.Get("Content-Type"), "spreadsheetml")
+	deptsXlsx, err := io.ReadAll(respExpDepts.Body)
+	require.NoError(t, err)
+	assert.Greater(t, len(deptsXlsx), 1000)
 }
 
 func TestAPI_Task_AdvancedLifecycle_Attachments_Kanban(t *testing.T) {

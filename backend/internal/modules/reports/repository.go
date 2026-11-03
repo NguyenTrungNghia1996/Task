@@ -311,3 +311,24 @@ func (r *Repository) GetDepartmentPerformance(orgID uuid.UUID) ([]DepartmentPerf
 	return result, nil
 }
 
+func (r *Repository) GetTasksForExport(orgID uuid.UUID, filter TaskReportFilter) ([]model.Task, error) {
+	query := r.db.Model(&model.Task{}).Where("organization_id = ?", orgID)
+	if filter.FromDate != nil {
+		query = query.Where("created_at >= ?", filter.FromDate)
+	}
+	if filter.ToDate != nil {
+		query = query.Where("created_at <= ?", filter.ToDate)
+	}
+	if filter.DepartmentID != nil {
+		query = query.Joins("JOIN task_assignments ON task_assignments.task_id = tasks.id").
+			Where("task_assignments.assignee_department_id = ?", *filter.DepartmentID)
+	}
+
+	var list []model.Task
+	err := query.Order("created_at DESC").
+		Preload("Assignments.AssigneeUser").
+		Preload("Assignments.AssigneeDepartment").
+		Find(&list).Error
+	return list, err
+}
+

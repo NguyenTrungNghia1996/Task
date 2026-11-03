@@ -119,6 +119,62 @@ func (h *Handler) GetDepartmentPerformance(c *fiber.Ctx) error {
 	return response.JSON(c, fiber.StatusOK, performance)
 }
 
+// ExportTasksExcel godoc
+// @Summary Xuất báo cáo danh sách công việc ra file Excel (.xlsx)
+// @Description Xuất toàn bộ hoặc lọc theo thời gian/phòng ban ra tệp Excel định dạng đẹp
+// @Tags Reports
+// @Security BearerAuth
+// @Produce application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+// @Param from_date query string false "Từ ngày (ISO 8601)"
+// @Param to_date query string false "Đến ngày (ISO 8601)"
+// @Param department_id query string false "ID phòng ban lọc"
+// @Success 200 {file} binary
+// @Router /reports/tasks/export [get]
+func (h *Handler) ExportTasksExcel(c *fiber.Ctx) error {
+	orgID, ok := c.Locals("org_id").(uuid.UUID)
+	if !ok {
+		return response.Error(c, fiber.StatusUnauthorized, "UNAUTHORIZED", "Missing organization context", nil)
+	}
+
+	var filter TaskReportFilter
+	if err := c.QueryParser(&filter); err != nil {
+		return response.Error(c, fiber.StatusBadRequest, "INVALID_QUERY", "Invalid query parameters", err.Error())
+	}
+
+	fileBytes, err := h.svc.ExportTasksExcel(orgID, filter)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "EXPORT_TASKS_FAILED", err.Error(), nil)
+	}
+
+	c.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Set("Content-Disposition", "attachment; filename=\"Bao_cao_cong_viec.xlsx\"")
+	return c.Send(fileBytes)
+}
+
+// ExportDepartmentsExcel godoc
+// @Summary Xuất báo cáo hiệu suất phòng ban ra file Excel (.xlsx)
+// @Description Xuất bảng đánh giá chi tiết KPI và tỷ lệ hoàn thành các phòng ban ra tệp Excel
+// @Tags Reports
+// @Security BearerAuth
+// @Produce application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+// @Success 200 {file} binary
+// @Router /reports/departments/export [get]
+func (h *Handler) ExportDepartmentsExcel(c *fiber.Ctx) error {
+	orgID, ok := c.Locals("org_id").(uuid.UUID)
+	if !ok {
+		return response.Error(c, fiber.StatusUnauthorized, "UNAUTHORIZED", "Missing organization context", nil)
+	}
+
+	fileBytes, err := h.svc.ExportDepartmentsExcel(orgID)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "EXPORT_DEPARTMENTS_FAILED", err.Error(), nil)
+	}
+
+	c.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Set("Content-Disposition", "attachment; filename=\"Bao_cao_hieu_suat_phong_ban.xlsx\"")
+	return c.Send(fileBytes)
+}
+
 func RegisterRoutes(router fiber.Router, h *Handler, authMiddleware fiber.Handler) {
 	// Dashboard Group
 	dash := router.Group("/dashboard", authMiddleware)
@@ -128,6 +184,8 @@ func RegisterRoutes(router fiber.Router, h *Handler, authMiddleware fiber.Handle
 	// Reports Group
 	reps := router.Group("/reports", authMiddleware)
 	reps.Get("/tasks", h.GetTaskReport)
+	reps.Get("/tasks/export", h.ExportTasksExcel)
 	reps.Get("/departments", h.GetDepartmentPerformance)
+	reps.Get("/departments/export", h.ExportDepartmentsExcel)
 }
 

@@ -1208,6 +1208,21 @@ const docTemplate = `{
                 }
             }
         },
+        "/notifications/ws": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mở kết nối WebSocket lắng nghe thông báo tức thời",
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "WebSocket đẩy thông báo thời gian thực",
+                "responses": {}
+            }
+        },
         "/notifications/{notificationId}": {
             "patch": {
                 "security": [
@@ -1490,6 +1505,31 @@ const docTemplate = `{
                 }
             }
         },
+        "/reports/departments/export": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Xuất bảng đánh giá chi tiết KPI và tỷ lệ hoàn thành các phòng ban ra tệp Excel",
+                "produces": [
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Xuất báo cáo hiệu suất phòng ban ra file Excel (.xlsx)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/reports/tasks": {
             "get": {
                 "security": [
@@ -1542,6 +1582,51 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/tasks/export": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Xuất toàn bộ hoặc lọc theo thời gian/phòng ban ra tệp Excel định dạng đẹp",
+                "produces": [
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Xuất báo cáo danh sách công việc ra file Excel (.xlsx)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Từ ngày (ISO 8601)",
+                        "name": "from_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Đến ngày (ISO 8601)",
+                        "name": "to_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID phòng ban lọc",
+                        "name": "department_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
                         }
                     }
                 }

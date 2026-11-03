@@ -129,5 +129,17 @@ func TestReports_DashboardSummary_And_MyTasks(t *testing.T) {
 	assert.Equal(t, int64(1), perf[0].TotalTasks)
 	assert.Equal(t, int64(1), perf[0].CompletedTasks)
 	assert.Equal(t, 100.0, perf[0].CompletionRate)
+
+	// 5. Export Tasks Excel
+	excelTasksBytes, err := svc.ExportTasksExcel(org.ID, reports.TaskReportFilter{})
+	require.NoError(t, err)
+	assert.NotEmpty(t, excelTasksBytes)
+	assert.Greater(t, len(excelTasksBytes), 1000) // Valid .xlsx zip binary
+
+	// 6. Export Departments Excel
+	excelDeptsBytes, err := svc.ExportDepartmentsExcel(org.ID)
+	require.NoError(t, err)
+	assert.NotEmpty(t, excelDeptsBytes)
+	assert.Greater(t, len(excelDeptsBytes), 1000)
 }
 

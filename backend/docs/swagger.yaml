@@ -2019,6 +2019,15 @@ paths:
       summary: Số lượng thông báo chưa đọc
       tags:
       - Notifications
+  /notifications/ws:
+    get:
+      description: Mở kết nối WebSocket lắng nghe thông báo tức thời
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: WebSocket đẩy thông báo thời gian thực
+      tags:
+      - Notifications
   /organizations/current:
     get:
       description: Lấy thông tin đơn vị tổ chức của người dùng hiện tại
@@ -2144,6 +2153,22 @@ paths:
       summary: Báo cáo hiệu suất theo phòng ban
       tags:
       - Reports
+  /reports/departments/export:
+    get:
+      description: Xuất bảng đánh giá chi tiết KPI và tỷ lệ hoàn thành các phòng ban
+        ra tệp Excel
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BearerAuth: []
+      summary: Xuất báo cáo hiệu suất phòng ban ra file Excel (.xlsx)
+      tags:
+      - Reports
   /reports/tasks:
     get:
       description: Thống kê tổng hợp số liệu công việc theo trạng thái, mức độ ưu
@@ -2176,6 +2201,35 @@ paths:
       security:
       - BearerAuth: []
       summary: Báo cáo thống kê tiến độ công việc
+      tags:
+      - Reports
+  /reports/tasks/export:
+    get:
+      description: Xuất toàn bộ hoặc lọc theo thời gian/phòng ban ra tệp Excel định
+        dạng đẹp
+      parameters:
+      - description: Từ ngày (ISO 8601)
+        in: query
+        name: from_date
+        type: string
+      - description: Đến ngày (ISO 8601)
+        in: query
+        name: to_date
+        type: string
+      - description: ID phòng ban lọc
+        in: query
+        name: department_id
+        type: string
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BearerAuth: []
+      summary: Xuất báo cáo danh sách công việc ra file Excel (.xlsx)
       tags:
       - Reports
   /roles:

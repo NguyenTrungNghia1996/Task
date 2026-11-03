@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
 
@@ -191,6 +192,48 @@ func (h *Handler) Stream(c *fiber.Ctx) error {
 	return nil
 }
 
+// WebSocket godoc
+// @Summary WebSocket đẩy thông báo thời gian thực
+// @Description Mở kết nối WebSocket lắng nghe thông báo tức thời
+// @Tags Notifications
+// @Security BearerAuth
+// @Router /notifications/ws [get]
+func (h *Handler) WebSocket(c *websocket.Conn) {
+	recipientID, ok := c.Locals("user_id").(uuid.UUID)
+	if !ok {
+		_ = c.Close()
+		return
+	}
+
+	notifChan := h.svc.Subscribe(recipientID)
+	defer h.svc.Unsubscribe(recipientID, notifChan)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for {
+			select {
+			case notif, ok := <-notifChan:
+				if !ok {
+					return
+				}
+				if err := c.WriteJSON(notif); err != nil {
+					return
+				}
+			case <-done:
+				return
+			}
+		}
+	}()
+
+	for {
+		_, _, err := c.ReadMessage()
+		if err != nil {
+			break
+		}
+	}
+}
+
 func RegisterRoutes(router fiber.Router, h *Handler, authMiddleware fiber.Handler) {
 	notifs := router.Group("/notifications", authMiddleware)
 
@@ -199,4 +242,5 @@ func RegisterRoutes(router fiber.Router, h *Handler, authMiddleware fiber.Handle
 	notifs.Patch("/:notificationId", h.MarkAsRead)
 	notifs.Post("/read-all", h.MarkAllAsRead)
 	notifs.Get("/stream", h.Stream)
+	notifs.Get("/ws", websocket.New(h.WebSocket))
 }

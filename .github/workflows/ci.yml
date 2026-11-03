@@ -1,0 +1,44 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    name: Backend Test & Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: backend/go.sum
+
+      - name: Verify Module Dependencies
+        run: go mod verify
+
+      - name: Go Vet Linting
+        run: go vet ./...
+
+      - name: Run Test Suite
+        run: go test -v -count=1 -race -coverprofile=coverage.out ./...
+
+      - name: Build API Binary
+        run: CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o bin/api ./cmd/api
+
+      - name: Build Seed Binary
+        run: CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o bin/seed ./cmd/seed
+
+      - name: Docker Build Test
+        run: docker build -t taskmgmt-backend:ci .

@@ -22,6 +22,11 @@ func AuthRequired(jwtSecret string) fiber.Handler {
 		}
 
 		if tokenStr == "" {
+			// Fallback to query param for EventSource (SSE) and WebSocket clients
+			tokenStr = c.Query("token")
+		}
+
+		if tokenStr == "" {
 			return response.Error(c, fiber.StatusUnauthorized, "UNAUTHORIZED", "Missing authentication token", nil)
 		}
 

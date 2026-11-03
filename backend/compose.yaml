@@ -58,10 +58,15 @@ services:
       S3_ACCESS_KEY: minioadmin
       S3_SECRET_KEY: minioadmin
       S3_USE_SSL: "false"
+      STORAGE_DRIVER: local
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads_data:/app/uploads
     ports:
       - "8080:8080"
 
 volumes:
   pgdata:
   miniodata:
+  uploads_data:
 
