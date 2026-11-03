@@ -310,3 +310,4 @@ func (r *Repository) GetDepartmentPerformance(orgID uuid.UUID) ([]DepartmentPerf
 
 	return result, nil
 }
+

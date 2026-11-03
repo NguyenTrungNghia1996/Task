@@ -20,6 +20,7 @@ import (
 	taskModule "taskmgmt/internal/modules/tasks"
 	userModule "taskmgmt/internal/modules/users"
 	"taskmgmt/internal/platform/response"
+	"taskmgmt/internal/platform/storage"
 )
 
 func Setup(app *fiber.App, db *gorm.DB, cfg *config.Config) {
@@ -74,8 +75,9 @@ func Setup(app *fiber.App, db *gorm.DB, cfg *config.Config) {
 	notifModule.RegisterRoutes(app, notifHdl, authCheck)
 
 	// Tasks Module
+	storageSvc, _ := storage.NewStorage(cfg)
 	taskRepo := taskModule.NewRepository(db)
-	taskSvc := taskModule.NewService(taskRepo, notifSvc)
+	taskSvc := taskModule.NewService(taskRepo, notifSvc, storageSvc)
 	taskHdl := taskModule.NewHandler(taskSvc)
 	taskModule.RegisterRoutes(api, taskHdl, authCheck)
 	taskModule.RegisterRoutes(app, taskHdl, authCheck)

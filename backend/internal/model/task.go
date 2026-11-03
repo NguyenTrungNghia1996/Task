@@ -24,12 +24,16 @@ type Task struct {
 	ApprovalRequired bool       `gorm:"not null;default:true" json:"approval_required"`
 	Weight           int32      `gorm:"not null;default:1" json:"weight"`
 	Version          int64      `gorm:"not null;default:1" json:"version"`
+	SortOrder        int        `gorm:"not null;default:0" json:"sort_order"`
+	BlockedReason    string     `gorm:"type:text" json:"blocked_reason,omitempty"`
+	IsAssigned       bool       `gorm:"not null;default:false;index" json:"is_assigned"`
 
 	Parent      *Task            `gorm:"foreignKey:ParentID" json:"parent,omitempty"`
 	Children    []Task           `gorm:"foreignKey:ParentID" json:"children,omitempty"`
 	Assignments []TaskAssignment `gorm:"foreignKey:TaskID" json:"assignments,omitempty"`
 	Updates     []TaskUpdate     `gorm:"foreignKey:TaskID" json:"updates,omitempty"`
 	Reviews     []TaskReview     `gorm:"foreignKey:TaskID" json:"reviews,omitempty"`
+	Attachments []TaskAttachment `gorm:"foreignKey:TaskID" json:"attachments,omitempty"`
 }
 
 type TaskAssignment struct {

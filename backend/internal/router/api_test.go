@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -97,6 +98,41 @@ func doRequest(app *fiber.App, method, path string, body interface{}, token stri
 	}
 
 	return resp, jsonMap, nil
+}
+
+func doMultipartRequest(app *fiber.App, path, fieldName, fileName string, fileContent []byte, token string) (*http.Response, map[string]interface{}, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(fieldName, fileName)
+	if err != nil {
+		return nil, nil, err
+	}
+	if _, err := io.Copy(part, bytes.NewReader(fileContent)); err != nil {
+		return nil, nil, err
+	}
+	_ = writer.Close()
+
+	req := httptest.NewRequest("POST", path, body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
+	}
+
+	resp, err := app.Test(req, 10000)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return resp, nil, err
+	}
+
+	var data map[string]interface{}
+	if len(respBytes) > 0 {
+		_ = json.Unmarshal(respBytes, &data)
+	}
+	return resp, data, nil
 }
 
 func TestAPI_Health(t *testing.T) {
@@ -243,7 +279,7 @@ func TestAPI_Tasks_Flow(t *testing.T) {
 		Priority:    2,
 		StartAt:     &now,
 		DueAt:       &due,
-		InitialAssignment: tasks.AssignmentInput{
+		InitialAssignment: &tasks.AssignmentInput{
 			Type: "user",
 			ID:   ctx.admin.ID,
 		},
@@ -282,7 +318,7 @@ func TestAPI_Tasks_Flow(t *testing.T) {
 		Priority: 2,
 		Weight:   1,
 		DueAt:    &childDue,
-		InitialAssignment: tasks.AssignmentInput{
+		InitialAssignment: &tasks.AssignmentInput{
 			Type: "user",
 			ID:   ctx.admin.ID,
 		},
@@ -587,7 +623,7 @@ func TestAPI_Dashboard_And_Reports(t *testing.T) {
 		Priority: 1,
 		StartAt:  &now,
 		DueAt:    &due,
-		InitialAssignment: tasks.AssignmentInput{
+		InitialAssignment: &tasks.AssignmentInput{
 			Type: "user",
 			ID:   ctx.admin.ID,
 		},
@@ -622,4 +658,168 @@ func TestAPI_Dashboard_And_Reports(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, respPerf.StatusCode)
 	assert.NotNil(t, dataPerf["data"])
+}
+
+func TestAPI_Task_AdvancedLifecycle_Attachments_Kanban(t *testing.T) {
+	ctx := setupAPITest(t)
+
+	// 1. POST /tasks with is_draft = true
+	createDraft := tasks.CreateTaskRequest{
+		Title:    "Kế hoạch quý 1 (Bản nháp)",
+		Priority: 1,
+		IsDraft:  true,
+		InitialAssignment: &tasks.AssignmentInput{
+			Type: "user",
+			ID:   ctx.admin.ID,
+		},
+	}
+	respDraft, dataDraft, err := doRequest(ctx.app, "POST", "/api/v1/tasks", createDraft, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respDraft.StatusCode)
+	draftID := dataDraft["data"].(map[string]interface{})["id"].(string)
+	assert.Equal(t, "draft", dataDraft["data"].(map[string]interface{})["status"])
+
+	// 2. DELETE /tasks/:taskId on active/dispatched task must be rejected
+	createActive := tasks.CreateTaskRequest{
+		Title:    "Công việc đã giao",
+		Priority: 2,
+		InitialAssignment: &tasks.AssignmentInput{
+			Type: "user",
+			ID:   ctx.admin.ID,
+		},
+	}
+	respActive, dataActive, err := doRequest(ctx.app, "POST", "/api/v1/tasks", createActive, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respActive.StatusCode)
+	activeID := dataActive["data"].(map[string]interface{})["id"].(string)
+
+	respDelActive, _, err := doRequest(ctx.app, "DELETE", "/api/v1/tasks/"+activeID, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusBadRequest, respDelActive.StatusCode)
+
+	// 3. DELETE /tasks/:taskId on draft task succeeds
+	respDelDraft, _, err := doRequest(ctx.app, "DELETE", "/api/v1/tasks/"+draftID, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDelDraft.StatusCode)
+
+	// 4. Create another draft and publish it
+	createDraft2 := tasks.CreateTaskRequest{
+		Title:    "Bản nháp số 2",
+		Priority: 2,
+		IsDraft:  true,
+		InitialAssignment: &tasks.AssignmentInput{
+			Type: "user",
+			ID:   ctx.admin.ID,
+		},
+	}
+	respDraft2, dataDraft2, err := doRequest(ctx.app, "POST", "/api/v1/tasks", createDraft2, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respDraft2.StatusCode)
+	draftID2 := dataDraft2["data"].(map[string]interface{})["id"].(string)
+
+	respPub, dataPub, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+draftID2+"/publish", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respPub.StatusCode)
+	assert.Equal(t, "assigned", dataPub["data"].(map[string]interface{})["status"])
+	assert.True(t, dataPub["data"].(map[string]interface{})["is_assigned"].(bool))
+
+	// 5. Create unassigned task & Claim
+	createUnassigned := tasks.CreateTaskRequest{
+		Title:    "Công việc trong hàng đợi nhận việc",
+		Priority: 3,
+	}
+	respUn, dataUn, err := doRequest(ctx.app, "POST", "/api/v1/tasks", createUnassigned, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respUn.StatusCode)
+	unassignedID := dataUn["data"].(map[string]interface{})["id"].(string)
+	assert.Equal(t, "unassigned", dataUn["data"].(map[string]interface{})["status"])
+	assert.False(t, dataUn["data"].(map[string]interface{})["is_assigned"].(bool))
+
+	// Filter by is_assigned=false
+	respListUn, dataListUn, err := doRequest(ctx.app, "GET", "/api/v1/tasks?is_assigned=false", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respListUn.StatusCode)
+	assert.NotEmpty(t, dataListUn["data"].([]interface{}))
+
+	// Claim task
+	respClaim, dataClaim, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+unassignedID+"/claim", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respClaim.StatusCode)
+	assert.Equal(t, "assigned", dataClaim["data"].(map[string]interface{})["status"])
+	assert.True(t, dataClaim["data"].(map[string]interface{})["is_assigned"].(bool))
+
+	// 6. Block & Unblock task
+	blockReq := map[string]string{"reason": "Đang chờ thiết bị từ nhà cung cấp"}
+	respBlock, dataBlock, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+unassignedID+"/block", blockReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respBlock.StatusCode)
+	assert.Equal(t, "blocked", dataBlock["data"].(map[string]interface{})["status"])
+	assert.Equal(t, "Đang chờ thiết bị từ nhà cung cấp", dataBlock["data"].(map[string]interface{})["blocked_reason"])
+
+	unblockReq := map[string]string{"note": "Thiết bị đã về kho"}
+	respUnblock, dataUnblock, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+unassignedID+"/unblock", unblockReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respUnblock.StatusCode)
+	assert.Equal(t, "in_progress", dataUnblock["data"].(map[string]interface{})["status"])
+
+	// 7. Submit task for approval
+	respSubmit, dataSubmit, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+unassignedID+"/submit", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respSubmit.StatusCode)
+	assert.Equal(t, "submitted", dataSubmit["data"].(map[string]interface{})["status"])
+
+	// 8. Move task (Kanban drag & drop)
+	version := int64(dataSubmit["data"].(map[string]interface{})["version"].(float64))
+	moveReq := map[string]interface{}{
+		"sort_order": 10,
+		"new_status": "in_progress",
+		"version":    version,
+	}
+	respMove, dataMove, err := doRequest(ctx.app, "PATCH", "/api/v1/tasks/"+unassignedID+"/move", moveReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respMove.StatusCode)
+	assert.Equal(t, "in_progress", dataMove["data"].(map[string]interface{})["status"])
+	assert.Equal(t, float64(10), dataMove["data"].(map[string]interface{})["sort_order"])
+
+	// 9. Presign attachment upload (Step 1)
+	presignReq := tasks.PresignUploadRequest{
+		FileName:    "spec.pdf",
+		ContentType: "application/pdf",
+		SizeBytes:   1024,
+	}
+	respPresign, dataPresign, err := doRequest(ctx.app, "POST", "/api/v1/tasks/"+unassignedID+"/attachments/presign", presignReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respPresign.StatusCode)
+	assert.Equal(t, "local", dataPresign["data"].(map[string]interface{})["storage_driver"])
+
+	// 10. Direct multipart upload (Step 2 or Direct local)
+	fileBytes := []byte("Tài liệu đặc tả kỹ thuật chi tiết")
+	respUpload, dataUpload, err := doMultipartRequest(ctx.app, "/api/v1/tasks/"+unassignedID+"/attachments/upload", "file", "spec.pdf", fileBytes, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respUpload.StatusCode)
+	attData := dataUpload["data"].(map[string]interface{})
+	attID := attData["id"].(string)
+	assert.Equal(t, "spec.pdf", attData["file_name"])
+
+	// 11. List attachments
+	respAttList, dataAttList, err := doRequest(ctx.app, "GET", "/api/v1/tasks/"+unassignedID+"/attachments", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respAttList.StatusCode)
+	attachments := dataAttList["data"].([]interface{})
+	assert.GreaterOrEqual(t, len(attachments), 1)
+
+	// 12. Download attachment
+	reqDl := httptest.NewRequest("GET", "/api/v1/tasks/"+unassignedID+"/attachments/"+attID+"/download", nil)
+	reqDl.Header.Set("Authorization", "Bearer "+ctx.adminToken)
+	respDl, err := ctx.app.Test(reqDl, 10000)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDl.StatusCode)
+	dlBody, err := io.ReadAll(respDl.Body)
+	require.NoError(t, err)
+	assert.Equal(t, fileBytes, dlBody)
+
+	// 13. Delete attachment
+	respDelAtt, _, err := doRequest(ctx.app, "DELETE", "/api/v1/tasks/"+unassignedID+"/attachments/"+attID, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDelAtt.StatusCode)
 }

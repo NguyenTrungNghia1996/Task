@@ -1,16 +1,21 @@
 package tasks
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
+	"taskmgmt/internal/config"
 	"taskmgmt/internal/model"
 	appErrors "taskmgmt/internal/platform/errors"
+	"taskmgmt/internal/platform/storage"
 )
 
 type Notifier interface {
@@ -20,12 +25,24 @@ type Notifier interface {
 type Service struct {
 	repo     *Repository
 	notifier Notifier
+	storage  storage.StorageService
 }
 
-func NewService(repo *Repository, notifier ...Notifier) *Service {
+func NewService(repo *Repository, args ...interface{}) *Service {
 	s := &Service{repo: repo}
-	if len(notifier) > 0 {
-		s.notifier = notifier[0]
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case Notifier:
+			s.notifier = v
+		case storage.StorageService:
+			s.storage = v
+		}
+	}
+	if s.storage == nil {
+		s.storage, _ = storage.NewStorage(&config.Config{
+			StorageDriver: "local",
+			UploadDir:     "./uploads",
+		})
 	}
 	return s
 }
@@ -47,6 +64,19 @@ func (s *Service) CreateTask(orgID, actorID uuid.UUID, req CreateTaskRequest) (*
 		approvalReq = *req.ApprovalRequired
 	}
 
+	status := "unassigned"
+	isAssigned := false
+
+	if req.IsDraft {
+		status = "draft"
+		if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+			isAssigned = true
+		}
+	} else if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+		status = "assigned"
+		isAssigned = true
+	}
+
 	task := &model.Task{
 		BaseModel:        model.BaseModel{ID: taskID},
 		OrganizationID:   orgID,
@@ -55,7 +85,7 @@ func (s *Service) CreateTask(orgID, actorID uuid.UUID, req CreateTaskRequest) (*
 		Code:             code,
 		Title:            req.Title,
 		Description:      req.Description,
-		Status:           "assigned",
+		Status:           status,
 		Priority:         req.Priority,
 		Progress:         0,
 		StartAt:          req.StartAt,
@@ -64,26 +94,39 @@ func (s *Service) CreateTask(orgID, actorID uuid.UUID, req CreateTaskRequest) (*
 		ApprovalRequired: approvalReq,
 		Weight:           1,
 		Version:          1,
+		SortOrder:        req.SortOrder,
+		IsAssigned:       isAssigned,
 	}
 
-	assignment := &model.TaskAssignment{
-		OrganizationID: orgID,
-		TaskID:         taskID,
-		IsPrimary:      true,
-		AssignmentRole: "responsible",
-		AssignedBy:     actorID,
+	var assignment *model.TaskAssignment
+	if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+		assignment = &model.TaskAssignment{
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			IsPrimary:      true,
+			AssignmentRole: "responsible",
+			AssignedBy:     actorID,
+		}
+
+		if req.InitialAssignment.Type == "user" {
+			assignment.AssigneeUserID = &req.InitialAssignment.ID
+		} else if req.InitialAssignment.Type == "department" {
+			assignment.AssigneeDepartmentID = &req.InitialAssignment.ID
+			assignment.ResponsibleUserID = req.InitialAssignment.ResponsibleUserID
+		}
 	}
 
-	if req.InitialAssignment.Type == "user" {
-		assignment.AssigneeUserID = &req.InitialAssignment.ID
-	} else if req.InitialAssignment.Type == "department" {
-		assignment.AssigneeDepartmentID = &req.InitialAssignment.ID
-		assignment.ResponsibleUserID = req.InitialAssignment.ResponsibleUserID
+	actionType := "create_root_task"
+	eventType := "task.created"
+	if req.IsDraft {
+		actionType = "create_draft_task"
+		eventType = "task.draft_created"
 	}
 
 	eventData, _ := json.Marshal(map[string]interface{}{
-		"action":     "create_root_task",
+		"action":     actionType,
 		"title":      task.Title,
+		"is_draft":   req.IsDraft,
 		"assigned":   req.InitialAssignment,
 		"created_by": actorID,
 	})
@@ -98,7 +141,7 @@ func (s *Service) CreateTask(orgID, actorID uuid.UUID, req CreateTaskRequest) (*
 			OrganizationID: orgID,
 			TaskID:         taskID,
 			ActorID:        actorID,
-			EventType:      "task.created",
+			EventType:      eventType,
 			Data:           datatypes.JSON(eventData),
 			CreatedAt:      time.Now().UTC(),
 		}
@@ -109,7 +152,7 @@ func (s *Service) CreateTask(orgID, actorID uuid.UUID, req CreateTaskRequest) (*
 		return nil, err
 	}
 
-	if s.notifier != nil {
+	if s.notifier != nil && status == "assigned" && req.InitialAssignment != nil {
 		if req.InitialAssignment.Type == "user" {
 			s.notifyUser(orgID, req.InitialAssignment.ID, &taskID, "task_assigned",
 				"Bạn được giao công việc mới: "+task.Title,
@@ -147,7 +190,6 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 	}
 
 	taskID := uuid.New()
-	code := fmt.Sprintf("%s-%02d", parent.Code, time.Now().Unix()%100)
 
 	weight := req.Weight
 	if weight <= 0 {
@@ -159,6 +201,23 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 		approvalReq = *req.ApprovalRequired
 	}
 
+	status := "unassigned"
+	isAssigned := false
+
+	if req.IsDraft {
+		status = "draft"
+		if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+			isAssigned = true
+		}
+	} else if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+		status = "assigned"
+		isAssigned = true
+	}
+
+	var childCount int64
+	_ = s.repo.DB().Model(&model.Task{}).Where("parent_id = ?", parentID).Count(&childCount).Error
+	code := fmt.Sprintf("%s-%02d", parent.Code, childCount+1)
+
 	child := &model.Task{
 		BaseModel:        model.BaseModel{ID: taskID},
 		OrganizationID:   orgID,
@@ -167,7 +226,7 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 		Code:             code,
 		Title:            req.Title,
 		Description:      req.Description,
-		Status:           "assigned",
+		Status:           status,
 		Priority:         req.Priority,
 		Progress:         0,
 		StartAt:          req.StartAt,
@@ -176,28 +235,41 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 		ApprovalRequired: approvalReq,
 		Weight:           weight,
 		Version:          1,
+		SortOrder:        req.SortOrder,
+		IsAssigned:       isAssigned,
 	}
 
-	assignment := &model.TaskAssignment{
-		OrganizationID: orgID,
-		TaskID:         taskID,
-		IsPrimary:      true,
-		AssignmentRole: "responsible",
-		AssignedBy:     actorID,
+	var assignment *model.TaskAssignment
+	if req.InitialAssignment != nil && req.InitialAssignment.ID != uuid.Nil {
+		assignment = &model.TaskAssignment{
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			IsPrimary:      true,
+			AssignmentRole: "responsible",
+			AssignedBy:     actorID,
+		}
+
+		if req.InitialAssignment.Type == "user" {
+			assignment.AssigneeUserID = &req.InitialAssignment.ID
+		} else if req.InitialAssignment.Type == "department" {
+			assignment.AssigneeDepartmentID = &req.InitialAssignment.ID
+			assignment.ResponsibleUserID = req.InitialAssignment.ResponsibleUserID
+		}
 	}
 
-	if req.InitialAssignment.Type == "user" {
-		assignment.AssigneeUserID = &req.InitialAssignment.ID
-	} else if req.InitialAssignment.Type == "department" {
-		assignment.AssigneeDepartmentID = &req.InitialAssignment.ID
-		assignment.ResponsibleUserID = req.InitialAssignment.ResponsibleUserID
+	actionType := "create_child_task"
+	eventType := "task.child_created"
+	if req.IsDraft {
+		actionType = "create_draft_child_task"
+		eventType = "task.draft_child_created"
 	}
 
 	eventData, _ := json.Marshal(map[string]interface{}{
-		"action":    "create_child_task",
+		"action":    actionType,
 		"parent_id": parentID,
 		"weight":    weight,
 		"due_at":    req.DueAt,
+		"is_draft":  req.IsDraft,
 	})
 
 	err = s.repo.DB().Transaction(func(tx *gorm.DB) error {
@@ -205,9 +277,11 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 			return err
 		}
 
-		// Rollup parent progress after new child added
-		if err := s.repo.RollupParentProgressTx(tx, parentID); err != nil {
-			return err
+		// Rollup parent progress after new child added (only if not draft)
+		if !req.IsDraft {
+			if err := s.repo.RollupParentProgressTx(tx, parentID); err != nil {
+				return err
+			}
 		}
 
 		event := model.TaskEvent{
@@ -215,7 +289,7 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 			OrganizationID: orgID,
 			TaskID:         taskID,
 			ActorID:        actorID,
-			EventType:      "task.child_created",
+			EventType:      eventType,
 			Data:           datatypes.JSON(eventData),
 			CreatedAt:      time.Now().UTC(),
 		}
@@ -226,7 +300,7 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 		return nil, err
 	}
 
-	if s.notifier != nil {
+	if s.notifier != nil && status == "assigned" && req.InitialAssignment != nil {
 		if req.InitialAssignment.Type == "user" {
 			s.notifyUser(orgID, req.InitialAssignment.ID, &taskID, "task_assigned",
 				"Bạn được giao công việc con mới: "+child.Title,
@@ -239,6 +313,465 @@ func (s *Service) CreateChildTask(orgID, actorID, parentID uuid.UUID, req Create
 	}
 
 	return s.repo.GetByID(orgID, taskID)
+}
+
+func (s *Service) PublishTask(orgID, actorID, taskID uuid.UUID) (*model.Task, error) {
+	var task *model.Task
+
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		t, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+		if t.Status != "draft" {
+			return appErrors.ErrTaskNotDraft
+		}
+
+		var assignCount int64
+		_ = tx.Model(&model.TaskAssignment{}).Where("task_id = ?", taskID).Count(&assignCount).Error
+
+		newStatus := "unassigned"
+		isAssigned := false
+		if assignCount > 0 {
+			newStatus = "assigned"
+			isAssigned = true
+		}
+
+		updates := map[string]interface{}{
+			"status":      newStatus,
+			"is_assigned": isAssigned,
+		}
+		if err := s.repo.UpdateWithVersion(tx, taskID, t.Version, updates); err != nil {
+			return err
+		}
+
+		// Rollup progress if this task has a parent
+		if t.ParentID != nil {
+			if err := s.repo.RollupParentProgressTx(tx, *t.ParentID); err != nil {
+				return err
+			}
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action":      "publish_task",
+			"new_status":  newStatus,
+			"is_assigned": isAssigned,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.published",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	task, err = s.repo.GetByID(orgID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.notifier != nil && task.IsAssigned {
+		for _, a := range task.Assignments {
+			if a.AssigneeUserID != nil {
+				s.notifyUser(orgID, *a.AssigneeUserID, &taskID, "task_published",
+					"Nhiệm vụ đã được phát hành: "+task.Title,
+					fmt.Sprintf("Mã công việc: %s", task.Code))
+			}
+		}
+	}
+
+	return task, nil
+}
+
+func (s *Service) ClaimTask(orgID, actorID, taskID uuid.UUID) (*model.Task, error) {
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		if task.Status == "completed" || task.Status == "cancelled" {
+			return appErrors.ErrTaskCompleted
+		}
+		if task.Status == "draft" {
+			return fmt.Errorf("không thể nhận công việc đang ở trạng thái bản nháp")
+		}
+		if task.IsAssigned {
+			return appErrors.ErrTaskAlreadyAssigned
+		}
+
+		assignment := &model.TaskAssignment{
+			BaseModel:      model.BaseModel{ID: uuid.New()},
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			AssigneeUserID: &actorID,
+			IsPrimary:      true,
+			AssignmentRole: "responsible",
+			AssignedBy:     actorID,
+			Note:           "Tự nhận công việc qua hệ thống",
+		}
+		if err := tx.Create(assignment).Error; err != nil {
+			return err
+		}
+
+		updates := map[string]interface{}{
+			"status":      "assigned",
+			"is_assigned": true,
+		}
+		if err := s.repo.UpdateWithVersion(tx, taskID, task.Version, updates); err != nil {
+			return err
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action":   "claim_task",
+			"actor_id": actorID,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.claimed",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	task, err := s.repo.GetByID(orgID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.notifier != nil && task.CreatedBy != actorID {
+		s.notifyUser(orgID, task.CreatedBy, &taskID, "task_claimed",
+			fmt.Sprintf("Công việc %s đã có người nhận", task.Code),
+			fmt.Sprintf("Nhân sự đã nhận nhiệm vụ %s", task.Title))
+	}
+
+	return task, nil
+}
+
+func (s *Service) BlockTask(orgID, actorID, taskID uuid.UUID, reason string) (*model.Task, error) {
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		if task.Status == "completed" || task.Status == "cancelled" {
+			return appErrors.ErrTaskCompleted
+		}
+		if task.Status == "draft" {
+			return fmt.Errorf("công việc bản nháp không thể báo vướng mắc")
+		}
+
+		updates := map[string]interface{}{
+			"status":         "blocked",
+			"blocked_reason": reason,
+		}
+		if err := s.repo.UpdateWithVersion(tx, taskID, task.Version, updates); err != nil {
+			return err
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action": "block_task",
+			"reason": reason,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.blocked",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	task, err := s.repo.GetByID(orgID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.notifier != nil && task.CreatedBy != actorID {
+		s.notifyUser(orgID, task.CreatedBy, &taskID, "task_blocked",
+			fmt.Sprintf("Vướng mắc trong công việc %s: %s", task.Code, task.Title),
+			reason)
+	}
+
+	return task, nil
+}
+
+func (s *Service) UnblockTask(orgID, actorID, taskID uuid.UUID, note string) (*model.Task, error) {
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		if task.Status != "blocked" {
+			return fmt.Errorf("công việc hiện không ở trạng thái vướng mắc (blocked)")
+		}
+
+		updates := map[string]interface{}{
+			"status":         "in_progress",
+			"blocked_reason": "",
+		}
+		if err := s.repo.UpdateWithVersion(tx, taskID, task.Version, updates); err != nil {
+			return err
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action": "unblock_task",
+			"note":   note,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.unblocked",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	task, err := s.repo.GetByID(orgID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.notifier != nil {
+		for _, a := range task.Assignments {
+			if a.AssigneeUserID != nil && *a.AssigneeUserID != actorID {
+				s.notifyUser(orgID, *a.AssigneeUserID, &taskID, "task_unblocked",
+					fmt.Sprintf("Công việc %s đã được gỡ vướng mắc", task.Code),
+					note)
+			}
+		}
+	}
+
+	return task, nil
+}
+
+func (s *Service) SubmitTask(orgID, actorID, taskID uuid.UUID) (*model.Task, error) {
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		if task.Status == "completed" || task.Status == "cancelled" || task.Status == "draft" {
+			return appErrors.ErrInvalidTaskState
+		}
+
+		updates := map[string]interface{}{
+			"status": "submitted",
+		}
+		if err := s.repo.UpdateWithVersion(tx, taskID, task.Version, updates); err != nil {
+			return err
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action": "submit_task",
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.submitted",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	task, err := s.repo.GetByID(orgID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if s.notifier != nil && task.CreatedBy != actorID {
+		s.notifyUser(orgID, task.CreatedBy, &taskID, "task_submitted",
+			fmt.Sprintf("Công việc %s đã nộp chờ nghiệm thu", task.Code),
+			fmt.Sprintf("Nhiệm vụ %s đã hoàn tất và sẵn sàng kiểm tra nghiệm thu.", task.Title))
+	}
+
+	return task, nil
+}
+
+func (s *Service) MoveTask(orgID, actorID, taskID uuid.UUID, req MoveTaskRequest) (*model.Task, error) {
+	var oldParentID *uuid.UUID
+	var newParentID *uuid.UUID
+	hasParentChange := false
+
+	err := s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		updates := make(map[string]interface{})
+
+		if req.SortOrder != nil {
+			updates["sort_order"] = *req.SortOrder
+		}
+
+		if req.NewStatus != nil {
+			updates["status"] = *req.NewStatus
+		}
+
+		if req.ParentID != nil {
+			oldParentID = task.ParentID
+			hasParentChange = true
+
+			if *req.ParentID == uuid.Nil {
+				// Move to root
+				updates["parent_id"] = nil
+				updates["root_task_id"] = &task.ID
+				newParentID = nil
+			} else {
+				// Moving under new parent
+				targetParentID := *req.ParentID
+				if targetParentID == taskID {
+					return appErrors.ErrCyclicDependency
+				}
+
+				// Check cyclic dependency
+				isDescendant, err := s.repo.CheckIsDescendant(tx, orgID, taskID, targetParentID)
+				if err != nil {
+					return err
+				}
+				if isDescendant {
+					return appErrors.ErrCyclicDependency
+				}
+
+				var parent model.Task
+				if err := tx.Where("organization_id = ? AND id = ?", orgID, targetParentID).First(&parent).Error; err != nil {
+					return fmt.Errorf("new parent not found: %w", err)
+				}
+				if parent.Status == "completed" || parent.Status == "cancelled" {
+					return appErrors.ErrTaskCompleted
+				}
+
+				// Deadline check
+				if parent.DueAt != nil && task.DueAt != nil && task.DueAt.After(*parent.DueAt) {
+					return appErrors.ErrParentDueExceeded
+				}
+
+				newRootID := parent.RootTaskID
+				if newRootID == nil || *newRootID == uuid.Nil {
+					newRootID = &parent.ID
+				}
+
+				updates["parent_id"] = &targetParentID
+				updates["root_task_id"] = newRootID
+				newParentID = &targetParentID
+			}
+		}
+
+		if err := s.repo.UpdateWithVersion(tx, taskID, req.Version, updates); err != nil {
+			return err
+		}
+
+		// Rollup parent progress
+		if hasParentChange {
+			if oldParentID != nil {
+				_ = s.repo.RollupParentProgressTx(tx, *oldParentID)
+			}
+			if newParentID != nil {
+				_ = s.repo.RollupParentProgressTx(tx, *newParentID)
+			}
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action":  "move_task",
+			"updates": updates,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.moved",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.repo.GetByID(orgID, taskID)
+}
+
+func (s *Service) DeleteTask(orgID, actorID, taskID uuid.UUID) error {
+	return s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		task, err := s.repo.GetByIDForUpdate(tx, orgID, taskID)
+		if err != nil {
+			return err
+		}
+
+		if task.Status != "draft" {
+			return appErrors.ErrCannotDeleteDispatchedTask
+		}
+
+		if err := s.repo.SoftDeleteTaskTx(tx, taskID); err != nil {
+			return err
+		}
+
+		eventData, _ := json.Marshal(map[string]interface{}{
+			"action":  "delete_draft_task",
+			"task_id": taskID,
+		})
+
+		event := model.TaskEvent{
+			ID:             uuid.New(),
+			OrganizationID: orgID,
+			TaskID:         taskID,
+			ActorID:        actorID,
+			EventType:      "task.deleted",
+			Data:           datatypes.JSON(eventData),
+			CreatedAt:      time.Now().UTC(),
+		}
+		return tx.Create(&event).Error
+	})
 }
 
 func (s *Service) UpdateTask(orgID, actorID, taskID uuid.UUID, req UpdateTaskRequest) (*model.Task, error) {
@@ -344,13 +877,26 @@ func (s *Service) SubmitProgress(orgID, actorID, taskID uuid.UUID, req CreateTas
 			return err
 		}
 
+		// Link attachments to this update
+		if len(req.AttachmentIDs) > 0 {
+			if err := s.repo.LinkAttachmentsToUpdate(tx, taskID, updateRecord.ID, req.AttachmentIDs); err != nil {
+				return err
+			}
+		}
+
 		// Update task status and leaf progress
 		taskUpdates := map[string]interface{}{
 			"updated_at": time.Now().UTC(),
 		}
 		if childCount == 0 {
 			taskUpdates["progress"] = newProgress
-			if task.Status == "assigned" {
+			if newProgress == 100 {
+				if task.ApprovalRequired {
+					taskUpdates["status"] = "submitted"
+				} else {
+					taskUpdates["status"] = "completed"
+				}
+			} else if task.Status == "assigned" || task.Status == "revision_required" {
 				taskUpdates["status"] = "in_progress"
 			}
 		}
@@ -367,10 +913,11 @@ func (s *Service) SubmitProgress(orgID, actorID, taskID uuid.UUID, req CreateTas
 		}
 
 		eventData, _ := json.Marshal(map[string]interface{}{
-			"action":    "submit_progress",
-			"progress":  newProgress,
-			"content":   req.Content,
-			"update_id": updateRecord.ID,
+			"action":         "submit_progress",
+			"progress":       newProgress,
+			"content":        req.Content,
+			"update_id":      updateRecord.ID,
+			"attachment_ids": req.AttachmentIDs,
 		})
 
 		event := model.TaskEvent{
@@ -511,9 +1058,7 @@ func (s *Service) ReopenTask(orgID, actorID, taskID uuid.UUID, req ReopenTaskReq
 			return err
 		}
 
-		// Rule: Only the latest reviewer or a higher manager may reopen
 		if latestReview != nil && latestReview.ReviewerID != actorID {
-			// shortcut: In MVP, permit task creator or latest reviewer; full RBAC scope hierarchy in phase 3
 			if task.CreatedBy != actorID {
 				return appErrors.ErrReopenUnauthorized
 			}
@@ -737,7 +1282,24 @@ func (s *Service) AddAssignment(orgID, actorID, taskID uuid.UUID, req CreateAssi
 		assignment.ResponsibleUserID = req.ResponsibleUserID
 	}
 
-	if err := s.repo.CreateAssignment(assignment); err != nil {
+	err = s.repo.DB().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(assignment).Error; err != nil {
+			return err
+		}
+		// If task was unassigned, promote to assigned
+		if !task.IsAssigned {
+			updates := map[string]interface{}{
+				"is_assigned": true,
+				"updated_at":  time.Now().UTC(),
+			}
+			if task.Status == "unassigned" {
+				updates["status"] = "assigned"
+			}
+			return tx.Model(&model.Task{}).Where("id = ?", taskID).Updates(updates).Error
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 
@@ -759,4 +1321,147 @@ func (s *Service) DeleteAssignment(orgID, taskID, assignmentID uuid.UUID) error 
 		return err
 	}
 	return s.repo.DeleteAssignment(taskID, assignmentID)
+}
+
+// --- Attachment Service Methods ---
+
+func (s *Service) PresignAttachmentUpload(orgID, actorID, taskID uuid.UUID, req PresignUploadRequest) (*PresignUploadResponse, error) {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return nil, err
+	}
+
+	attID := uuid.New()
+	fileName := filepath.Base(req.FileName)
+	objectKey := fmt.Sprintf("%s/%s/%s_%s", orgID, taskID, attID, fileName)
+
+	att := &model.TaskAttachment{
+		BaseModel:   model.BaseModel{ID: attID},
+		TaskID:      taskID,
+		UploadedBy:  actorID,
+		FileName:    fileName,
+		ObjectKey:   objectKey,
+		ContentType: req.ContentType,
+		SizeBytes:   req.SizeBytes,
+		Status:      "pending",
+	}
+
+	if err := s.repo.CreateAttachment(nil, att); err != nil {
+		return nil, err
+	}
+
+	driver := s.storage.Driver()
+	uploadURL := ""
+	expiresInSec := 900 // 15 mins
+
+	if driver == "minio" {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		u, err := s.storage.PresignUpload(ctx, objectKey, req.ContentType, time.Duration(expiresInSec)*time.Second)
+		if err != nil {
+			return nil, err
+		}
+		uploadURL = u
+	} else {
+		// Local driver: return backend upload endpoint
+		uploadURL = fmt.Sprintf("/api/v1/tasks/%s/attachments/upload", taskID)
+	}
+
+	return &PresignUploadResponse{
+		AttachmentID:  attID,
+		UploadURL:     uploadURL,
+		ObjectKey:     objectKey,
+		ExpiresInSec:  expiresInSec,
+		StorageDriver: driver,
+	}, nil
+}
+
+func (s *Service) ConfirmAttachmentUpload(orgID, actorID, taskID, attID uuid.UUID, checksum string) error {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return err
+	}
+	return s.repo.ConfirmAttachment(taskID, attID, checksum)
+}
+
+func (s *Service) DirectUploadAttachment(orgID, actorID, taskID uuid.UUID, fileName, contentType string, sizeBytes int64, fileReader io.Reader) (*model.TaskAttachment, error) {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return nil, err
+	}
+
+	attID := uuid.New()
+	cleanName := filepath.Base(fileName)
+	objectKey := fmt.Sprintf("%s/%s/%s_%s", orgID, taskID, attID, cleanName)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := s.storage.UploadStream(ctx, objectKey, fileReader, sizeBytes, contentType); err != nil {
+		return nil, err
+	}
+
+	att := &model.TaskAttachment{
+		BaseModel:   model.BaseModel{ID: attID},
+		TaskID:      taskID,
+		UploadedBy:  actorID,
+		FileName:    cleanName,
+		ObjectKey:   objectKey,
+		ContentType: contentType,
+		SizeBytes:   sizeBytes,
+		Status:      "active",
+	}
+
+	if err := s.repo.CreateAttachment(nil, att); err != nil {
+		_ = s.storage.Delete(context.Background(), objectKey)
+		return nil, err
+	}
+
+	return att, nil
+}
+
+func (s *Service) GetTaskAttachments(orgID, taskID uuid.UUID) ([]model.TaskAttachment, error) {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return nil, err
+	}
+	return s.repo.GetAttachments(taskID)
+}
+
+func (s *Service) DownloadAttachment(orgID, taskID, attID uuid.UUID) (*model.TaskAttachment, io.ReadCloser, string, error) {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return nil, nil, "", err
+	}
+
+	att, err := s.repo.GetAttachmentByID(taskID, attID)
+	if err != nil {
+		return nil, nil, "", err
+	}
+
+	if s.storage.Driver() == "minio" {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		presignedURL, err := s.storage.PresignDownload(ctx, att.ObjectKey, 15*time.Minute)
+		if err != nil {
+			return nil, nil, "", err
+		}
+		return att, nil, presignedURL, nil
+	}
+
+	// Local driver: open stream
+	rc, err := s.storage.Open(context.Background(), att.ObjectKey)
+	if err != nil {
+		return nil, nil, "", err
+	}
+	return att, rc, "", nil
+}
+
+func (s *Service) DeleteAttachment(orgID, actorID, taskID, attID uuid.UUID) error {
+	if _, err := s.repo.GetByID(orgID, taskID); err != nil {
+		return err
+	}
+
+	att, err := s.repo.GetAttachmentByID(taskID, attID)
+	if err != nil {
+		return err
+	}
+
+	_ = s.storage.Delete(context.Background(), att.ObjectKey)
+	return s.repo.DeleteAttachment(taskID, attID)
 }

@@ -13,24 +13,28 @@ type AssignmentInput struct {
 }
 
 type CreateTaskRequest struct {
-	Title             string          `json:"title" validate:"required,max=255"`
-	Description       string          `json:"description"`
-	Priority          int16           `json:"priority" validate:"gte=1,lte=3"`
-	StartAt           *time.Time      `json:"start_at"`
-	DueAt             *time.Time      `json:"due_at"`
-	ApprovalRequired  *bool           `json:"approval_required"`
-	InitialAssignment AssignmentInput `json:"initial_assignment" validate:"required"`
+	Title             string           `json:"title" validate:"required,max=255"`
+	Description       string           `json:"description"`
+	Priority          int16            `json:"priority" validate:"gte=1,lte=3"`
+	StartAt           *time.Time       `json:"start_at"`
+	DueAt             *time.Time       `json:"due_at"`
+	ApprovalRequired  *bool            `json:"approval_required"`
+	SortOrder         int              `json:"sort_order,omitempty"`
+	IsDraft           bool             `json:"is_draft,omitempty"`
+	InitialAssignment *AssignmentInput `json:"initial_assignment,omitempty" validate:"omitempty"`
 }
 
 type CreateChildTaskRequest struct {
-	Title             string          `json:"title" validate:"required,max=255"`
-	Description       string          `json:"description"`
-	Priority          int16           `json:"priority" validate:"gte=1,lte=3"`
-	StartAt           *time.Time      `json:"start_at"`
-	DueAt             *time.Time      `json:"due_at"`
-	Weight            int32           `json:"weight" validate:"gte=1"`
-	ApprovalRequired  *bool           `json:"approval_required"`
-	InitialAssignment AssignmentInput `json:"initial_assignment" validate:"required"`
+	Title             string           `json:"title" validate:"required,max=255"`
+	Description       string           `json:"description"`
+	Priority          int16            `json:"priority" validate:"gte=1,lte=3"`
+	StartAt           *time.Time       `json:"start_at"`
+	DueAt             *time.Time       `json:"due_at"`
+	Weight            int32            `json:"weight" validate:"gte=1"`
+	ApprovalRequired  *bool            `json:"approval_required"`
+	SortOrder         int              `json:"sort_order,omitempty"`
+	IsDraft           bool             `json:"is_draft,omitempty"`
+	InitialAssignment *AssignmentInput `json:"initial_assignment,omitempty" validate:"omitempty"`
 }
 
 type UpdateTaskRequest struct {
@@ -39,6 +43,21 @@ type UpdateTaskRequest struct {
 	Priority    *int16     `json:"priority,omitempty" validate:"omitempty,gte=1,lte=3"`
 	DueAt       *time.Time `json:"due_at,omitempty"`
 	Version     int64      `json:"version" validate:"required,gte=1"` // Optimistic Locking
+}
+
+type BlockTaskRequest struct {
+	Reason string `json:"reason" validate:"required,min=3,max=1000"`
+}
+
+type UnblockTaskRequest struct {
+	Note string `json:"note,omitempty" validate:"max=1000"`
+}
+
+type MoveTaskRequest struct {
+	NewStatus *string    `json:"new_status,omitempty" validate:"omitempty,oneof=draft unassigned assigned in_progress blocked submitted completed cancelled"`
+	SortOrder *int       `json:"sort_order,omitempty"`
+	ParentID  *uuid.UUID `json:"parent_id,omitempty"`
+	Version   int64      `json:"version" validate:"required,gte=1"` // Optimistic Locking
 }
 
 type CreateTaskUpdateRequest struct {
@@ -72,15 +91,28 @@ type PresignUploadRequest struct {
 }
 
 type PresignUploadResponse struct {
-	AttachmentID uuid.UUID `json:"attachment_id"`
-	UploadURL    string    `json:"upload_url"`
-	ObjectKey    string    `json:"object_key"`
-	ExpiresInSec int       `json:"expires_in_sec"`
+	AttachmentID  uuid.UUID `json:"attachment_id"`
+	UploadURL     string    `json:"upload_url"`
+	ObjectKey     string    `json:"object_key"`
+	ExpiresInSec  int       `json:"expires_in_sec"`
+	StorageDriver string    `json:"storage_driver"`
 }
 
 type ConfirmUploadRequest struct {
 	AttachmentID uuid.UUID `json:"attachment_id" validate:"required"`
 	Checksum     string    `json:"checksum,omitempty"`
+}
+
+type AttachmentResponse struct {
+	ID          uuid.UUID  `json:"id"`
+	TaskID      uuid.UUID  `json:"task_id"`
+	UpdateID    *uuid.UUID `json:"update_id,omitempty"`
+	UploadedBy  uuid.UUID  `json:"uploaded_by"`
+	FileName    string     `json:"file_name"`
+	ContentType string     `json:"content_type,omitempty"`
+	SizeBytes   int64      `json:"size_bytes"`
+	Status      string     `json:"status"`
+	CreatedAt   time.Time  `json:"created_at"`
 }
 
 type TaskFilter struct {
@@ -89,6 +121,7 @@ type TaskFilter struct {
 	Query        string     `query:"q"`
 	Status       string     `query:"status"`
 	Priority     int16      `query:"priority"`
+	IsAssigned   *bool      `query:"is_assigned"`
 	AssigneeID   *uuid.UUID `query:"assignee_id"`
 	DepartmentID *uuid.UUID `query:"department_id"`
 	ParentID     *uuid.UUID `query:"parent_id"`
@@ -117,5 +150,3 @@ type TaskEventItem struct {
 	Data      map[string]interface{} `json:"data"`
 	CreatedAt time.Time              `json:"created_at"`
 }
-
-

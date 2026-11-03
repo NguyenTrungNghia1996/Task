@@ -130,3 +130,4 @@ func TestReports_DashboardSummary_And_MyTasks(t *testing.T) {
 	assert.Equal(t, int64(1), perf[0].CompletedTasks)
 	assert.Equal(t, 100.0, perf[0].CompletionRate)
 }
+

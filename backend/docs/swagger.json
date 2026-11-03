@@ -76,8 +76,7 @@
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/auth/logout": {
@@ -122,12 +121,16 @@
                             ]
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/auth/me": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy thông tin cá nhân và vai trò của người dùng đang đăng nhập",
                 "produces": [
                     "application/json"
@@ -219,12 +222,16 @@
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
-                },
-                "security": []
+                }
             }
         },
         "/dashboard/my-tasks": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách việc của tôi sắp xếp theo mức độ khẩn cấp (quá hạn, ưu tiên cao lên đầu)",
                 "produces": [
                     "application/json"
@@ -268,6 +275,11 @@
         },
         "/dashboard/summary": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Thống kê chỉ số KPI tổng quan công việc theo phạm vi quyền của người dùng hiện tại",
                 "produces": [
                     "application/json"
@@ -300,6 +312,11 @@
         },
         "/departments": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Thêm phòng ban hoặc tổ/đội mới vào cơ cấu đơn vị",
                 "consumes": [
                     "application/json"
@@ -346,6 +363,11 @@
         },
         "/departments/options": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách phòng ban dạng options cho Select và TreeSelect của Ant Design",
                 "produces": [
                     "application/json"
@@ -381,14 +403,19 @@
         },
         "/departments/tree": {
             "get": {
-                "description": "Lấy danh sách phòng ban dạng cây phân cấp (tương thích Ant Design a-tree & a-tree-select)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách phòng ban dạng cây phân cấp (tương thích Ant Design a-tree \u0026 a-tree-select)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Departments"
                 ],
-                "summary": "Cây cơ cấu tổ chức & phòng ban",
+                "summary": "Cây cơ cấu tổ chức \u0026 phòng ban",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -416,6 +443,11 @@
         },
         "/departments/{departmentId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Xem thông tin chi tiết một phòng ban theo ID",
                 "produces": [
                     "application/json"
@@ -455,6 +487,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Xóa phòng ban (chỉ xóa được khi không có phòng ban con và không còn thành viên đang hoạt động)",
                 "produces": [
                     "application/json"
@@ -482,6 +519,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Sửa tên, mã, loại phòng ban hoặc chuyển phòng ban cha (chống lặp chu trình)",
                 "consumes": [
                     "application/json"
@@ -535,6 +577,11 @@
         },
         "/departments/{departmentId}/members": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách nhân sự trực thuộc phòng ban kèm chức danh và vai trò",
                 "produces": [
                     "application/json"
@@ -577,6 +624,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Gán nhân sự vào phòng ban kèm chức danh và quản lý trực tiếp",
                 "consumes": [
                     "application/json"
@@ -630,6 +682,11 @@
         },
         "/departments/{departmentId}/members/{memberId}": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Kết thúc quan hệ thành viên phòng ban",
                 "produces": [
                     "application/json"
@@ -664,6 +721,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Sửa chức danh, người quản lý hoặc thời hạn kiêm nhiệm",
                 "consumes": [
                     "application/json"
@@ -724,6 +786,11 @@
         },
         "/menus": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy toàn bộ cây menu không lọc quyền để phục vụ màn hình cấu hình Menu",
                 "produces": [
                     "application/json"
@@ -757,6 +824,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Quản trị viên thêm menu mới vào cây điều hướng",
                 "consumes": [
                     "application/json"
@@ -809,6 +881,11 @@
         },
         "/menus/user-menus": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách menu dạng cây phân cấp đã được lọc theo quyền của user, định dạng chuẩn :items của Ant Design a-menu",
                 "produces": [
                     "application/json"
@@ -844,6 +921,11 @@
         },
         "/menus/{menuId}": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Xóa menu khỏi cây điều hướng (chỉ xóa được menu lá không có menu con)",
                 "produces": [
                     "application/json"
@@ -883,6 +965,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Sửa tên, icon, đường dẫn, quyền yêu cầu hoặc vị trí của menu",
                 "consumes": [
                     "application/json"
@@ -948,6 +1035,11 @@
         },
         "/notifications": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách thông báo của người dùng hiện tại có phân trang và lọc chưa đọc",
                 "produces": [
                     "application/json"
@@ -1012,6 +1104,11 @@
         },
         "/notifications/read-all": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Chuyển toàn bộ thông báo chưa đọc của người dùng sang trạng thái đã đọc",
                 "produces": [
                     "application/json"
@@ -1050,6 +1147,11 @@
         },
         "/notifications/stream": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Mở kết nối SSE lắng nghe thông báo tức thời",
                 "produces": [
                     "text/event-stream"
@@ -1063,6 +1165,11 @@
         },
         "/notifications/unread-count": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy tổng số thông báo chưa đọc của người dùng hiện tại",
                 "produces": [
                     "application/json"
@@ -1101,6 +1208,11 @@
         },
         "/notifications/{notificationId}": {
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Đánh dấu thông báo cụ thể là đã đọc",
                 "produces": [
                     "application/json"
@@ -1160,6 +1272,11 @@
         },
         "/organizations/current": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy thông tin đơn vị tổ chức của người dùng hiện tại",
                 "produces": [
                     "application/json"
@@ -1192,6 +1309,11 @@
         },
         "/permissions": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách quyền được gom nhóm theo phân hệ (module) cho bảng ma trận phân quyền",
                 "produces": [
                     "application/json"
@@ -1231,6 +1353,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Quản trị viên đăng ký thêm mã quyền mới vào hệ thống",
                 "consumes": [
                     "application/json"
@@ -1283,6 +1410,11 @@
         },
         "/permissions/options": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách quyền {value, label, module} cho component a-select khi tạo/sửa Menu",
                 "produces": [
                     "application/json"
@@ -1318,6 +1450,11 @@
         },
         "/reports/departments": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Đánh giá tổng hợp khối lượng công việc, tỷ lệ hoàn thành và quá hạn theo từng phòng ban",
                 "produces": [
                     "application/json"
@@ -1353,6 +1490,11 @@
         },
         "/reports/tasks": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Thống kê tổng hợp số liệu công việc theo trạng thái, mức độ ưu tiên và thời gian",
                 "produces": [
                     "application/json"
@@ -1405,6 +1547,11 @@
         },
         "/roles": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách các vai trò để quản lý phân quyền",
                 "produces": [
                     "application/json"
@@ -1440,6 +1587,11 @@
         },
         "/roles/{roleId}/permissions": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy chi tiết vai trò kèm toàn bộ các quyền chức năng đang được gán",
                 "produces": [
                     "application/json"
@@ -1485,6 +1637,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Thay thế toàn bộ danh sách quyền của một vai trò bằng danh sách mã quyền mới",
                 "consumes": [
                     "application/json"
@@ -1532,7 +1689,12 @@
         },
         "/tasks": {
             "get": {
-                "description": "Lấy danh sách công việc có lọc, phân trang và sắp xếp",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy danh sách công việc có lọc (trạng thái, đã gắn người, phân trang, sắp xếp)",
                 "produces": [
                     "application/json"
                 ],
@@ -1561,8 +1723,14 @@
                     },
                     {
                         "type": "string",
-                        "description": "Lọc theo trạng thái",
+                        "description": "Lọc theo trạng thái (draft, unassigned, assigned, in_progress, blocked, submitted, completed, cancelled)",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Lọc công việc đã gắn người (true) hoặc chưa gắn (false)",
+                        "name": "is_assigned",
                         "in": "query"
                     },
                     {
@@ -1579,7 +1747,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Sắp xếp theo trường (created_at, due_at, priority...)",
+                        "description": "Sắp xếp theo trường (created_at, due_at, priority, sort_order...)",
                         "name": "sort_by",
                         "in": "query"
                     },
@@ -1624,7 +1792,12 @@
                 }
             },
             "post": {
-                "description": "Tạo một nhiệm vụ gốc mới và khởi tạo phân công ban đầu",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tạo một nhiệm vụ gốc mới (hỗ trợ lưu bản nháp hoặc giao việc ngay, tự nhận việc)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1688,7 +1861,12 @@
         },
         "/tasks/{taskId}": {
             "get": {
-                "description": "Lấy thông tin chi tiết một công việc kèm phân công",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy thông tin chi tiết một công việc theo ID",
                 "produces": [
                     "application/json"
                 ],
@@ -1696,51 +1874,6 @@
                     "Tasks"
                 ],
                 "summary": "Chi tiết công việc",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID công việc (UUID)",
-                        "name": "taskId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.Task"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Xóa mềm hoặc hủy công việc theo chính sách RESTful",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Xóa/Hủy công việc theo chính sách REST",
                 "parameters": [
                     {
                         "type": "string",
@@ -1783,8 +1916,63 @@
                     }
                 }
             },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chỉ cho phép xóa nếu task ở trạng thái bản nháp (draft). Đã giao việc phải dùng chức năng hủy.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Xóa bản nháp công việc",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
-                "description": "Sửa thông tin công việc, bắt buộc truyền trường version để chống ghi đè đồng thời",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Cập nhật tiêu đề, mô tả, ưu tiên hoặc hạn chót",
                 "consumes": [
                     "application/json"
                 ],
@@ -1804,7 +1992,7 @@
                         "required": true
                     },
                     {
-                        "description": "Dữ liệu cập nhật kèm version",
+                        "description": "Dữ liệu cập nhật kèm Version",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1838,14 +2026,14 @@
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
-                    "409": {
-                        "description": "Conflict",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
@@ -1855,7 +2043,11 @@
         },
         "/tasks/{taskId}/assignments": {
             "get": {
-                "description": "Lấy danh sách người hoặc phòng ban được giao việc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1893,23 +2085,15 @@
                                 }
                             ]
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             },
             "post": {
-                "description": "Giao công việc cho người hoặc phòng ban mới",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1956,31 +2140,17 @@
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/tasks/{taskId}/assignments/{assignmentId}": {
             "delete": {
-                "description": "Gỡ bỏ một phân công khỏi công việc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -2010,11 +2180,271 @@
                         "schema": {
                             "$ref": "#/definitions/response.SuccessResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/attachments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Danh sách tệp đính kèm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.TaskAttachment"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/attachments/confirm": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Dành cho MinIO sau khi client PUT file thành công",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Xác nhận tải lên tệp thành công (Bước 2)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    {
+                        "description": "Xác nhận tệp",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tasks.ConfirmUploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/attachments/presign": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Hỗ trợ cả MinIO/S3 (Presigned PUT) hoặc Local storage (URL upload backend)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Lấy URL tải lên tệp đính kèm (Bước 1)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Thông tin tệp",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tasks.PresignUploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tasks.PresignUploadResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/attachments/upload": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tải tệp lên máy chủ backend Golang trực tiếp (chế độ local storage)",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Tải lên tệp đính kèm trực tiếp (Multipart)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Tệp đính kèm",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.TaskAttachment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/attachments/{attachmentId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Xóa tệp đính kèm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID tệp đính kèm (UUID)",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "404": {
@@ -2026,9 +2456,124 @@
                 }
             }
         },
+        "/tasks/{taskId}/attachments/{attachmentId}/download": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Stream trực tiếp từ máy chủ backend (Local) hoặc Redirect sang URL MinIO/S3",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Tải xuống tệp đính kèm",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID tệp đính kèm (UUID)",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/block": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chuyển trạng thái sang blocked và ghi nhận lý do vướng mắc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Báo vướng mắc công việc",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Lý do vướng mắc",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tasks.BlockTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tasks/{taskId}/cancellations": {
             "post": {
-                "description": "Hủy công việc theo thẩm quyền có kèm lý do",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2075,31 +2620,17 @@
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/tasks/{taskId}/children": {
             "get": {
-                "description": "Lấy danh sách các công việc con trực tiếp của một nhiệm vụ",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -2110,7 +2641,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID công việc cha (UUID)",
+                        "description": "ID công việc (UUID)",
                         "name": "taskId",
                         "in": "path",
                         "required": true
@@ -2137,10 +2668,21 @@
                                 }
                             ]
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
                     }
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Tạo công việc con theo cây phân cấp (ràng buộc thời hạn nằm trong hạn cha)",
                 "consumes": [
                     "application/json"
@@ -2216,9 +2758,71 @@
                 }
             }
         },
+        "/tasks/{taskId}/claim": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Người dùng tự nhận công việc (chuyển sang assigned và tạo phân công chính)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Tự nhận công việc chưa gán",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tasks/{taskId}/comments": {
             "get": {
-                "description": "Lấy danh sách trao đổi, bình luận trong công việc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -2256,23 +2860,15 @@
                                 }
                             ]
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             },
             "post": {
-                "description": "Thêm bình luận mới vào công việc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2319,38 +2915,24 @@
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/tasks/{taskId}/events": {
             "get": {
-                "description": "Lấy toàn bộ lịch sử sự kiện kiểm toán nghiệp vụ của công việc",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Audit timeline",
+                "summary": "Dòng sự kiện (Audit Log)",
                 "parameters": [
                     {
                         "type": "string",
@@ -2381,6 +2963,134 @@
                                 }
                             ]
                         }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/move": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Hỗ trợ kéo thả đổi cột Kanban, sắp xếp thứ tự và di chuyển cây công việc kèm kiểm tra chu trình",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Di chuyển công việc (Kanban \u0026 Cây công việc)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dữ liệu di chuyển",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tasks.MoveTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/publish": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chuyển trạng thái từ draft sang assigned (nếu có người) hoặc unassigned (chưa có người)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Phát hành công việc từ bản nháp",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
                     },
                     "401": {
                         "description": "Unauthorized",
@@ -2399,7 +3109,11 @@
         },
         "/tasks/{taskId}/reopen": {
             "post": {
-                "description": "Chỉ người nghiệm thu gần nhất hoặc cấp quản lý cao hơn được phép; bắt buộc có lý do",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2447,26 +3161,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
                     "403": {
                         "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
@@ -2476,7 +3172,11 @@
         },
         "/tasks/{taskId}/reviews": {
             "get": {
-                "description": "Lấy toàn bộ lịch sử các lần nghiệm thu hoặc yêu cầu bổ sung",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -2514,23 +3214,15 @@
                                 }
                             ]
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             },
             "post": {
-                "description": "Đánh giá kết quả công việc (chỉ approved khi toàn bộ việc con bắt buộc đã hoàn thành)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2540,7 +3232,7 @@
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Nghiệm thu hoặc yêu cầu bổ sung",
+                "summary": "Nghiệm thu công việc",
                 "parameters": [
                     {
                         "type": "string",
@@ -2550,7 +3242,7 @@
                         "required": true
                     },
                     {
-                        "description": "Quyết định nghiệm thu",
+                        "description": "Quyết định phê duyệt/yêu cầu sửa đổi",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2578,26 +3270,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
                         }
@@ -2605,16 +3279,21 @@
                 }
             }
         },
-        "/tasks/{taskId}/tree": {
-            "get": {
-                "description": "Lấy cây phân cấp hoàn chỉnh từ công việc hiện tại xuống các cấp con cháu",
+        "/tasks/{taskId}/submit": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chuyển trạng thái sang submitted để quản lý nghiệm thu",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Cây phân cấp công việc",
+                "summary": "Nộp công việc chờ nghiệm thu",
                 "parameters": [
                     {
                         "type": "string",
@@ -2642,20 +3321,151 @@
                                 }
                             ]
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
                     }
                 }
             }
         },
-        "/tasks/{taskId}/updates": {
+        "/tasks/{taskId}/tree": {
             "get": {
-                "description": "Lấy toàn bộ các lần báo cáo tiến độ kèm người gửi và tệp đính kèm",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lấy toàn bộ cây nhiệm vụ cha con đa cấp đệ quy",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Lịch sử báo cáo tiến độ",
+                "summary": "Cây phân cấp công việc",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc gốc hoặc công việc bất kỳ (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/unblock": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Chuyển trạng thái từ blocked về in_progress và ghi nhận giải pháp",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Gỡ vướng mắc công việc",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID công việc (UUID)",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Ghi chú giải quyết",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/tasks.UnblockTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Task"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{taskId}/updates": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Lịch sử tiến độ",
                 "parameters": [
                     {
                         "type": "string",
@@ -2686,23 +3496,16 @@
                                 }
                             ]
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
                     }
                 }
             },
             "post": {
-                "description": "Gửi báo cáo tiến độ và kích hoạt tự động tính toán tổng hợp tiến độ cha",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Nộp báo cáo tiến độ, tự động tính tỷ trọng lên cha và tự động chuyển submitted khi 100%",
                 "consumes": [
                     "application/json"
                 ],
@@ -2712,7 +3515,7 @@
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Báo cáo tiến độ",
+                "summary": "Báo cáo tiến độ công việc",
                 "parameters": [
                     {
                         "type": "string",
@@ -2722,7 +3525,7 @@
                         "required": true
                     },
                     {
-                        "description": "Nội dung báo cáo tiến độ",
+                        "description": "Dữ liệu tiến độ",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2750,6 +3553,12 @@
                             ]
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
                     "409": {
                         "description": "Conflict",
                         "schema": {
@@ -2761,6 +3570,11 @@
         },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách người dùng trong đơn vị có phân trang, tìm kiếm và lọc",
                 "produces": [
                     "application/json"
@@ -2832,6 +3646,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Quản trị viên thêm nhân sự mới vào hệ thống kèm vai trò và phòng ban",
                 "consumes": [
                     "application/json"
@@ -2878,6 +3697,11 @@
         },
         "/users/options": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy danh sách người dùng đang hoạt động để gán việc trong thẻ a-select của Ant Design",
                 "produces": [
                     "application/json"
@@ -2913,6 +3737,11 @@
         },
         "/users/{userId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Lấy thông tin chi tiết của người dùng kèm danh sách vai trò và phòng ban",
                 "produces": [
                     "application/json"
@@ -2952,6 +3781,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Chỉnh sửa họ tên, email, trạng thái hoạt động hoặc phòng ban",
                 "consumes": [
                     "application/json"
@@ -3005,6 +3839,11 @@
         },
         "/users/{userId}/reset-password": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Quản trị viên cấp lại mật khẩu mới cho người dùng",
                 "consumes": [
                     "application/json"
@@ -3046,6 +3885,11 @@
         },
         "/users/{userId}/roles": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -3087,6 +3931,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Thay thế toàn bộ vai trò hiện tại bằng danh sách vai trò mới",
                 "consumes": [
                     "application/json"
@@ -3827,6 +4676,15 @@
                         "$ref": "#/definitions/model.TaskAssignment"
                     }
                 },
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TaskAttachment"
+                    }
+                },
+                "blocked_reason": {
+                    "type": "string"
+                },
                 "children": {
                     "type": "array",
                     "items": {
@@ -3851,6 +4709,9 @@
                 "id": {
                     "type": "string"
                 },
+                "is_assigned": {
+                    "type": "boolean"
+                },
                 "organization_id": {
                     "type": "string"
                 },
@@ -3874,6 +4735,9 @@
                 },
                 "root_task_id": {
                     "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
                 },
                 "start_at": {
                     "type": "string"
@@ -3973,7 +4837,7 @@
                     "type": "integer"
                 },
                 "status": {
-                    "description": "pending -> active",
+                    "description": "pending -\u003e active",
                     "type": "string"
                 },
                 "task_id": {
@@ -4438,6 +5302,19 @@
                 }
             }
         },
+        "tasks.BlockTaskRequest": {
+            "type": "object",
+            "required": [
+                "reason"
+            ],
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "minLength": 3
+                }
+            }
+        },
         "tasks.CancelTaskRequest": {
             "type": "object",
             "required": [
@@ -4448,6 +5325,20 @@
                     "type": "string",
                     "maxLength": 2000,
                     "minLength": 5
+                }
+            }
+        },
+        "tasks.ConfirmUploadRequest": {
+            "type": "object",
+            "required": [
+                "attachment_id"
+            ],
+            "properties": {
+                "attachment_id": {
+                    "type": "string"
+                },
+                "checksum": {
+                    "type": "string"
                 }
             }
         },
@@ -4490,7 +5381,6 @@
         "tasks.CreateChildTaskRequest": {
             "type": "object",
             "required": [
-                "initial_assignment",
                 "title"
             ],
             "properties": {
@@ -4506,10 +5396,16 @@
                 "initial_assignment": {
                     "$ref": "#/definitions/tasks.AssignmentInput"
                 },
+                "is_draft": {
+                    "type": "boolean"
+                },
                 "priority": {
                     "type": "integer",
                     "maximum": 3,
                     "minimum": 1
+                },
+                "sort_order": {
+                    "type": "integer"
                 },
                 "start_at": {
                     "type": "string"
@@ -4538,7 +5434,6 @@
         "tasks.CreateTaskRequest": {
             "type": "object",
             "required": [
-                "initial_assignment",
                 "title"
             ],
             "properties": {
@@ -4554,10 +5449,16 @@
                 "initial_assignment": {
                     "$ref": "#/definitions/tasks.AssignmentInput"
                 },
+                "is_draft": {
+                    "type": "boolean"
+                },
                 "priority": {
                     "type": "integer",
                     "maximum": 3,
                     "minimum": 1
+                },
+                "sort_order": {
+                    "type": "integer"
                 },
                 "start_at": {
                     "type": "string"
@@ -4612,6 +5513,78 @@
                 }
             }
         },
+        "tasks.MoveTaskRequest": {
+            "type": "object",
+            "required": [
+                "version"
+            ],
+            "properties": {
+                "new_status": {
+                    "type": "string",
+                    "enum": [
+                        "draft",
+                        "unassigned",
+                        "assigned",
+                        "in_progress",
+                        "blocked",
+                        "submitted",
+                        "completed",
+                        "cancelled"
+                    ]
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "version": {
+                    "description": "Optimistic Locking",
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "tasks.PresignUploadRequest": {
+            "type": "object",
+            "required": [
+                "content_type",
+                "file_name",
+                "size_bytes"
+            ],
+            "properties": {
+                "content_type": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "size_bytes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tasks.PresignUploadResponse": {
+            "type": "object",
+            "properties": {
+                "attachment_id": {
+                    "type": "string"
+                },
+                "expires_in_sec": {
+                    "type": "integer"
+                },
+                "object_key": {
+                    "type": "string"
+                },
+                "storage_driver": {
+                    "type": "string"
+                },
+                "upload_url": {
+                    "type": "string"
+                }
+            }
+        },
         "tasks.ReopenTaskRequest": {
             "type": "object",
             "required": [
@@ -4646,6 +5619,15 @@
                 },
                 "task_id": {
                     "type": "string"
+                }
+            }
+        },
+        "tasks.UnblockTaskRequest": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string",
+                    "maxLength": 1000
                 }
             }
         },
@@ -4875,7 +5857,7 @@
                     "type": "string"
                 },
                 "value": {
-                    "description": "ID dùng cho <a-select>",
+                    "description": "ID dùng cho \u003ca-select\u003e",
                     "type": "string"
                 }
             }
@@ -4888,10 +5870,5 @@
             "name": "Authorization",
             "in": "header"
         }
-    },
-    "security": [
-        {
-            "BearerAuth": []
-        }
-    ]
+    }
 }

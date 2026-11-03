@@ -466,6 +466,12 @@ definitions:
         items:
           $ref: '#/definitions/model.TaskAssignment'
         type: array
+      attachments:
+        items:
+          $ref: '#/definitions/model.TaskAttachment'
+        type: array
+      blocked_reason:
+        type: string
       children:
         items:
           $ref: '#/definitions/model.Task'
@@ -482,6 +488,8 @@ definitions:
         type: string
       id:
         type: string
+      is_assigned:
+        type: boolean
       organization_id:
         type: string
       parent:
@@ -498,6 +506,8 @@ definitions:
         type: array
       root_task_id:
         type: string
+      sort_order:
+        type: integer
       start_at:
         type: string
       status:
@@ -872,6 +882,15 @@ definitions:
     - id
     - type
     type: object
+  tasks.BlockTaskRequest:
+    properties:
+      reason:
+        maxLength: 1000
+        minLength: 3
+        type: string
+    required:
+    - reason
+    type: object
   tasks.CancelTaskRequest:
     properties:
       reason:
@@ -880,6 +899,15 @@ definitions:
         type: string
     required:
     - reason
+    type: object
+  tasks.ConfirmUploadRequest:
+    properties:
+      attachment_id:
+        type: string
+      checksum:
+        type: string
+    required:
+    - attachment_id
     type: object
   tasks.CreateAssignmentRequest:
     properties:
@@ -916,9 +944,13 @@ definitions:
         type: string
       initial_assignment:
         $ref: '#/definitions/tasks.AssignmentInput'
+      is_draft:
+        type: boolean
       priority:
         maximum: 3
         minimum: 1
+        type: integer
+      sort_order:
         type: integer
       start_at:
         type: string
@@ -929,7 +961,6 @@ definitions:
         minimum: 1
         type: integer
     required:
-    - initial_assignment
     - title
     type: object
   tasks.CreateCommentRequest:
@@ -949,9 +980,13 @@ definitions:
         type: string
       initial_assignment:
         $ref: '#/definitions/tasks.AssignmentInput'
+      is_draft:
+        type: boolean
       priority:
         maximum: 3
         minimum: 1
+        type: integer
+      sort_order:
         type: integer
       start_at:
         type: string
@@ -959,7 +994,6 @@ definitions:
         maxLength: 255
         type: string
     required:
-    - initial_assignment
     - title
     type: object
   tasks.CreateTaskReviewRequest:
@@ -992,6 +1026,57 @@ definitions:
     required:
     - content
     type: object
+  tasks.MoveTaskRequest:
+    properties:
+      new_status:
+        enum:
+        - draft
+        - unassigned
+        - assigned
+        - in_progress
+        - blocked
+        - submitted
+        - completed
+        - cancelled
+        type: string
+      parent_id:
+        type: string
+      sort_order:
+        type: integer
+      version:
+        description: Optimistic Locking
+        minimum: 1
+        type: integer
+    required:
+    - version
+    type: object
+  tasks.PresignUploadRequest:
+    properties:
+      content_type:
+        type: string
+      file_name:
+        maxLength: 255
+        type: string
+      size_bytes:
+        type: integer
+    required:
+    - content_type
+    - file_name
+    - size_bytes
+    type: object
+  tasks.PresignUploadResponse:
+    properties:
+      attachment_id:
+        type: string
+      expires_in_sec:
+        type: integer
+      object_key:
+        type: string
+      storage_driver:
+        type: string
+      upload_url:
+        type: string
+    type: object
   tasks.ReopenTaskRequest:
     properties:
       reason:
@@ -1015,6 +1100,12 @@ definitions:
       id:
         type: string
       task_id:
+        type: string
+    type: object
+  tasks.UnblockTaskRequest:
+    properties:
+      note:
+        maxLength: 1000
         type: string
     type: object
   tasks.UpdateTaskRequest:
@@ -2175,7 +2266,8 @@ paths:
       - RBAC
   /tasks:
     get:
-      description: Lấy danh sách công việc có lọc, phân trang và sắp xếp
+      description: Lấy danh sách công việc có lọc (trạng thái, đã gắn người, phân
+        trang, sắp xếp)
       parameters:
       - description: Trang hiện tại (mặc định 1)
         in: query
@@ -2189,10 +2281,15 @@ paths:
         in: query
         name: q
         type: string
-      - description: Lọc theo trạng thái
+      - description: Lọc theo trạng thái (draft, unassigned, assigned, in_progress,
+          blocked, submitted, completed, cancelled)
         in: query
         name: status
         type: string
+      - description: Lọc công việc đã gắn người (true) hoặc chưa gắn (false)
+        in: query
+        name: is_assigned
+        type: boolean
       - description: Lọc theo mức độ ưu tiên
         in: query
         name: priority
@@ -2201,7 +2298,7 @@ paths:
         in: query
         name: overdue
         type: boolean
-      - description: Sắp xếp theo trường (created_at, due_at, priority...)
+      - description: Sắp xếp theo trường (created_at, due_at, priority, sort_order...)
         in: query
         name: sort_by
         type: string
@@ -2237,7 +2334,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Tạo một nhiệm vụ gốc mới và khởi tạo phân công ban đầu
+      description: Tạo một nhiệm vụ gốc mới (hỗ trợ lưu bản nháp hoặc giao việc ngay,
+        tự nhận việc)
       parameters:
       - description: Dữ liệu tạo nhiệm vụ
         in: body
@@ -2276,7 +2374,40 @@ paths:
       - Tasks
   /tasks/{taskId}:
     delete:
-      description: Xóa mềm hoặc hủy công việc theo chính sách RESTful
+      description: Chỉ cho phép xóa nếu task ở trạng thái bản nháp (draft). Đã giao
+        việc phải dùng chức năng hủy.
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Xóa bản nháp công việc
+      tags:
+      - Tasks
+    get:
+      description: Lấy thông tin chi tiết một công việc theo ID
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2305,50 +2436,20 @@ paths:
             $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Xóa/Hủy công việc theo chính sách REST
-      tags:
-      - Tasks
-    get:
-      description: Lấy thông tin chi tiết một công việc kèm phân công
-      parameters:
-      - description: ID công việc (UUID)
-        in: path
-        name: taskId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.SuccessResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.Task'
-              type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      security:
-      - BearerAuth: []
       summary: Chi tiết công việc
       tags:
       - Tasks
     patch:
       consumes:
       - application/json
-      description: Sửa thông tin công việc, bắt buộc truyền trường version để chống
-        ghi đè đồng thời
+      description: Cập nhật tiêu đề, mô tả, ưu tiên hoặc hạn chót
       parameters:
       - description: ID công việc (UUID)
         in: path
         name: taskId
         required: true
         type: string
-      - description: Dữ liệu cập nhật kèm version
+      - description: Dữ liệu cập nhật kèm Version
         in: body
         name: request
         required: true
@@ -2370,12 +2471,12 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
         "409":
           description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       security:
@@ -2385,7 +2486,6 @@ paths:
       - Tasks
   /tasks/{taskId}/assignments:
     get:
-      description: Lấy danh sách người hoặc phòng ban được giao việc
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2406,14 +2506,6 @@ paths:
                     $ref: '#/definitions/model.TaskAssignment'
                   type: array
               type: object
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách phân công công việc
@@ -2422,7 +2514,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Giao công việc cho người hoặc phòng ban mới
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2447,18 +2538,6 @@ paths:
                 data:
                   $ref: '#/definitions/model.TaskAssignment'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Phân công thêm người hoặc phòng ban
@@ -2466,7 +2545,6 @@ paths:
       - Tasks
   /tasks/{taskId}/assignments/{assignmentId}:
     delete:
-      description: Gỡ bỏ một phân công khỏi công việc
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2485,24 +2563,249 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.SuccessResponse'
-        "401":
-          description: Unauthorized
+      security:
+      - BearerAuth: []
+      summary: Xóa phân công công việc
+      tags:
+      - Tasks
+  /tasks/{taskId}/attachments:
+    get:
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/response.ErrorResponse'
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.TaskAttachment'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách tệp đính kèm
+      tags:
+      - Attachments
+  /tasks/{taskId}/attachments/{attachmentId}:
+    delete:
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: ID tệp đính kèm (UUID)
+        in: path
+        name: attachmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Xóa phân công công việc
+      summary: Xóa tệp đính kèm
+      tags:
+      - Attachments
+  /tasks/{taskId}/attachments/{attachmentId}/download:
+    get:
+      description: Stream trực tiếp từ máy chủ backend (Local) hoặc Redirect sang
+        URL MinIO/S3
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: ID tệp đính kèm (UUID)
+        in: path
+        name: attachmentId
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Tải xuống tệp đính kèm
+      tags:
+      - Attachments
+  /tasks/{taskId}/attachments/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Dành cho MinIO sau khi client PUT file thành công
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Xác nhận tệp
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/tasks.ConfirmUploadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Xác nhận tải lên tệp thành công (Bước 2)
+      tags:
+      - Attachments
+  /tasks/{taskId}/attachments/presign:
+    post:
+      consumes:
+      - application/json
+      description: Hỗ trợ cả MinIO/S3 (Presigned PUT) hoặc Local storage (URL upload
+        backend)
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Thông tin tệp
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/tasks.PresignUploadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/tasks.PresignUploadResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Lấy URL tải lên tệp đính kèm (Bước 1)
+      tags:
+      - Attachments
+  /tasks/{taskId}/attachments/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Tải tệp lên máy chủ backend Golang trực tiếp (chế độ local storage)
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Tệp đính kèm
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.TaskAttachment'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Tải lên tệp đính kèm trực tiếp (Multipart)
+      tags:
+      - Attachments
+  /tasks/{taskId}/block:
+    post:
+      consumes:
+      - application/json
+      description: Chuyển trạng thái sang blocked và ghi nhận lý do vướng mắc
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Lý do vướng mắc
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/tasks.BlockTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Báo vướng mắc công việc
       tags:
       - Tasks
   /tasks/{taskId}/cancellations:
     post:
       consumes:
       - application/json
-      description: Hủy công việc theo thẩm quyền có kèm lý do
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2527,18 +2830,6 @@ paths:
                 data:
                   $ref: '#/definitions/model.Task'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Hủy công việc
@@ -2546,9 +2837,8 @@ paths:
       - Tasks
   /tasks/{taskId}/children:
     get:
-      description: Lấy danh sách các công việc con trực tiếp của một nhiệm vụ
       parameters:
-      - description: ID công việc cha (UUID)
+      - description: ID công việc (UUID)
         in: path
         name: taskId
         required: true
@@ -2567,6 +2857,10 @@ paths:
                     $ref: '#/definitions/model.Task'
                   type: array
               type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách công việc con trực tiếp
@@ -2622,9 +2916,43 @@ paths:
       summary: Tạo công việc con
       tags:
       - Tasks
+  /tasks/{taskId}/claim:
+    post:
+      description: Người dùng tự nhận công việc (chuyển sang assigned và tạo phân
+        công chính)
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Tự nhận công việc chưa gán
+      tags:
+      - Tasks
   /tasks/{taskId}/comments:
     get:
-      description: Lấy danh sách trao đổi, bình luận trong công việc
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2645,14 +2973,6 @@ paths:
                     $ref: '#/definitions/model.TaskComment'
                   type: array
               type: object
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách bình luận
@@ -2661,7 +2981,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Thêm bình luận mới vào công việc
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2686,18 +3005,6 @@ paths:
                 data:
                   $ref: '#/definitions/model.TaskComment'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Thêm bình luận
@@ -2705,7 +3012,6 @@ paths:
       - Tasks
   /tasks/{taskId}/events:
     get:
-      description: Lấy toàn bộ lịch sử sự kiện kiểm toán nghiệp vụ của công việc
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2726,6 +3032,84 @@ paths:
                     $ref: '#/definitions/tasks.TaskEventItem'
                   type: array
               type: object
+      security:
+      - BearerAuth: []
+      summary: Dòng sự kiện (Audit Log)
+      tags:
+      - Tasks
+  /tasks/{taskId}/move:
+    patch:
+      consumes:
+      - application/json
+      description: Hỗ trợ kéo thả đổi cột Kanban, sắp xếp thứ tự và di chuyển cây
+        công việc kèm kiểm tra chu trình
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Dữ liệu di chuyển
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/tasks.MoveTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Di chuyển công việc (Kanban & Cây công việc)
+      tags:
+      - Tasks
+  /tasks/{taskId}/publish:
+    post:
+      description: Chuyển trạng thái từ draft sang assigned (nếu có người) hoặc unassigned
+        (chưa có người)
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
@@ -2736,15 +3120,13 @@ paths:
             $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Audit timeline
+      summary: Phát hành công việc từ bản nháp
       tags:
       - Tasks
   /tasks/{taskId}/reopen:
     post:
       consumes:
       - application/json
-      description: Chỉ người nghiệm thu gần nhất hoặc cấp quản lý cao hơn được phép;
-        bắt buộc có lý do
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2769,20 +3151,8 @@ paths:
                 data:
                   $ref: '#/definitions/model.Task'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
         "403":
           description: Forbidden
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       security:
@@ -2792,7 +3162,6 @@ paths:
       - Tasks
   /tasks/{taskId}/reviews:
     get:
-      description: Lấy toàn bộ lịch sử các lần nghiệm thu hoặc yêu cầu bổ sung
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2813,14 +3182,6 @@ paths:
                     $ref: '#/definitions/model.TaskReview'
                   type: array
               type: object
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Lịch sử nghiệm thu
@@ -2829,15 +3190,13 @@ paths:
     post:
       consumes:
       - application/json
-      description: Đánh giá kết quả công việc (chỉ approved khi toàn bộ việc con bắt
-        buộc đã hoàn thành)
       parameters:
       - description: ID công việc (UUID)
         in: path
         name: taskId
         required: true
         type: string
-      - description: Quyết định nghiệm thu
+      - description: Quyết định phê duyệt/yêu cầu sửa đổi
         in: body
         name: request
         required: true
@@ -2855,31 +3214,18 @@ paths:
                 data:
                   $ref: '#/definitions/model.TaskReview'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "422":
-          description: Unprocessable Entity
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Nghiệm thu hoặc yêu cầu bổ sung
+      summary: Nghiệm thu công việc
       tags:
       - Tasks
-  /tasks/{taskId}/tree:
-    get:
-      description: Lấy cây phân cấp hoàn chỉnh từ công việc hiện tại xuống các cấp
-        con cháu
+  /tasks/{taskId}/submit:
+    post:
+      description: Chuyển trạng thái sang submitted để quản lý nghiệm thu
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2898,14 +3244,88 @@ paths:
                 data:
                   $ref: '#/definitions/model.Task'
               type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Nộp công việc chờ nghiệm thu
+      tags:
+      - Tasks
+  /tasks/{taskId}/tree:
+    get:
+      description: Lấy toàn bộ cây nhiệm vụ cha con đa cấp đệ quy
+      parameters:
+      - description: ID công việc gốc hoặc công việc bất kỳ (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Cây phân cấp công việc
       tags:
       - Tasks
+  /tasks/{taskId}/unblock:
+    post:
+      consumes:
+      - application/json
+      description: Chuyển trạng thái từ blocked về in_progress và ghi nhận giải pháp
+      parameters:
+      - description: ID công việc (UUID)
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Ghi chú giải quyết
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/tasks.UnblockTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Gỡ vướng mắc công việc
+      tags:
+      - Tasks
   /tasks/{taskId}/updates:
     get:
-      description: Lấy toàn bộ các lần báo cáo tiến độ kèm người gửi và tệp đính kèm
       parameters:
       - description: ID công việc (UUID)
         in: path
@@ -2926,31 +3346,23 @@ paths:
                     $ref: '#/definitions/model.TaskUpdate'
                   type: array
               type: object
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Lịch sử báo cáo tiến độ
+      summary: Lịch sử tiến độ
       tags:
       - Tasks
     post:
       consumes:
       - application/json
-      description: Gửi báo cáo tiến độ và kích hoạt tự động tính toán tổng hợp tiến
-        độ cha
+      description: Nộp báo cáo tiến độ, tự động tính tỷ trọng lên cha và tự động chuyển
+        submitted khi 100%
       parameters:
       - description: ID công việc (UUID)
         in: path
         name: taskId
         required: true
         type: string
-      - description: Nội dung báo cáo tiến độ
+      - description: Dữ liệu tiến độ
         in: body
         name: request
         required: true
@@ -2968,13 +3380,17 @@ paths:
                 data:
                   $ref: '#/definitions/model.TaskUpdate'
               type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
         "409":
           description: Conflict
           schema:
             $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Báo cáo tiến độ
+      summary: Báo cáo tiến độ công việc
       tags:
       - Tasks
   /users:

@@ -26,6 +26,8 @@ type Config struct {
 	S3AccessKey    string
 	S3SecretKey    string
 	S3UseSSL       bool
+	StorageDriver  string
+	UploadDir      string
 }
 
 func Load() *Config {
@@ -50,6 +52,8 @@ func Load() *Config {
 		S3AccessKey:       getEnv("S3_ACCESS_KEY", "minioadmin"),
 		S3SecretKey:       getEnv("S3_SECRET_KEY", "minioadmin"),
 		S3UseSSL:          getEnvBool("S3_USE_SSL", false),
+		StorageDriver:     getEnv("STORAGE_DRIVER", "local"),
+		UploadDir:         getEnv("UPLOAD_DIR", "./uploads"),
 	}
 }
 

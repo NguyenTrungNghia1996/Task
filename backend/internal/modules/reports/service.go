@@ -48,3 +48,4 @@ func (s *Service) GetTaskReport(orgID uuid.UUID, filter TaskReportFilter) (*Task
 func (s *Service) GetDepartmentPerformance(orgID uuid.UUID) ([]DepartmentPerformanceItem, error) {
 	return s.repo.GetDepartmentPerformance(orgID)
 }
+

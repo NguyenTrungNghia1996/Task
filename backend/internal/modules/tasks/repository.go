@@ -3,6 +3,7 @@ package tasks
 import (
 	"errors"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,8 +13,9 @@ import (
 )
 
 var (
-	ErrTaskNotFound = errors.New("task not found")
+	ErrTaskNotFound     = errors.New("task not found")
 	ErrVersionConflict = errors.New("version conflict: task was modified by another transaction")
+	ErrAttachmentNotFound = errors.New("attachment not found")
 )
 
 type Repository struct {
@@ -49,6 +51,7 @@ func (r *Repository) GetByID(orgID, taskID uuid.UUID) (*model.Task, error) {
 		Preload("Assignments.AssigneeUser").
 		Preload("Assignments.AssigneeDepartment").
 		Preload("Assignments.ResponsibleUser").
+		Preload("Attachments.Uploader").
 		First(&task).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -90,12 +93,29 @@ func (r *Repository) UpdateWithVersion(tx *gorm.DB, taskID uuid.UUID, expectedVe
 	return nil
 }
 
+func (r *Repository) SoftDeleteTaskTx(tx *gorm.DB, taskID uuid.UUID) error {
+	result := tx.Where("id = ?", taskID).Delete(&model.Task{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrTaskNotFound
+	}
+	return nil
+}
+
 func (r *Repository) GetDirectChildren(orgID, parentID uuid.UUID) ([]model.Task, error) {
 	var children []model.Task
 	err := r.db.Where("organization_id = ? AND parent_id = ?", orgID, parentID).
-		Order("created_at ASC").
+		Order("sort_order ASC, created_at ASC").
 		Find(&children).Error
 	return children, err
+}
+
+func (r *Repository) CountDirectChildren(tx *gorm.DB, parentID uuid.UUID) (int64, error) {
+	var count int64
+	err := tx.Model(&model.Task{}).Where("parent_id = ?", parentID).Count(&count).Error
+	return count, err
 }
 
 func (r *Repository) CountIncompleteRequiredChildren(tx *gorm.DB, taskID uuid.UUID) (int64, error) {
@@ -114,24 +134,43 @@ func (r *Repository) CheckHasExceededChildDue(tx *gorm.DB, parentID uuid.UUID, n
 	return count > 0, err
 }
 
-func (r *Repository) CheckIsDescendant(orgID, ancestorID, targetID uuid.UUID) (bool, error) {
-	// Recursive CTE to check if targetID is in the subtree of ancestorID
-	query := `
-		WITH RECURSIVE task_tree AS (
-			SELECT id, parent_id FROM tasks WHERE organization_id = ? AND parent_id = ?
-			UNION ALL
-			SELECT t.id, t.parent_id FROM tasks t
-			JOIN task_tree tt ON t.parent_id = tt.id
-			WHERE t.organization_id = ?
-		)
-		SELECT COUNT(1) FROM task_tree WHERE id = ?
-	`
-	var count int64
-	err := r.db.Raw(query, orgID, ancestorID, orgID, targetID).Scan(&count).Error
-	if err != nil {
-		return false, err
+func (r *Repository) CheckIsDescendant(tx *gorm.DB, orgID, ancestorID, targetID uuid.UUID) (bool, error) {
+	if ancestorID == targetID {
+		return true, nil
 	}
-	return count > 0, nil
+
+	db := r.db
+	if tx != nil {
+		db = tx
+	}
+
+	currID := &targetID
+	visited := make(map[uuid.UUID]bool)
+
+	for currID != nil {
+		if visited[*currID] {
+			return true, nil // Loop detected in existing data
+		}
+		visited[*currID] = true
+
+		if *currID == ancestorID {
+			return true, nil // targetID is indeed a descendant of ancestorID
+		}
+
+		var t model.Task
+		err := db.Select("id", "parent_id").
+			Where("organization_id = ? AND id = ?", orgID, *currID).
+			First(&t).Error
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				break
+			}
+			return false, err
+		}
+		currID = t.ParentID
+	}
+
+	return false, nil
 }
 
 func (r *Repository) RollupParentProgressTx(tx *gorm.DB, parentID uuid.UUID) error {
@@ -200,6 +239,9 @@ func (r *Repository) ListTasks(orgID uuid.UUID, filter TaskFilter) ([]model.Task
 	if filter.Priority > 0 {
 		query = query.Where("priority = ?", filter.Priority)
 	}
+	if filter.IsAssigned != nil {
+		query = query.Where("is_assigned = ?", *filter.IsAssigned)
+	}
 	if filter.Query != "" {
 		like := "%" + filter.Query + "%"
 		query = query.Where("(title ILIKE ? OR code ILIKE ?)", like, like)
@@ -219,6 +261,14 @@ func (r *Repository) ListTasks(orgID uuid.UUID, filter TaskFilter) ([]model.Task
 	if filter.Overdue {
 		now := time.Now().UTC()
 		query = query.Where("due_at < ? AND status NOT IN ('completed', 'cancelled')", now)
+	}
+	if filter.AssigneeID != nil {
+		query = query.Joins("JOIN task_assignments ON task_assignments.task_id = tasks.id").
+			Where("task_assignments.assignee_user_id = ?", *filter.AssigneeID)
+	}
+	if filter.DepartmentID != nil {
+		query = query.Joins("JOIN task_assignments ON task_assignments.task_id = tasks.id").
+			Where("task_assignments.assignee_department_id = ?", *filter.DepartmentID)
 	}
 
 	var total int64
@@ -240,7 +290,7 @@ func (r *Repository) ListTasks(orgID uuid.UUID, filter TaskFilter) ([]model.Task
 	// Sorting
 	sortBy := "created_at"
 	allowedSorts := map[string]bool{
-		"created_at": true, "due_at": true, "priority": true, "progress": true, "title": true,
+		"created_at": true, "due_at": true, "priority": true, "progress": true, "title": true, "sort_order": true,
 	}
 	if allowedSorts[filter.SortBy] {
 		sortBy = filter.SortBy
@@ -339,19 +389,147 @@ func (r *Repository) DeleteAssignment(taskID, assignmentID uuid.UUID) error {
 	return nil
 }
 
+// GetTaskTree loads an arbitrary-depth task tree with assignments preloaded.
 func (r *Repository) GetTaskTree(orgID, taskID uuid.UUID) (*model.Task, error) {
-	var root model.Task
-	err := r.db.Where("organization_id = ? AND id = ?", orgID, taskID).
-		Preload("Assignments.AssigneeUser").
-		Preload("Assignments.AssigneeDepartment").
-		Preload("Children.Children.Children").
-		First(&root).Error
-	if err != nil {
+	var target model.Task
+	if err := r.db.Where("organization_id = ? AND id = ?", orgID, taskID).First(&target).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrTaskNotFound
 		}
 		return nil, err
 	}
-	return &root, nil
+
+	rootID := taskID
+	if target.RootTaskID != nil && *target.RootTaskID != uuid.Nil {
+		rootID = *target.RootTaskID
+	}
+
+	var allTasks []model.Task
+	err := r.db.Where("organization_id = ? AND (id = ? OR root_task_id = ?)", orgID, rootID, rootID).
+		Preload("Assignments.AssigneeUser").
+		Preload("Assignments.AssigneeDepartment").
+		Preload("Assignments.ResponsibleUser").
+		Order("sort_order ASC, created_at ASC").
+		Find(&allTasks).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Map tasks by ID and build tree in-memory
+	nodeMap := make(map[uuid.UUID]*model.Task, len(allTasks))
+	for i := range allTasks {
+		allTasks[i].Children = make([]model.Task, 0)
+		nodeMap[allTasks[i].ID] = &allTasks[i]
+	}
+
+	for i := range allTasks {
+		curr := &allTasks[i]
+		if curr.ParentID != nil {
+			if parent, exists := nodeMap[*curr.ParentID]; exists {
+				parent.Children = append(parent.Children, *curr)
+			}
+		}
+	}
+
+	res, exists := nodeMap[taskID]
+	if !exists {
+		return nil, ErrTaskNotFound
+	}
+
+	// Helper to recursively sort children by sort_order ASC
+	var sortChildren func(n *model.Task)
+	sortChildren = func(n *model.Task) {
+		sort.SliceStable(n.Children, func(i, j int) bool {
+			if n.Children[i].SortOrder == n.Children[j].SortOrder {
+				return n.Children[i].CreatedAt.Before(n.Children[j].CreatedAt)
+			}
+			return n.Children[i].SortOrder < n.Children[j].SortOrder
+		})
+		for i := range n.Children {
+			if childInMap, ok := nodeMap[n.Children[i].ID]; ok {
+				sortChildren(childInMap)
+				n.Children[i] = *childInMap
+			}
+		}
+	}
+	sortChildren(res)
+
+	return res, nil
 }
 
+// --- Attachment Repository Methods ---
+
+func (r *Repository) CreateAttachment(tx *gorm.DB, att *model.TaskAttachment) error {
+	db := r.db
+	if tx != nil {
+		db = tx
+	}
+	return db.Create(att).Error
+}
+
+func (r *Repository) GetAttachments(taskID uuid.UUID) ([]model.TaskAttachment, error) {
+	var attachments []model.TaskAttachment
+	err := r.db.Where("task_id = ?", taskID).
+		Preload("Uploader").
+		Order("created_at DESC").
+		Find(&attachments).Error
+	return attachments, err
+}
+
+func (r *Repository) GetAttachmentByID(taskID, attID uuid.UUID) (*model.TaskAttachment, error) {
+	var att model.TaskAttachment
+	err := r.db.Where("task_id = ? AND id = ?", taskID, attID).
+		Preload("Uploader").
+		First(&att).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrAttachmentNotFound
+		}
+		return nil, err
+	}
+	return &att, nil
+}
+
+func (r *Repository) ConfirmAttachment(taskID, attID uuid.UUID, checksum string) error {
+	updates := map[string]interface{}{
+		"status":     "active",
+		"updated_at": time.Now().UTC(),
+	}
+	if checksum != "" {
+		updates["checksum"] = checksum
+	}
+	result := r.db.Model(&model.TaskAttachment{}).
+		Where("task_id = ? AND id = ?", taskID, attID).
+		Updates(updates)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrAttachmentNotFound
+	}
+	return nil
+}
+
+func (r *Repository) DeleteAttachment(taskID, attID uuid.UUID) error {
+	result := r.db.Where("task_id = ? AND id = ?", taskID, attID).Delete(&model.TaskAttachment{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrAttachmentNotFound
+	}
+	return nil
+}
+
+func (r *Repository) LinkAttachmentsToUpdate(tx *gorm.DB, taskID, updateID uuid.UUID, attIDs []uuid.UUID) error {
+	if len(attIDs) == 0 {
+		return nil
+	}
+	return tx.Model(&model.TaskAttachment{}).
+		Where("task_id = ? AND id IN ?", taskID, attIDs).
+		Updates(map[string]interface{}{
+			"update_id":  updateID,
+			"status":     "active",
+			"updated_at": time.Now().UTC(),
+		}).Error
+}

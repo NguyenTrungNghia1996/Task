@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -592,6 +593,123 @@ func main() {
 	}
 	assignTask(db, org.ID, task3.ID, &nvUser.ID, nil, nil, commanderUser.ID, "responsible", true)
 
+	// Root Task 4: Thi công tuyến cáp quang liên lạc ngầm (Trạng thái blocked - Vướng mắc)
+	dueRoot4 := now.Add(15 * 24 * time.Hour)
+	task4 := model.Task{
+		OrganizationID:   org.ID,
+		Code:             "TASK-2026-00006",
+		Title:            "Thi công tuyến cáp quang liên lạc ngầm sở chỉ huy",
+		Description:      "Hạ ngầm tuyến cáp quang bảo đảm đường truyền tác chiến phòng không không quân.",
+		Status:           "blocked",
+		BlockedReason:    "Vướng giải phóng mặt bằng đoạn qua công trình dân sự, đang chờ UBND quận phê duyệt.",
+		Priority:         1,
+		Progress:         25,
+		StartAt:          &startDay,
+		DueAt:            &dueRoot4,
+		CreatedBy:        commanderUser.ID,
+		ApprovalRequired: true,
+		Weight:           1,
+		Version:          2,
+		SortOrder:        4,
+		IsAssigned:       true,
+	}
+	db.Where("organization_id = ? AND code = ?", org.ID, task4.Code).FirstOrCreate(&task4)
+	if task4.RootTaskID == nil {
+		task4.RootTaskID = &task4.ID
+		db.Save(&task4)
+	}
+	assignTask(db, org.ID, task4.ID, &nvUser.ID, nil, nil, commanderUser.ID, "responsible", true)
+
+	// Root Task 5: Kiểm tra an toàn bảo mật hệ thống (Trạng thái submitted - Chờ nghiệm thu)
+	dueRoot5 := now.Add(5 * 24 * time.Hour)
+	task5 := model.Task{
+		OrganizationID:   org.ID,
+		Code:             "TASK-2026-00007",
+		Title:            "Kiểm tra an toàn bảo mật hệ thống mạng truyền số liệu",
+		Description:      "Rà soát lỗ hổng bảo mật, vá mã độc và kiểm tra độ bền vững tường lửa mạng nội bộ.",
+		Status:           "submitted",
+		Priority:         2,
+		Progress:         100,
+		StartAt:          &startDay,
+		DueAt:            &dueRoot5,
+		CreatedBy:        commanderUser.ID,
+		ApprovalRequired: true,
+		Weight:           1,
+		Version:          2,
+		SortOrder:        5,
+		IsAssigned:       true,
+	}
+	db.Where("organization_id = ? AND code = ?", org.ID, task5.Code).FirstOrCreate(&task5)
+	if task5.RootTaskID == nil {
+		task5.RootTaskID = &task5.ID
+		db.Save(&task5)
+	}
+	assignTask(db, org.ID, task5.ID, &tvUser.ID, nil, nil, commanderUser.ID, "responsible", true)
+
+	// Root Task 6: Cập nhật tài liệu hướng dẫn tác chiến (Trạng thái unassigned - Chờ người tự nhận)
+	dueRoot6 := now.Add(25 * 24 * time.Hour)
+	task6 := model.Task{
+		OrganizationID:   org.ID,
+		Code:             "TASK-2026-00008",
+		Title:            "Cập nhật tài liệu quy chuẩn kỹ thuật thiết bị công nghệ mới",
+		Description:      "Biên soạn tài liệu hướng dẫn kỹ thuật cho kíp trực tự nhận và thực hiện.",
+		Status:           "unassigned",
+		Priority:         3,
+		Progress:         0,
+		StartAt:          &now,
+		DueAt:            &dueRoot6,
+		CreatedBy:        commanderUser.ID,
+		ApprovalRequired: false,
+		Weight:           1,
+		Version:          1,
+		SortOrder:        6,
+		IsAssigned:       false,
+	}
+	db.Where("organization_id = ? AND code = ?", org.ID, task6.Code).FirstOrCreate(&task6)
+	if task6.RootTaskID == nil {
+		task6.RootTaskID = &task6.ID
+		db.Save(&task6)
+	}
+
+	// Root Task 7: Kế hoạch ngân sách nghiên cứu phát triển (Trạng thái draft - Bản nháp)
+	dueRoot7 := now.Add(60 * 24 * time.Hour)
+	task7 := model.Task{
+		OrganizationID:   org.ID,
+		Code:             "TASK-2026-00009",
+		Title:            "Dự thảo Kế hoạch ngân sách nghiên cứu phát triển năm 2027",
+		Description:      "Bản nháp dự toán chi ngân sách nghiên cứu khoa học quân sự.",
+		Status:           "draft",
+		Priority:         2,
+		Progress:         0,
+		StartAt:          &now,
+		DueAt:            &dueRoot7,
+		CreatedBy:        commanderUser.ID,
+		ApprovalRequired: true,
+		Weight:           1,
+		Version:          1,
+		SortOrder:        7,
+		IsAssigned:       false,
+	}
+	db.Where("organization_id = ? AND code = ?", org.ID, task7.Code).FirstOrCreate(&task7)
+	if task7.RootTaskID == nil {
+		task7.RootTaskID = &task7.ID
+		db.Save(&task7)
+	}
+
+	// Sample Attachment on Task 1.1
+	att11 := model.TaskAttachment{
+		BaseModel:   model.BaseModel{ID: uuid.New()},
+		TaskID:      child11.ID,
+		UpdateID:    &up11.ID,
+		UploadedBy:  nvUser.ID,
+		FileName:    "so_do_mang_lien_lac_da_chien.pdf",
+		ObjectKey:   fmt.Sprintf("%s/%s/so_do_mang_lien_lac_da_chien.pdf", org.ID, child11.ID),
+		ContentType: "application/pdf",
+		SizeBytes:   524288,
+		Status:      "active",
+	}
+	db.Where("task_id = ? AND file_name = ?", child11.ID, att11.FileName).FirstOrCreate(&att11)
+
 	// 9. Seed Sample Notifications
 	notifications := []model.Notification{
 		{
@@ -675,5 +793,6 @@ func assignTask(db *gorm.DB, orgID, taskID uuid.UUID, userID, deptID, respUserID
 			AssignedBy:           assignedBy,
 		}
 		db.Create(&assign)
+		db.Model(&model.Task{}).Where("id = ?", taskID).Update("is_assigned", true)
 	}
 }

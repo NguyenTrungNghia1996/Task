@@ -60,3 +60,4 @@ type DepartmentPerformanceItem struct {
 	AvgProgress     float64   `json:"avg_progress"`
 	CompletionRate  float64   `json:"completion_rate"`
 }
+

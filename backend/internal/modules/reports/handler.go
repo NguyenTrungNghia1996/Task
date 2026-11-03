@@ -130,3 +130,4 @@ func RegisterRoutes(router fiber.Router, h *Handler, authMiddleware fiber.Handle
 	reps.Get("/tasks", h.GetTaskReport)
 	reps.Get("/departments", h.GetDepartmentPerformance)
 }
+
