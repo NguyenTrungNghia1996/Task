@@ -18,6 +18,7 @@ import (
 	"taskmgmt/internal/config"
 	"taskmgmt/internal/model"
 	"taskmgmt/internal/modules/auth"
+	"taskmgmt/internal/modules/departments"
 	"taskmgmt/internal/modules/menus"
 	"taskmgmt/internal/modules/rbac"
 	"taskmgmt/internal/modules/tasks"
@@ -472,4 +473,105 @@ func TestAPI_Notifications(t *testing.T) {
 	resp3, _, err := doRequest(ctx.app, "POST", "/api/v1/notifications/read-all", nil, ctx.adminToken)
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp3.StatusCode)
+}
+
+func TestAPI_Departments_And_Organizations(t *testing.T) {
+	ctx := setupAPITest(t)
+
+	// 1. GET /organizations/current
+	respOrg, dataOrg, err := doRequest(ctx.app, "GET", "/api/v1/organizations/current", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respOrg.StatusCode)
+	orgData := dataOrg["data"].(map[string]interface{})
+	assert.Equal(t, ctx.org.Code, orgData["code"])
+
+	// 2. POST /departments - Create Root Division
+	createDiv := departments.CreateDepartmentRequest{
+		Code:           "KHOI_TC",
+		Name:           "Khối Tác Chiến Toàn Diện",
+		DepartmentType: "division",
+	}
+	respDiv, dataDiv, err := doRequest(ctx.app, "POST", "/api/v1/departments", createDiv, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respDiv.StatusCode)
+	divIDStr := dataDiv["data"].(map[string]interface{})["id"].(string)
+	divUUID := uuid.MustParse(divIDStr)
+
+	// 3. POST /departments - Create Child Department
+	createChild := departments.CreateDepartmentRequest{
+		ParentID:       &divUUID,
+		Code:           "PHONG_TM",
+		Name:           "Phòng Tham Mưu Chỉ Huy",
+		DepartmentType: "department",
+	}
+	respChild, dataChild, err := doRequest(ctx.app, "POST", "/api/v1/departments", createChild, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respChild.StatusCode)
+	childIDStr := dataChild["data"].(map[string]interface{})["id"].(string)
+
+	// 4. GET /departments/tree
+	respTree, dataTree, err := doRequest(ctx.app, "GET", "/api/v1/departments/tree", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respTree.StatusCode)
+	treeList := dataTree["data"].([]interface{})
+	assert.NotEmpty(t, treeList)
+
+	// 5. GET /departments/options
+	respOpt, dataOpt, err := doRequest(ctx.app, "GET", "/api/v1/departments/options", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respOpt.StatusCode)
+	assert.GreaterOrEqual(t, len(dataOpt["data"].([]interface{})), 2)
+
+	// 6. GET /departments/:departmentId
+	respDetail, dataDetail, err := doRequest(ctx.app, "GET", "/api/v1/departments/"+childIDStr, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDetail.StatusCode)
+	assert.Equal(t, "Phòng Tham Mưu Chỉ Huy", dataDetail["data"].(map[string]interface{})["name"])
+
+	// 7. PATCH /departments/:departmentId
+	newDeptName := "Phòng Tham Mưu Tác Chiến"
+	patchReq := departments.UpdateDepartmentRequest{
+		Name: &newDeptName,
+	}
+	respPatch, dataPatch, err := doRequest(ctx.app, "PATCH", "/api/v1/departments/"+childIDStr, patchReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respPatch.StatusCode)
+	assert.Equal(t, newDeptName, dataPatch["data"].(map[string]interface{})["name"])
+
+	// 8. POST /departments/:departmentId/members
+	addMemberReq := departments.AddDepartmentMemberRequest{
+		UserID:        ctx.admin.ID,
+		PositionTitle: "Trưởng phòng",
+		IsPrimary:     true,
+	}
+	respMember, dataMember, err := doRequest(ctx.app, "POST", "/api/v1/departments/"+childIDStr+"/members", addMemberReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respMember.StatusCode)
+	memberIDStr := dataMember["data"].(map[string]interface{})["id"].(string)
+
+	// 9. GET /departments/:departmentId/members
+	respMembers, dataMembers, err := doRequest(ctx.app, "GET", "/api/v1/departments/"+childIDStr+"/members", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respMembers.StatusCode)
+	assert.Len(t, dataMembers["data"].([]interface{}), 1)
+
+	// 10. PATCH /departments/:departmentId/members/:memberId
+	newPosition := "Chỉ huy trưởng phòng ban"
+	patchMemberReq := departments.UpdateDepartmentMemberRequest{
+		PositionTitle: &newPosition,
+	}
+	respPatchMember, dataPatchMember, err := doRequest(ctx.app, "PATCH", "/api/v1/departments/"+childIDStr+"/members/"+memberIDStr, patchMemberReq, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respPatchMember.StatusCode)
+	assert.Equal(t, newPosition, dataPatchMember["data"].(map[string]interface{})["position_title"])
+
+	// 11. DELETE /departments/:departmentId/members/:memberId
+	respDelMember, _, err := doRequest(ctx.app, "DELETE", "/api/v1/departments/"+childIDStr+"/members/"+memberIDStr, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDelMember.StatusCode)
+
+	// 12. DELETE /departments/:departmentId
+	respDelDept, _, err := doRequest(ctx.app, "DELETE", "/api/v1/departments/"+childIDStr, nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respDelDept.StatusCode)
 }

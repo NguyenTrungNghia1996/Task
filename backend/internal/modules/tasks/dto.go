@@ -109,4 +109,13 @@ type CreateAssignmentRequest struct {
 	Note              string     `json:"note,omitempty"`
 }
 
+type TaskEventItem struct {
+	ID        uuid.UUID              `json:"id"`
+	TaskID    uuid.UUID              `json:"task_id"`
+	ActorID   uuid.UUID              `json:"actor_id"`
+	EventType string                 `json:"event_type"`
+	Data      map[string]interface{} `json:"data"`
+	CreatedAt time.Time              `json:"created_at"`
+}
+
 

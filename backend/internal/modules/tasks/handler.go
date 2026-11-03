@@ -577,7 +577,7 @@ func (h *Handler) GetTaskReviews(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Produce json
 // @Param taskId path string true "ID công việc (UUID)"
-// @Success 200 {object} response.SuccessResponse{data=[]model.TaskEvent}
+// @Success 200 {object} response.SuccessResponse{data=[]tasks.TaskEventItem}
 // @Failure 401 {object} response.ErrorResponse
 // @Failure 404 {object} response.ErrorResponse
 // @Router /tasks/{taskId}/events [get]

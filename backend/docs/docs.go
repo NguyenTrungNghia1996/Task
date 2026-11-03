@@ -46,7 +46,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_auth.LoginRequest"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -56,13 +56,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_auth.LoginResponse"
+                                            "$ref": "#/definitions/auth.LoginResponse"
                                         }
                                     }
                                 }
@@ -72,13 +72,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 },
@@ -104,7 +104,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_auth.RefreshRequest"
+                            "$ref": "#/definitions/auth.RefreshRequest"
                         }
                     }
                 ],
@@ -114,13 +114,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_auth.LogoutResponse"
+                                            "$ref": "#/definitions/auth.LogoutResponse"
                                         }
                                     }
                                 }
@@ -147,13 +147,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_auth.UserInfoResp"
+                                            "$ref": "#/definitions/auth.UserInfoResp"
                                         }
                                     }
                                 }
@@ -163,7 +163,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -189,7 +189,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_auth.RefreshRequest"
+                            "$ref": "#/definitions/auth.RefreshRequest"
                         }
                     }
                 ],
@@ -199,13 +199,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_auth.LoginResponse"
+                                            "$ref": "#/definitions/auth.LoginResponse"
                                         }
                                     }
                                 }
@@ -215,17 +215,441 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 },
                 "security": []
+            }
+        },
+        "/departments": {
+            "post": {
+                "description": "Th\u00eam ph\u00f2ng ban ho\u1eb7c t\u1ed5/\u0111\u1ed9i m\u1edbi v\u00e0o c\u01a1 c\u1ea5u \u0111\u01a1n v\u1ecb",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "T\u1ea1o ph\u00f2ng ban m\u1edbi",
+                "parameters": [
+                    {
+                        "description": "Th\u00f4ng tin ph\u00f2ng ban m\u1edbi",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/departments.CreateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/options": {
+            "get": {
+                "description": "L\u1ea5y danh s\u00e1ch ph\u00f2ng ban d\u1ea1ng options cho Select v\u00e0 TreeSelect c\u1ee7a Ant Design",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "Danh s\u00e1ch ph\u00f2ng ban d\u1ea1ng Options",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/departments.DepartmentOption"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/tree": {
+            "get": {
+                "description": "L\u1ea5y danh s\u00e1ch ph\u00f2ng ban d\u1ea1ng c\u00e2y ph\u00e2n c\u1ea5p (t\u01b0\u01a1ng th\u00edch Ant Design a-tree & a-tree-select)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "C\u00e2y c\u01a1 c\u1ea5u t\u1ed5 ch\u1ee9c & ph\u00f2ng ban",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/departments.DepartmentTreeNode"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{departmentId}": {
+            "get": {
+                "description": "Xem th\u00f4ng tin chi ti\u1ebft m\u1ed9t ph\u00f2ng ban theo ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "Chi ti\u1ebft ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "X\u00f3a ph\u00f2ng ban (ch\u1ec9 x\u00f3a \u0111\u01b0\u1ee3c khi kh\u00f4ng c\u00f3 ph\u00f2ng ban con v\u00e0 kh\u00f4ng c\u00f2n th\u00e0nh vi\u00ean \u0111ang ho\u1ea1t \u0111\u1ed9ng)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "X\u00f3a ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "S\u1eeda t\u00ean, m\u00e3, lo\u1ea1i ph\u00f2ng ban ho\u1eb7c chuy\u1ec3n ph\u00f2ng ban cha (ch\u1ed1ng l\u1eb7p chu tr\u00ecnh)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "C\u1eadp nh\u1eadt ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Th\u00f4ng tin c\u1eadp nh\u1eadt",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/departments.UpdateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/departments.DepartmentDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{departmentId}/members": {
+            "get": {
+                "description": "L\u1ea5y danh s\u00e1ch nh\u00e2n s\u1ef1 tr\u1ef1c thu\u1ed9c ph\u00f2ng ban k\u00e8m ch\u1ee9c danh v\u00e0 vai tr\u00f2",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "Danh s\u00e1ch th\u00e0nh vi\u00ean ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "G\u00e1n nh\u00e2n s\u1ef1 v\u00e0o ph\u00f2ng ban k\u00e8m ch\u1ee9c danh v\u00e0 qu\u1ea3n l\u00fd tr\u1ef1c ti\u1ebfp",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "Th\u00eam nh\u00e2n s\u1ef1 v\u00e0o ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Th\u00f4ng tin th\u00e0nh vi\u00ean",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/departments.AddDepartmentMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{departmentId}/members/{memberId}": {
+            "delete": {
+                "description": "K\u1ebft th\u00fac quan h\u1ec7 th\u00e0nh vi\u00ean ph\u00f2ng ban",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "R\u00fat nh\u00e2n s\u1ef1 kh\u1ecfi ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID th\u00e0nh vi\u00ean (UUID)",
+                        "name": "memberId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "S\u1eeda ch\u1ee9c danh, ng\u01b0\u1eddi qu\u1ea3n l\u00fd ho\u1eb7c th\u1eddi h\u1ea1n ki\u00eam nhi\u1ec7m",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Departments"
+                ],
+                "summary": "C\u1eadp nh\u1eadt th\u00e0nh vi\u00ean ph\u00f2ng ban",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban (UUID)",
+                        "name": "departmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID quan h\u1ec7 th\u00e0nh vi\u00ean (UUID)",
+                        "name": "memberId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Th\u00f4ng tin c\u1eadp nh\u1eadt",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/departments.UpdateDepartmentMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/departments.DepartmentMemberDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/menus": {
@@ -244,7 +668,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -252,7 +676,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.Menu"
+                                                "$ref": "#/definitions/model.Menu"
                                             }
                                         }
                                     }
@@ -281,7 +705,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_menus.CreateMenuRequest"
+                            "$ref": "#/definitions/menus.CreateMenuRequest"
                         }
                     }
                 ],
@@ -291,13 +715,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Menu"
+                                            "$ref": "#/definitions/model.Menu"
                                         }
                                     }
                                 }
@@ -307,7 +731,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -329,7 +753,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -337,7 +761,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/internal_modules_menus.AntdMenuItem"
+                                                "$ref": "#/definitions/menus.AntdMenuItem"
                                             }
                                         }
                                     }
@@ -371,19 +795,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -414,7 +838,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_menus.UpdateMenuRequest"
+                            "$ref": "#/definitions/menus.UpdateMenuRequest"
                         }
                     }
                 ],
@@ -424,13 +848,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Menu"
+                                            "$ref": "#/definitions/model.Menu"
                                         }
                                     }
                                 }
@@ -440,13 +864,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -488,7 +912,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -496,11 +920,11 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.Notification"
+                                                "$ref": "#/definitions/model.Notification"
                                             }
                                         },
                                         "meta": {
-                                            "$ref": "#/definitions/taskmgmt_internal_platform_response.PaginationMeta"
+                                            "$ref": "#/definitions/response.PaginationMeta"
                                         }
                                     }
                                 }
@@ -510,7 +934,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -532,13 +956,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_notifications.MarkAllReadResponse"
+                                            "$ref": "#/definitions/notifications.MarkAllReadResponse"
                                         }
                                     }
                                 }
@@ -548,7 +972,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -583,13 +1007,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_notifications.UnreadCountResponse"
+                                            "$ref": "#/definitions/notifications.UnreadCountResponse"
                                         }
                                     }
                                 }
@@ -599,7 +1023,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -630,13 +1054,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Notification"
+                                            "$ref": "#/definitions/model.Notification"
                                         }
                                     }
                                 }
@@ -646,19 +1070,51 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/organizations/current": {
+            "get": {
+                "description": "L\u1ea5y th\u00f4ng tin \u0111\u01a1n v\u1ecb t\u1ed5 ch\u1ee9c c\u1ee7a ng\u01b0\u1eddi d\u00f9ng hi\u1ec7n t\u1ea1i",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Th\u00f4ng tin \u0111\u01a1n v\u1ecb hi\u1ec7n t\u1ea1i",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Organization"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -680,7 +1136,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -688,7 +1144,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/internal_modules_rbac.ModuleGroupedPermissions"
+                                                "$ref": "#/definitions/rbac.ModuleGroupedPermissions"
                                             }
                                         }
                                     }
@@ -699,7 +1155,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -723,7 +1179,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_rbac.CreatePermissionRequest"
+                            "$ref": "#/definitions/rbac.CreatePermissionRequest"
                         }
                     }
                 ],
@@ -733,13 +1189,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Permission"
+                                            "$ref": "#/definitions/model.Permission"
                                         }
                                     }
                                 }
@@ -749,7 +1205,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -771,7 +1227,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -779,7 +1235,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/internal_modules_rbac.PermissionOption"
+                                                "$ref": "#/definitions/rbac.PermissionOption"
                                             }
                                         }
                                     }
@@ -806,7 +1262,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -814,7 +1270,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.Role"
+                                                "$ref": "#/definitions/model.Role"
                                             }
                                         }
                                     }
@@ -850,13 +1306,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_rbac.RoleWithPermissionsResponse"
+                                            "$ref": "#/definitions/rbac.RoleWithPermissionsResponse"
                                         }
                                     }
                                 }
@@ -866,7 +1322,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -897,7 +1353,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_rbac.UpdateRolePermissionsRequest"
+                            "$ref": "#/definitions/rbac.UpdateRolePermissionsRequest"
                         }
                     }
                 ],
@@ -905,13 +1361,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -983,7 +1439,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -991,11 +1447,11 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                                "$ref": "#/definitions/model.Task"
                                             }
                                         },
                                         "meta": {
-                                            "$ref": "#/definitions/taskmgmt_internal_platform_response.PaginationMeta"
+                                            "$ref": "#/definitions/response.PaginationMeta"
                                         }
                                     }
                                 }
@@ -1005,7 +1461,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1029,7 +1485,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskRequest"
+                            "$ref": "#/definitions/tasks.CreateTaskRequest"
                         }
                     }
                 ],
@@ -1039,13 +1495,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1055,19 +1511,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1098,13 +1554,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1114,7 +1570,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1143,13 +1599,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1159,13 +1615,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1196,7 +1652,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.UpdateTaskRequest"
+                            "$ref": "#/definitions/tasks.UpdateTaskRequest"
                         }
                     }
                 ],
@@ -1206,13 +1662,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1222,19 +1678,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1265,7 +1721,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1273,7 +1729,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
+                                                "$ref": "#/definitions/model.TaskAssignment"
                                             }
                                         }
                                     }
@@ -1284,13 +1740,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1321,7 +1777,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateAssignmentRequest"
+                            "$ref": "#/definitions/tasks.CreateAssignmentRequest"
                         }
                     }
                 ],
@@ -1331,13 +1787,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
+                                            "$ref": "#/definitions/model.TaskAssignment"
                                         }
                                     }
                                 }
@@ -1347,19 +1803,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1395,19 +1851,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1440,7 +1896,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CancelTaskRequest"
+                            "$ref": "#/definitions/tasks.CancelTaskRequest"
                         }
                     }
                 ],
@@ -1450,13 +1906,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1466,19 +1922,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1509,7 +1965,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1517,7 +1973,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                                "$ref": "#/definitions/model.Task"
                                             }
                                         }
                                     }
@@ -1553,7 +2009,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateChildTaskRequest"
+                            "$ref": "#/definitions/tasks.CreateChildTaskRequest"
                         }
                     }
                 ],
@@ -1563,13 +2019,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1579,25 +2035,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1628,7 +2084,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1636,7 +2092,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskComment"
+                                                "$ref": "#/definitions/model.TaskComment"
                                             }
                                         }
                                     }
@@ -1647,13 +2103,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1684,7 +2140,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateCommentRequest"
+                            "$ref": "#/definitions/tasks.CreateCommentRequest"
                         }
                     }
                 ],
@@ -1694,13 +2150,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskComment"
+                                            "$ref": "#/definitions/model.TaskComment"
                                         }
                                     }
                                 }
@@ -1710,19 +2166,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1753,7 +2209,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1761,7 +2217,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskEvent"
+                                                "$ref": "#/definitions/tasks.TaskEventItem"
                                             }
                                         }
                                     }
@@ -1772,13 +2228,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1811,7 +2267,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.ReopenTaskRequest"
+                            "$ref": "#/definitions/tasks.ReopenTaskRequest"
                         }
                     }
                 ],
@@ -1821,13 +2277,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -1837,25 +2293,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1886,7 +2342,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1894,7 +2350,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
+                                                "$ref": "#/definitions/model.TaskReview"
                                             }
                                         }
                                     }
@@ -1905,13 +2361,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -1942,7 +2398,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskReviewRequest"
+                            "$ref": "#/definitions/tasks.CreateTaskReviewRequest"
                         }
                     }
                 ],
@@ -1952,13 +2408,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
+                                            "$ref": "#/definitions/model.TaskReview"
                                         }
                                     }
                                 }
@@ -1968,25 +2424,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -2017,13 +2473,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.Task"
+                                            "$ref": "#/definitions/model.Task"
                                         }
                                     }
                                 }
@@ -2058,7 +2514,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2066,7 +2522,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
+                                                "$ref": "#/definitions/model.TaskUpdate"
                                             }
                                         }
                                     }
@@ -2077,13 +2533,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -2114,7 +2570,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_tasks.CreateTaskUpdateRequest"
+                            "$ref": "#/definitions/tasks.CreateTaskUpdateRequest"
                         }
                     }
                 ],
@@ -2124,13 +2580,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
+                                            "$ref": "#/definitions/model.TaskUpdate"
                                         }
                                     }
                                 }
@@ -2140,7 +2596,7 @@ const docTemplate = `{
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     }
                 }
@@ -2200,7 +2656,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2208,7 +2664,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/internal_modules_users.UserListItem"
+                                                "$ref": "#/definitions/users.UserListItem"
                                             }
                                         }
                                     }
@@ -2237,7 +2693,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_users.CreateUserRequest"
+                            "$ref": "#/definitions/users.CreateUserRequest"
                         }
                     }
                 ],
@@ -2247,13 +2703,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                            "$ref": "#/definitions/users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -2279,7 +2735,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2287,7 +2743,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/internal_modules_users.UserOption"
+                                                "$ref": "#/definitions/users.UserOption"
                                             }
                                         }
                                     }
@@ -2323,13 +2779,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                            "$ref": "#/definitions/users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -2364,7 +2820,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_users.UpdateUserRequest"
+                            "$ref": "#/definitions/users.UpdateUserRequest"
                         }
                     }
                 ],
@@ -2374,13 +2830,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                            "$ref": "#/definitions/users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -2417,7 +2873,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_users.ResetPasswordRequest"
+                            "$ref": "#/definitions/users.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -2425,7 +2881,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                            "$ref": "#/definitions/response.SuccessResponse"
                         }
                     }
                 }
@@ -2455,7 +2911,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -2499,7 +2955,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_modules_users.SetUserRolesRequest"
+                            "$ref": "#/definitions/users.SetUserRolesRequest"
                         }
                     }
                 ],
@@ -2509,13 +2965,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                    "$ref": "#/definitions/response.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                            "$ref": "#/definitions/users.UserDetailResponse"
                                         }
                                     }
                                 }
@@ -2527,7 +2983,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "internal_modules_auth.LoginRequest": {
+        "auth.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -2542,7 +2998,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_auth.LoginResponse": {
+        "auth.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -2555,11 +3011,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/internal_modules_auth.UserInfoResp"
+                    "$ref": "#/definitions/auth.UserInfoResp"
                 }
             }
         },
-        "internal_modules_auth.LogoutResponse": {
+        "auth.LogoutResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -2570,7 +3026,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_auth.RefreshRequest": {
+        "auth.RefreshRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -2581,7 +3037,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_auth.UserInfoResp": {
+        "auth.UserInfoResp": {
             "type": "object",
             "properties": {
                 "email": {
@@ -2613,14 +3069,300 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_menus.AntdMenuItem": {
+        "departments.AddDepartmentMemberRequest": {
+            "type": "object",
+            "required": [
+                "position_title",
+                "user_id"
+            ],
+            "properties": {
+                "effective_from": {
+                    "type": "string"
+                },
+                "effective_to": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "manager_user_id": {
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "departments.CreateDepartmentRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "department_type",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 2
+                },
+                "department_type": {
+                    "type": "string",
+                    "enum": [
+                        "division",
+                        "department",
+                        "section",
+                        "team",
+                        "office",
+                        "other"
+                    ]
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                },
+                "parent_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "departments.DepartmentDetailResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "leader": {
+                    "$ref": "#/definitions/departments.DepartmentLeaderDTO"
+                },
+                "member_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "parent_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "departments.DepartmentLeaderDTO": {
+            "type": "object",
+            "properties": {
+                "full_name": {
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "departments.DepartmentMemberDTO": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "type": "string"
+                },
+                "effective_from": {
+                    "type": "string"
+                },
+                "effective_to": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "manager_name": {
+                    "type": "string"
+                },
+                "manager_user_id": {
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "departments.DepartmentOption": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "department_type": {
+                    "type": "string"
+                },
+                "label": {
+                    "description": "e.g. \"Ph\u00f2ng K\u1ebf ho\u1ea1ch t\u00e1c chi\u1ebfn (PKHTC)\"",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "value": {
+                    "description": "UUID as string",
+                    "type": "string"
+                }
+            }
+        },
+        "departments.DepartmentTreeNode": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/departments.DepartmentTreeNode"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "department_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "key": {
+                    "description": "Ant Design Tree compatibility (ID string)",
+                    "type": "string"
+                },
+                "leader": {
+                    "$ref": "#/definitions/departments.DepartmentLeaderDTO"
+                },
+                "member_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Ant Design Tree compatibility (Name)",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "Ant Design TreeSelect compatibility",
+                    "type": "string"
+                }
+            }
+        },
+        "departments.UpdateDepartmentMemberRequest": {
+            "type": "object",
+            "properties": {
+                "effective_from": {
+                    "type": "string"
+                },
+                "effective_to": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "manager_user_id": {
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "departments.UpdateDepartmentRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 2
+                },
+                "department_type": {
+                    "type": "string",
+                    "enum": [
+                        "division",
+                        "department",
+                        "section",
+                        "team",
+                        "office",
+                        "other"
+                    ]
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                },
+                "parent_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "menus.AntdMenuItem": {
             "type": "object",
             "properties": {
                 "children": {
                     "description": "Menu con",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_modules_menus.AntdMenuItem"
+                        "$ref": "#/definitions/menus.AntdMenuItem"
                     }
                 },
                 "icon": {
@@ -2641,7 +3383,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_menus.CreateMenuRequest": {
+        "menus.CreateMenuRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -2684,7 +3426,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_menus.UpdateMenuRequest": {
+        "menus.UpdateMenuRequest": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -2718,7 +3460,514 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_notifications.MarkAllReadResponse": {
+        "model.Department": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Department"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Menu": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Menu"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_hidden": {
+                    "type": "boolean"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "required_permission": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Notification": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "read_at": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "recipient_id": {
+                    "type": "string"
+                },
+                "task": {
+                    "$ref": "#/definitions/model.Task"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Organization": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Permission": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Role": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Task": {
+            "type": "object",
+            "properties": {
+                "approval_required": {
+                    "type": "boolean"
+                },
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TaskAssignment"
+                    }
+                },
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Task"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/model.Task"
+                },
+                "parent_id": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TaskReview"
+                    }
+                },
+                "root_task_id": {
+                    "type": "string"
+                },
+                "start_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "updates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TaskUpdate"
+                    }
+                },
+                "version": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.TaskAssignment": {
+            "type": "object",
+            "properties": {
+                "assigned_by": {
+                    "type": "string"
+                },
+                "assignee_department": {
+                    "$ref": "#/definitions/model.Department"
+                },
+                "assignee_department_id": {
+                    "type": "string"
+                },
+                "assignee_user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "assignee_user_id": {
+                    "type": "string"
+                },
+                "assignment_role": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "responsible_user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "responsible_user_id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TaskAttachment": {
+            "type": "object",
+            "properties": {
+                "checksum": {
+                    "type": "string"
+                },
+                "content_type": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "size_bytes": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "pending -> active",
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "update_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "uploaded_by": {
+                    "type": "string"
+                },
+                "uploader": {
+                    "$ref": "#/definitions/model.User"
+                }
+            }
+        },
+        "model.TaskComment": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "author_id": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TaskReview": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "reviewed_at": {
+                    "type": "string"
+                },
+                "reviewer": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "reviewer_id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "update": {
+                    "$ref": "#/definitions/model.TaskUpdate"
+                },
+                "update_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TaskUpdate": {
+            "type": "object",
+            "properties": {
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TaskAttachment"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "submitted_at": {
+                    "type": "string"
+                },
+                "submitted_by": {
+                    "type": "string"
+                },
+                "submitter": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "notifications.MarkAllReadResponse": {
             "type": "object",
             "properties": {
                 "success": {
@@ -2729,7 +3978,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_notifications.UnreadCountResponse": {
+        "notifications.UnreadCountResponse": {
             "type": "object",
             "properties": {
                 "unread_count": {
@@ -2737,7 +3986,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_rbac.CreatePermissionRequest": {
+        "rbac.CreatePermissionRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -2765,7 +4014,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_rbac.ModuleGroupedPermissions": {
+        "rbac.ModuleGroupedPermissions": {
             "type": "object",
             "properties": {
                 "module": {
@@ -2774,12 +4023,12 @@ const docTemplate = `{
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.Permission"
+                        "$ref": "#/definitions/model.Permission"
                     }
                 }
             }
         },
-        "internal_modules_rbac.PermissionOption": {
+        "rbac.PermissionOption": {
             "type": "object",
             "properties": {
                 "label": {
@@ -2796,21 +4045,21 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_rbac.RoleWithPermissionsResponse": {
+        "rbac.RoleWithPermissionsResponse": {
             "type": "object",
             "properties": {
                 "permissions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.Permission"
+                        "$ref": "#/definitions/model.Permission"
                     }
                 },
                 "role": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.Role"
+                    "$ref": "#/definitions/model.Role"
                 }
             }
         },
-        "internal_modules_rbac.UpdateRolePermissionsRequest": {
+        "rbac.UpdateRolePermissionsRequest": {
             "type": "object",
             "required": [
                 "permission_codes"
@@ -2824,7 +4073,54 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.AssignmentInput": {
+        "response.ErrorDetails": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "details": {},
+                "message": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/response.ErrorDetails"
+                }
+            }
+        },
+        "response.PaginationMeta": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {}
+            }
+        },
+        "tasks.AssignmentInput": {
             "type": "object",
             "required": [
                 "id",
@@ -2846,7 +4142,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CancelTaskRequest": {
+        "tasks.CancelTaskRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -2859,7 +4155,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateAssignmentRequest": {
+        "tasks.CreateAssignmentRequest": {
             "type": "object",
             "required": [
                 "id",
@@ -2895,7 +4191,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateChildTaskRequest": {
+        "tasks.CreateChildTaskRequest": {
             "type": "object",
             "required": [
                 "initial_assignment",
@@ -2912,7 +4208,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "initial_assignment": {
-                    "$ref": "#/definitions/internal_modules_tasks.AssignmentInput"
+                    "$ref": "#/definitions/tasks.AssignmentInput"
                 },
                 "priority": {
                     "type": "integer",
@@ -2932,7 +4228,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateCommentRequest": {
+        "tasks.CreateCommentRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -2943,7 +4239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateTaskRequest": {
+        "tasks.CreateTaskRequest": {
             "type": "object",
             "required": [
                 "initial_assignment",
@@ -2960,7 +4256,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "initial_assignment": {
-                    "$ref": "#/definitions/internal_modules_tasks.AssignmentInput"
+                    "$ref": "#/definitions/tasks.AssignmentInput"
                 },
                 "priority": {
                     "type": "integer",
@@ -2976,7 +4272,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateTaskReviewRequest": {
+        "tasks.CreateTaskReviewRequest": {
             "type": "object",
             "required": [
                 "decision",
@@ -2998,7 +4294,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.CreateTaskUpdateRequest": {
+        "tasks.CreateTaskUpdateRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -3020,7 +4316,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.ReopenTaskRequest": {
+        "tasks.ReopenTaskRequest": {
             "type": "object",
             "required": [
                 "reason"
@@ -3033,7 +4329,31 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_tasks.UpdateTaskRequest": {
+        "tasks.TaskEventItem": {
+            "type": "object",
+            "properties": {
+                "actor_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "event_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "tasks.UpdateTaskRequest": {
             "type": "object",
             "required": [
                 "version"
@@ -3061,7 +4381,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.CreateUserRequest": {
+        "users.CreateUserRequest": {
             "type": "object",
             "required": [
                 "full_name",
@@ -3102,7 +4422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.DepartmentInfo": {
+        "users.DepartmentInfo": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3119,7 +4439,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.ResetPasswordRequest": {
+        "users.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "new_password"
@@ -3132,7 +4452,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.SetUserRolesRequest": {
+        "users.SetUserRolesRequest": {
             "type": "object",
             "required": [
                 "role_codes"
@@ -3146,7 +4466,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.UpdateUserRequest": {
+        "users.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "department_id": {
@@ -3169,7 +4489,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.UserDetailResponse": {
+        "users.UserDetailResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -3178,7 +4498,7 @@ const docTemplate = `{
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
+                        "$ref": "#/definitions/users.DepartmentInfo"
                     }
                 },
                 "email": {
@@ -3207,14 +4527,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.UserListItem": {
+        "users.UserListItem": {
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string"
                 },
                 "department": {
-                    "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
+                    "$ref": "#/definitions/users.DepartmentInfo"
                 },
                 "email": {
                     "type": "string"
@@ -3239,7 +4559,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_modules_users.UserOption": {
+        "users.UserOption": {
             "type": "object",
             "properties": {
                 "department_name": {
@@ -3262,569 +4582,6 @@ const docTemplate = `{
                     "description": "ID d\u00f9ng cho <a-select>",
                     "type": "string"
                 }
-            }
-        },
-        "taskmgmt_internal_model.Department": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.Department"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "department_type": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.Menu": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.Menu"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "is_hidden": {
-                    "type": "boolean"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "required_permission": {
-                    "type": "string"
-                },
-                "sort_order": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.Notification": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "read_at": {
-                    "type": "string"
-                },
-                "recipient": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "recipient_id": {
-                    "type": "string"
-                },
-                "task": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.Task"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.Permission": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "module": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.Role": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.Task": {
-            "type": "object",
-            "properties": {
-                "approval_required": {
-                    "type": "boolean"
-                },
-                "assignments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.TaskAssignment"
-                    }
-                },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.Task"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "due_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "parent": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.Task"
-                },
-                "parent_id": {
-                    "type": "string"
-                },
-                "priority": {
-                    "type": "integer"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "reviews": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.TaskReview"
-                    }
-                },
-                "root_task_id": {
-                    "type": "string"
-                },
-                "start_at": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "updates": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
-                    }
-                },
-                "version": {
-                    "type": "integer"
-                },
-                "weight": {
-                    "type": "integer"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskAssignment": {
-            "type": "object",
-            "properties": {
-                "assigned_by": {
-                    "type": "string"
-                },
-                "assignee_department": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.Department"
-                },
-                "assignee_department_id": {
-                    "type": "string"
-                },
-                "assignee_user": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "assignee_user_id": {
-                    "type": "string"
-                },
-                "assignment_role": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_primary": {
-                    "type": "boolean"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "responsible_user": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "responsible_user_id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskAttachment": {
-            "type": "object",
-            "properties": {
-                "checksum": {
-                    "type": "string"
-                },
-                "content_type": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "file_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "size_bytes": {
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "pending -> active",
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "update_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "uploaded_by": {
-                    "type": "string"
-                },
-                "uploader": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskComment": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "author_id": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskEvent": {
-            "type": "object",
-            "properties": {
-                "actor": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "actor_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "event_type": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskReview": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "decision": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "reviewed_at": {
-                    "type": "string"
-                },
-                "reviewer": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "reviewer_id": {
-                    "type": "string"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "update": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.TaskUpdate"
-                },
-                "update_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.TaskUpdate": {
-            "type": "object",
-            "properties": {
-                "attachments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/taskmgmt_internal_model.TaskAttachment"
-                    }
-                },
-                "content": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "progress": {
-                    "type": "integer"
-                },
-                "submitted_at": {
-                    "type": "string"
-                },
-                "submitted_by": {
-                    "type": "string"
-                },
-                "submitter": {
-                    "$ref": "#/definitions/taskmgmt_internal_model.User"
-                },
-                "task_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_model.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_platform_response.ErrorDetails": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "details": {},
-                "message": {
-                    "type": "string"
-                },
-                "request_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "taskmgmt_internal_platform_response.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorDetails"
-                }
-            }
-        },
-        "taskmgmt_internal_platform_response.PaginationMeta": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "total_pages": {
-                    "type": "integer"
-                }
-            }
-        },
-        "taskmgmt_internal_platform_response.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "meta": {}
             }
         }
     },

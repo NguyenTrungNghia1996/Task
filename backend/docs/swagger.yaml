@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  internal_modules_auth.LoginRequest:
+  auth.LoginRequest:
     properties:
       password:
         type: string
@@ -10,7 +10,7 @@ definitions:
     - password
     - username
     type: object
-  internal_modules_auth.LoginResponse:
+  auth.LoginResponse:
     properties:
       access_token:
         type: string
@@ -19,23 +19,23 @@ definitions:
       refresh_token:
         type: string
       user:
-        $ref: '#/definitions/internal_modules_auth.UserInfoResp'
+        $ref: '#/definitions/auth.UserInfoResp'
     type: object
-  internal_modules_auth.LogoutResponse:
+  auth.LogoutResponse:
     properties:
       message:
         type: string
       success:
         type: boolean
     type: object
-  internal_modules_auth.RefreshRequest:
+  auth.RefreshRequest:
     properties:
       refresh_token:
         type: string
     required:
     - refresh_token
     type: object
-  internal_modules_auth.UserInfoResp:
+  auth.UserInfoResp:
     properties:
       email:
         type: string
@@ -56,12 +56,209 @@ definitions:
       username:
         type: string
     type: object
-  internal_modules_menus.AntdMenuItem:
+  departments.AddDepartmentMemberRequest:
+    properties:
+      effective_from:
+        type: string
+      effective_to:
+        type: string
+      is_primary:
+        type: boolean
+      manager_user_id:
+        type: string
+      position_title:
+        maxLength: 100
+        type: string
+      user_id:
+        type: string
+    required:
+    - position_title
+    - user_id
+    type: object
+  departments.CreateDepartmentRequest:
+    properties:
+      code:
+        maxLength: 50
+        minLength: 2
+        type: string
+      department_type:
+        enum:
+        - division
+        - department
+        - section
+        - team
+        - office
+        - other
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 2
+        type: string
+      parent_id:
+        type: string
+    required:
+    - code
+    - department_type
+    - name
+    type: object
+  departments.DepartmentDetailResponse:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      department_type:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      leader:
+        $ref: '#/definitions/departments.DepartmentLeaderDTO'
+      member_count:
+        type: integer
+      name:
+        type: string
+      organization_id:
+        type: string
+      parent_id:
+        type: string
+      parent_name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  departments.DepartmentLeaderDTO:
+    properties:
+      full_name:
+        type: string
+      position_title:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  departments.DepartmentMemberDTO:
+    properties:
+      department_id:
+        type: string
+      effective_from:
+        type: string
+      effective_to:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_primary:
+        type: boolean
+      manager_name:
+        type: string
+      manager_user_id:
+        type: string
+      position_title:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  departments.DepartmentOption:
+    properties:
+      code:
+        type: string
+      department_type:
+        type: string
+      label:
+        description: e.g. "Phòng Kế hoạch tác chiến (PKHTC)"
+        type: string
+      parent_id:
+        type: string
+      value:
+        description: UUID as string
+        type: string
+    type: object
+  departments.DepartmentTreeNode:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/departments.DepartmentTreeNode'
+        type: array
+      code:
+        type: string
+      department_type:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      key:
+        description: Ant Design Tree compatibility (ID string)
+        type: string
+      leader:
+        $ref: '#/definitions/departments.DepartmentLeaderDTO'
+      member_count:
+        type: integer
+      name:
+        type: string
+      parent_id:
+        type: string
+      title:
+        description: Ant Design Tree compatibility (Name)
+        type: string
+      value:
+        description: Ant Design TreeSelect compatibility
+        type: string
+    type: object
+  departments.UpdateDepartmentMemberRequest:
+    properties:
+      effective_from:
+        type: string
+      effective_to:
+        type: string
+      is_primary:
+        type: boolean
+      manager_user_id:
+        type: string
+      position_title:
+        maxLength: 100
+        type: string
+    type: object
+  departments.UpdateDepartmentRequest:
+    properties:
+      code:
+        maxLength: 50
+        minLength: 2
+        type: string
+      department_type:
+        enum:
+        - division
+        - department
+        - section
+        - team
+        - office
+        - other
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 2
+        type: string
+      parent_id:
+        type: string
+    type: object
+  menus.AntdMenuItem:
     properties:
       children:
         description: Menu con
         items:
-          $ref: '#/definitions/internal_modules_menus.AntdMenuItem'
+          $ref: '#/definitions/menus.AntdMenuItem'
         type: array
       icon:
         description: 'vd: "ProjectOutlined"'
@@ -76,7 +273,7 @@ definitions:
         description: 'vd: "/tasks/all"'
         type: string
     type: object
-  internal_modules_menus.CreateMenuRequest:
+  menus.CreateMenuRequest:
     properties:
       code:
         maxLength: 100
@@ -107,7 +304,7 @@ definitions:
     - code
     - title
     type: object
-  internal_modules_menus.UpdateMenuRequest:
+  menus.UpdateMenuRequest:
     properties:
       icon:
         maxLength: 100
@@ -131,19 +328,353 @@ definitions:
         minLength: 2
         type: string
     type: object
-  internal_modules_notifications.MarkAllReadResponse:
+  model.Department:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/model.Department'
+        type: array
+      code:
+        type: string
+      created_at:
+        type: string
+      department_type:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      organization_id:
+        type: string
+      parent_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Menu:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/model.Menu'
+        type: array
+      code:
+        type: string
+      created_at:
+        type: string
+      icon:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_hidden:
+        type: boolean
+      parent_id:
+        type: string
+      path:
+        type: string
+      required_permission:
+        type: string
+      sort_order:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Notification:
+    properties:
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      organization_id:
+        type: string
+      read_at:
+        type: string
+      recipient:
+        $ref: '#/definitions/model.User'
+      recipient_id:
+        type: string
+      task:
+        $ref: '#/definitions/model.Task'
+      task_id:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Organization:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Permission:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      module:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Task:
+    properties:
+      approval_required:
+        type: boolean
+      assignments:
+        items:
+          $ref: '#/definitions/model.TaskAssignment'
+        type: array
+      children:
+        items:
+          $ref: '#/definitions/model.Task'
+        type: array
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      due_at:
+        type: string
+      id:
+        type: string
+      organization_id:
+        type: string
+      parent:
+        $ref: '#/definitions/model.Task'
+      parent_id:
+        type: string
+      priority:
+        type: integer
+      progress:
+        type: integer
+      reviews:
+        items:
+          $ref: '#/definitions/model.TaskReview'
+        type: array
+      root_task_id:
+        type: string
+      start_at:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      updates:
+        items:
+          $ref: '#/definitions/model.TaskUpdate'
+        type: array
+      version:
+        type: integer
+      weight:
+        type: integer
+    type: object
+  model.TaskAssignment:
+    properties:
+      assigned_by:
+        type: string
+      assignee_department:
+        $ref: '#/definitions/model.Department'
+      assignee_department_id:
+        type: string
+      assignee_user:
+        $ref: '#/definitions/model.User'
+      assignee_user_id:
+        type: string
+      assignment_role:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_primary:
+        type: boolean
+      note:
+        type: string
+      organization_id:
+        type: string
+      responsible_user:
+        $ref: '#/definitions/model.User'
+      responsible_user_id:
+        type: string
+      task_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.TaskAttachment:
+    properties:
+      checksum:
+        type: string
+      content_type:
+        type: string
+      created_at:
+        type: string
+      file_name:
+        type: string
+      id:
+        type: string
+      size_bytes:
+        type: integer
+      status:
+        description: pending -> active
+        type: string
+      task_id:
+        type: string
+      update_id:
+        type: string
+      updated_at:
+        type: string
+      uploaded_by:
+        type: string
+      uploader:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.TaskComment:
+    properties:
+      author:
+        $ref: '#/definitions/model.User'
+      author_id:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      task_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.TaskReview:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      decision:
+        type: string
+      id:
+        type: string
+      reviewed_at:
+        type: string
+      reviewer:
+        $ref: '#/definitions/model.User'
+      reviewer_id:
+        type: string
+      task_id:
+        type: string
+      update:
+        $ref: '#/definitions/model.TaskUpdate'
+      update_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.TaskUpdate:
+    properties:
+      attachments:
+        items:
+          $ref: '#/definitions/model.TaskAttachment'
+        type: array
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      progress:
+        type: integer
+      submitted_at:
+        type: string
+      submitted_by:
+        type: string
+      submitter:
+        $ref: '#/definitions/model.User'
+      task_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      organization_id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  notifications.MarkAllReadResponse:
     properties:
       success:
         type: boolean
       updated_count:
         type: integer
     type: object
-  internal_modules_notifications.UnreadCountResponse:
+  notifications.UnreadCountResponse:
     properties:
       unread_count:
         type: integer
     type: object
-  internal_modules_rbac.CreatePermissionRequest:
+  rbac.CreatePermissionRequest:
     properties:
       code:
         maxLength: 100
@@ -164,16 +695,16 @@ definitions:
     - module
     - name
     type: object
-  internal_modules_rbac.ModuleGroupedPermissions:
+  rbac.ModuleGroupedPermissions:
     properties:
       module:
         type: string
       permissions:
         items:
-          $ref: '#/definitions/taskmgmt_internal_model.Permission'
+          $ref: '#/definitions/model.Permission'
         type: array
     type: object
-  internal_modules_rbac.PermissionOption:
+  rbac.PermissionOption:
     properties:
       label:
         description: 'vd: "Xem danh sách công việc (tasks:view)"'
@@ -185,16 +716,16 @@ definitions:
         description: 'vd: "tasks:view"'
         type: string
     type: object
-  internal_modules_rbac.RoleWithPermissionsResponse:
+  rbac.RoleWithPermissionsResponse:
     properties:
       permissions:
         items:
-          $ref: '#/definitions/taskmgmt_internal_model.Permission'
+          $ref: '#/definitions/model.Permission'
         type: array
       role:
-        $ref: '#/definitions/taskmgmt_internal_model.Role'
+        $ref: '#/definitions/model.Role'
     type: object
-  internal_modules_rbac.UpdateRolePermissionsRequest:
+  rbac.UpdateRolePermissionsRequest:
     properties:
       permission_codes:
         items:
@@ -203,7 +734,38 @@ definitions:
     required:
     - permission_codes
     type: object
-  internal_modules_tasks.AssignmentInput:
+  response.ErrorDetails:
+    properties:
+      code:
+        type: string
+      details: {}
+      message:
+        type: string
+      request_id:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/response.ErrorDetails'
+    type: object
+  response.PaginationMeta:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  response.SuccessResponse:
+    properties:
+      data: {}
+      meta: {}
+    type: object
+  tasks.AssignmentInput:
     properties:
       id:
         type: string
@@ -218,7 +780,7 @@ definitions:
     - id
     - type
     type: object
-  internal_modules_tasks.CancelTaskRequest:
+  tasks.CancelTaskRequest:
     properties:
       reason:
         maxLength: 2000
@@ -227,7 +789,7 @@ definitions:
     required:
     - reason
     type: object
-  internal_modules_tasks.CreateAssignmentRequest:
+  tasks.CreateAssignmentRequest:
     properties:
       assignment_role:
         enum:
@@ -252,7 +814,7 @@ definitions:
     - id
     - type
     type: object
-  internal_modules_tasks.CreateChildTaskRequest:
+  tasks.CreateChildTaskRequest:
     properties:
       approval_required:
         type: boolean
@@ -261,7 +823,7 @@ definitions:
       due_at:
         type: string
       initial_assignment:
-        $ref: '#/definitions/internal_modules_tasks.AssignmentInput'
+        $ref: '#/definitions/tasks.AssignmentInput'
       priority:
         maximum: 3
         minimum: 1
@@ -278,14 +840,14 @@ definitions:
     - initial_assignment
     - title
     type: object
-  internal_modules_tasks.CreateCommentRequest:
+  tasks.CreateCommentRequest:
     properties:
       content:
         type: string
     required:
     - content
     type: object
-  internal_modules_tasks.CreateTaskRequest:
+  tasks.CreateTaskRequest:
     properties:
       approval_required:
         type: boolean
@@ -294,7 +856,7 @@ definitions:
       due_at:
         type: string
       initial_assignment:
-        $ref: '#/definitions/internal_modules_tasks.AssignmentInput'
+        $ref: '#/definitions/tasks.AssignmentInput'
       priority:
         maximum: 3
         minimum: 1
@@ -308,7 +870,7 @@ definitions:
     - initial_assignment
     - title
     type: object
-  internal_modules_tasks.CreateTaskReviewRequest:
+  tasks.CreateTaskReviewRequest:
     properties:
       comment:
         type: string
@@ -323,7 +885,7 @@ definitions:
     - decision
     - update_id
     type: object
-  internal_modules_tasks.CreateTaskUpdateRequest:
+  tasks.CreateTaskUpdateRequest:
     properties:
       attachment_ids:
         items:
@@ -338,7 +900,7 @@ definitions:
     required:
     - content
     type: object
-  internal_modules_tasks.ReopenTaskRequest:
+  tasks.ReopenTaskRequest:
     properties:
       reason:
         maxLength: 2000
@@ -347,7 +909,23 @@ definitions:
     required:
     - reason
     type: object
-  internal_modules_tasks.UpdateTaskRequest:
+  tasks.TaskEventItem:
+    properties:
+      actor_id:
+        type: string
+      created_at:
+        type: string
+      data:
+        additionalProperties: true
+        type: object
+      event_type:
+        type: string
+      id:
+        type: string
+      task_id:
+        type: string
+    type: object
+  tasks.UpdateTaskRequest:
     properties:
       description:
         type: string
@@ -367,7 +945,7 @@ definitions:
     required:
     - version
     type: object
-  internal_modules_users.CreateUserRequest:
+  users.CreateUserRequest:
     properties:
       department_id:
         type: string
@@ -397,7 +975,7 @@ definitions:
     - password
     - username
     type: object
-  internal_modules_users.DepartmentInfo:
+  users.DepartmentInfo:
     properties:
       id:
         type: string
@@ -408,7 +986,7 @@ definitions:
       position_title:
         type: string
     type: object
-  internal_modules_users.ResetPasswordRequest:
+  users.ResetPasswordRequest:
     properties:
       new_password:
         maxLength: 100
@@ -417,7 +995,7 @@ definitions:
     required:
     - new_password
     type: object
-  internal_modules_users.SetUserRolesRequest:
+  users.SetUserRolesRequest:
     properties:
       role_codes:
         items:
@@ -426,7 +1004,7 @@ definitions:
     required:
     - role_codes
     type: object
-  internal_modules_users.UpdateUserRequest:
+  users.UpdateUserRequest:
     properties:
       department_id:
         type: string
@@ -442,13 +1020,13 @@ definitions:
         maxLength: 100
         type: string
     type: object
-  internal_modules_users.UserDetailResponse:
+  users.UserDetailResponse:
     properties:
       created_at:
         type: string
       departments:
         items:
-          $ref: '#/definitions/internal_modules_users.DepartmentInfo'
+          $ref: '#/definitions/users.DepartmentInfo'
         type: array
       email:
         type: string
@@ -467,12 +1045,12 @@ definitions:
       username:
         type: string
     type: object
-  internal_modules_users.UserListItem:
+  users.UserListItem:
     properties:
       created_at:
         type: string
       department:
-        $ref: '#/definitions/internal_modules_users.DepartmentInfo'
+        $ref: '#/definitions/users.DepartmentInfo'
       email:
         type: string
       full_name:
@@ -488,7 +1066,7 @@ definitions:
       username:
         type: string
     type: object
-  internal_modules_users.UserOption:
+  users.UserOption:
     properties:
       department_name:
         type: string
@@ -504,377 +1082,6 @@ definitions:
       value:
         description: ID dùng cho <a-select>
         type: string
-    type: object
-  taskmgmt_internal_model.Department:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.Department'
-        type: array
-      code:
-        type: string
-      created_at:
-        type: string
-      department_type:
-        type: string
-      id:
-        type: string
-      is_active:
-        type: boolean
-      name:
-        type: string
-      organization_id:
-        type: string
-      parent_id:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.Menu:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.Menu'
-        type: array
-      code:
-        type: string
-      created_at:
-        type: string
-      icon:
-        type: string
-      id:
-        type: string
-      is_active:
-        type: boolean
-      is_hidden:
-        type: boolean
-      parent_id:
-        type: string
-      path:
-        type: string
-      required_permission:
-        type: string
-      sort_order:
-        type: integer
-      title:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.Notification:
-    properties:
-      body:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      organization_id:
-        type: string
-      read_at:
-        type: string
-      recipient:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      recipient_id:
-        type: string
-      task:
-        $ref: '#/definitions/taskmgmt_internal_model.Task'
-      task_id:
-        type: string
-      title:
-        type: string
-      type:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.Permission:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      module:
-        type: string
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.Role:
-    properties:
-      code:
-        type: string
-      created_at:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.Task:
-    properties:
-      approval_required:
-        type: boolean
-      assignments:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.TaskAssignment'
-        type: array
-      children:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.Task'
-        type: array
-      code:
-        type: string
-      created_at:
-        type: string
-      created_by:
-        type: string
-      description:
-        type: string
-      due_at:
-        type: string
-      id:
-        type: string
-      organization_id:
-        type: string
-      parent:
-        $ref: '#/definitions/taskmgmt_internal_model.Task'
-      parent_id:
-        type: string
-      priority:
-        type: integer
-      progress:
-        type: integer
-      reviews:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.TaskReview'
-        type: array
-      root_task_id:
-        type: string
-      start_at:
-        type: string
-      status:
-        type: string
-      title:
-        type: string
-      updated_at:
-        type: string
-      updates:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.TaskUpdate'
-        type: array
-      version:
-        type: integer
-      weight:
-        type: integer
-    type: object
-  taskmgmt_internal_model.TaskAssignment:
-    properties:
-      assigned_by:
-        type: string
-      assignee_department:
-        $ref: '#/definitions/taskmgmt_internal_model.Department'
-      assignee_department_id:
-        type: string
-      assignee_user:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      assignee_user_id:
-        type: string
-      assignment_role:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      is_primary:
-        type: boolean
-      note:
-        type: string
-      organization_id:
-        type: string
-      responsible_user:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      responsible_user_id:
-        type: string
-      task_id:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.TaskAttachment:
-    properties:
-      checksum:
-        type: string
-      content_type:
-        type: string
-      created_at:
-        type: string
-      file_name:
-        type: string
-      id:
-        type: string
-      size_bytes:
-        type: integer
-      status:
-        description: pending -> active
-        type: string
-      task_id:
-        type: string
-      update_id:
-        type: string
-      updated_at:
-        type: string
-      uploaded_by:
-        type: string
-      uploader:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-    type: object
-  taskmgmt_internal_model.TaskComment:
-    properties:
-      author:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      author_id:
-        type: string
-      content:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      task_id:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.TaskEvent:
-    properties:
-      actor:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      actor_id:
-        type: string
-      created_at:
-        type: string
-      data:
-        items:
-          type: integer
-        type: array
-      event_type:
-        type: string
-      id:
-        type: string
-      organization_id:
-        type: string
-      task_id:
-        type: string
-    type: object
-  taskmgmt_internal_model.TaskReview:
-    properties:
-      comment:
-        type: string
-      created_at:
-        type: string
-      decision:
-        type: string
-      id:
-        type: string
-      reviewed_at:
-        type: string
-      reviewer:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      reviewer_id:
-        type: string
-      task_id:
-        type: string
-      update:
-        $ref: '#/definitions/taskmgmt_internal_model.TaskUpdate'
-      update_id:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.TaskUpdate:
-    properties:
-      attachments:
-        items:
-          $ref: '#/definitions/taskmgmt_internal_model.TaskAttachment'
-        type: array
-      content:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      progress:
-        type: integer
-      submitted_at:
-        type: string
-      submitted_by:
-        type: string
-      submitter:
-        $ref: '#/definitions/taskmgmt_internal_model.User'
-      task_id:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  taskmgmt_internal_model.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      full_name:
-        type: string
-      id:
-        type: string
-      is_active:
-        type: boolean
-      organization_id:
-        type: string
-      updated_at:
-        type: string
-      username:
-        type: string
-    type: object
-  taskmgmt_internal_platform_response.ErrorDetails:
-    properties:
-      code:
-        type: string
-      details: {}
-      message:
-        type: string
-      request_id:
-        type: string
-    type: object
-  taskmgmt_internal_platform_response.ErrorResponse:
-    properties:
-      error:
-        $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorDetails'
-    type: object
-  taskmgmt_internal_platform_response.PaginationMeta:
-    properties:
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total:
-        type: integer
-      total_pages:
-        type: integer
-    type: object
-  taskmgmt_internal_platform_response.SuccessResponse:
-    properties:
-      data: {}
-      meta: {}
     type: object
 host: localhost:8080
 info:
@@ -900,7 +1107,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_auth.LoginRequest'
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
       - application/json
       responses:
@@ -908,19 +1115,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_auth.LoginResponse'
+                  $ref: '#/definitions/auth.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       summary: Đăng nhập hệ thống
       tags:
       - Auth
@@ -934,7 +1141,7 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/internal_modules_auth.RefreshRequest'
+          $ref: '#/definitions/auth.RefreshRequest'
       produces:
       - application/json
       responses:
@@ -942,10 +1149,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_auth.LogoutResponse'
+                  $ref: '#/definitions/auth.LogoutResponse'
               type: object
       summary: Đăng xuất
       tags:
@@ -960,15 +1167,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_auth.UserInfoResp'
+                  $ref: '#/definitions/auth.UserInfoResp'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Thông tin tài khoản hiện tại
@@ -985,7 +1192,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_auth.RefreshRequest'
+          $ref: '#/definitions/auth.RefreshRequest'
       produces:
       - application/json
       responses:
@@ -993,22 +1200,304 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_auth.LoginResponse'
+                  $ref: '#/definitions/auth.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       summary: Làm mới Access Token
       tags:
       - Auth
+  /departments:
+    post:
+      consumes:
+      - application/json
+      description: Thêm phòng ban hoặc tổ/đội mới vào cơ cấu đơn vị
+      parameters:
+      - description: Thông tin phòng ban mới
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departments.CreateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/departments.DepartmentDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tạo phòng ban mới
+      tags:
+      - Departments
+  /departments/{departmentId}:
+    delete:
+      description: Xóa phòng ban (chỉ xóa được khi không có phòng ban con và không
+        còn thành viên đang hoạt động)
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Xóa phòng ban
+      tags:
+      - Departments
+    get:
+      description: Xem thông tin chi tiết một phòng ban theo ID
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/departments.DepartmentDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Chi tiết phòng ban
+      tags:
+      - Departments
+    patch:
+      consumes:
+      - application/json
+      description: Sửa tên, mã, loại phòng ban hoặc chuyển phòng ban cha (chống lặp
+        chu trình)
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      - description: Thông tin cập nhật
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departments.UpdateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/departments.DepartmentDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Cập nhật phòng ban
+      tags:
+      - Departments
+  /departments/{departmentId}/members:
+    get:
+      description: Lấy danh sách nhân sự trực thuộc phòng ban kèm chức danh và vai
+        trò
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/departments.DepartmentMemberDTO'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách thành viên phòng ban
+      tags:
+      - Departments
+    post:
+      consumes:
+      - application/json
+      description: Gán nhân sự vào phòng ban kèm chức danh và quản lý trực tiếp
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      - description: Thông tin thành viên
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departments.AddDepartmentMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/departments.DepartmentMemberDTO'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Thêm nhân sự vào phòng ban
+      tags:
+      - Departments
+  /departments/{departmentId}/members/{memberId}:
+    delete:
+      description: Kết thúc quan hệ thành viên phòng ban
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      - description: ID thành viên (UUID)
+        in: path
+        name: memberId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Rút nhân sự khỏi phòng ban
+      tags:
+      - Departments
+    patch:
+      consumes:
+      - application/json
+      description: Sửa chức danh, người quản lý hoặc thời hạn kiêm nhiệm
+      parameters:
+      - description: ID phòng ban (UUID)
+        in: path
+        name: departmentId
+        required: true
+        type: string
+      - description: ID quan hệ thành viên (UUID)
+        in: path
+        name: memberId
+        required: true
+        type: string
+      - description: Thông tin cập nhật
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/departments.UpdateDepartmentMemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/departments.DepartmentMemberDTO'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Cập nhật thành viên phòng ban
+      tags:
+      - Departments
+  /departments/options:
+    get:
+      description: Lấy danh sách phòng ban dạng options cho Select và TreeSelect của
+        Ant Design
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/departments.DepartmentOption'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách phòng ban dạng Options
+      tags:
+      - Departments
+  /departments/tree:
+    get:
+      description: Lấy danh sách phòng ban dạng cây phân cấp (tương thích Ant Design
+        a-tree & a-tree-select)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/departments.DepartmentTreeNode'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Cây cơ cấu tổ chức & phòng ban
+      tags:
+      - Departments
   /menus:
     get:
       description: Lấy toàn bộ cây menu không lọc quyền để phục vụ màn hình cấu hình
@@ -1020,11 +1509,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.Menu'
+                    $ref: '#/definitions/model.Menu'
                   type: array
               type: object
       security:
@@ -1042,7 +1531,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_menus.CreateMenuRequest'
+          $ref: '#/definitions/menus.CreateMenuRequest'
       produces:
       - application/json
       responses:
@@ -1050,15 +1539,15 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Menu'
+                  $ref: '#/definitions/model.Menu'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Thêm mới mục Menu
@@ -1080,15 +1569,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Xóa mục Menu
@@ -1109,7 +1598,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_menus.UpdateMenuRequest'
+          $ref: '#/definitions/menus.UpdateMenuRequest'
       produces:
       - application/json
       responses:
@@ -1117,19 +1606,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Menu'
+                  $ref: '#/definitions/model.Menu'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Cập nhật mục Menu
@@ -1146,11 +1635,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/internal_modules_menus.AntdMenuItem'
+                    $ref: '#/definitions/menus.AntdMenuItem'
                   type: array
               type: object
       security:
@@ -1182,19 +1671,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.Notification'
+                    $ref: '#/definitions/model.Notification'
                   type: array
                 meta:
-                  $ref: '#/definitions/taskmgmt_internal_platform_response.PaginationMeta'
+                  $ref: '#/definitions/response.PaginationMeta'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách thông báo
@@ -1216,23 +1705,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Notification'
+                  $ref: '#/definitions/model.Notification'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Đánh dấu một thông báo đã đọc
@@ -1249,15 +1738,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_notifications.MarkAllReadResponse'
+                  $ref: '#/definitions/notifications.MarkAllReadResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Đánh dấu tất cả thông báo đã đọc
@@ -1284,20 +1773,40 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_notifications.UnreadCountResponse'
+                  $ref: '#/definitions/notifications.UnreadCountResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Số lượng thông báo chưa đọc
       tags:
       - Notifications
+  /organizations/current:
+    get:
+      description: Lấy thông tin đơn vị tổ chức của người dùng hiện tại
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Organization'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Thông tin đơn vị hiện tại
+      tags:
+      - Organizations
   /permissions:
     get:
       description: Lấy danh sách quyền được gom nhóm theo phân hệ (module) cho bảng
@@ -1309,17 +1818,17 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/internal_modules_rbac.ModuleGroupedPermissions'
+                    $ref: '#/definitions/rbac.ModuleGroupedPermissions'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách tất cả quyền hệ thống
@@ -1335,7 +1844,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_rbac.CreatePermissionRequest'
+          $ref: '#/definitions/rbac.CreatePermissionRequest'
       produces:
       - application/json
       responses:
@@ -1343,15 +1852,15 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Permission'
+                  $ref: '#/definitions/model.Permission'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Thêm quyền chức năng mới
@@ -1368,11 +1877,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/internal_modules_rbac.PermissionOption'
+                    $ref: '#/definitions/rbac.PermissionOption'
                   type: array
               type: object
       security:
@@ -1390,11 +1899,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.Role'
+                    $ref: '#/definitions/model.Role'
                   type: array
               type: object
       security:
@@ -1419,15 +1928,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_rbac.RoleWithPermissionsResponse'
+                  $ref: '#/definitions/rbac.RoleWithPermissionsResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Lấy danh sách quyền của một vai trò
@@ -1449,18 +1958,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_rbac.UpdateRolePermissionsRequest'
+          $ref: '#/definitions/rbac.UpdateRolePermissionsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Cập nhật tập quyền cho một vai trò
@@ -1509,19 +2018,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.Task'
+                    $ref: '#/definitions/model.Task'
                   type: array
                 meta:
-                  $ref: '#/definitions/taskmgmt_internal_platform_response.PaginationMeta'
+                  $ref: '#/definitions/response.PaginationMeta'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách công việc
@@ -1537,7 +2046,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateTaskRequest'
+          $ref: '#/definitions/tasks.CreateTaskRequest'
       produces:
       - application/json
       responses:
@@ -1545,23 +2054,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Tạo nhiệm vụ gốc
@@ -1583,19 +2092,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Xóa/Hủy công việc theo chính sách REST
@@ -1616,15 +2125,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Chi tiết công việc
@@ -1646,7 +2155,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.UpdateTaskRequest'
+          $ref: '#/definitions/tasks.UpdateTaskRequest'
       produces:
       - application/json
       responses:
@@ -1654,23 +2163,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Cập nhật công việc (Optimistic Locking)
@@ -1692,21 +2201,21 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.TaskAssignment'
+                    $ref: '#/definitions/model.TaskAssignment'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách phân công công việc
@@ -1727,7 +2236,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateAssignmentRequest'
+          $ref: '#/definitions/tasks.CreateAssignmentRequest'
       produces:
       - application/json
       responses:
@@ -1735,23 +2244,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.TaskAssignment'
+                  $ref: '#/definitions/model.TaskAssignment'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Phân công thêm người hoặc phòng ban
@@ -1777,15 +2286,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            $ref: '#/definitions/response.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Xóa phân công công việc
@@ -1807,7 +2316,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CancelTaskRequest'
+          $ref: '#/definitions/tasks.CancelTaskRequest'
       produces:
       - application/json
       responses:
@@ -1815,23 +2324,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Hủy công việc
@@ -1853,11 +2362,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.Task'
+                    $ref: '#/definitions/model.Task'
                   type: array
               type: object
       security:
@@ -1881,7 +2390,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateChildTaskRequest'
+          $ref: '#/definitions/tasks.CreateChildTaskRequest'
       produces:
       - application/json
       responses:
@@ -1889,27 +2398,27 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Tạo công việc con
@@ -1931,21 +2440,21 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.TaskComment'
+                    $ref: '#/definitions/model.TaskComment'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Danh sách bình luận
@@ -1966,7 +2475,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateCommentRequest'
+          $ref: '#/definitions/tasks.CreateCommentRequest'
       produces:
       - application/json
       responses:
@@ -1974,23 +2483,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.TaskComment'
+                  $ref: '#/definitions/model.TaskComment'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Thêm bình luận
@@ -2012,21 +2521,21 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.TaskEvent'
+                    $ref: '#/definitions/tasks.TaskEventItem'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Audit timeline
@@ -2049,7 +2558,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.ReopenTaskRequest'
+          $ref: '#/definitions/tasks.ReopenTaskRequest'
       produces:
       - application/json
       responses:
@@ -2057,27 +2566,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Mở lại công việc đã hoàn thành
@@ -2099,21 +2608,21 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.TaskReview'
+                    $ref: '#/definitions/model.TaskReview'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Lịch sử nghiệm thu
@@ -2135,7 +2644,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateTaskReviewRequest'
+          $ref: '#/definitions/tasks.CreateTaskReviewRequest'
       produces:
       - application/json
       responses:
@@ -2143,27 +2652,27 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.TaskReview'
+                  $ref: '#/definitions/model.TaskReview'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Nghiệm thu hoặc yêu cầu bổ sung
@@ -2186,10 +2695,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
       security:
       - BearerAuth: []
@@ -2212,21 +2721,21 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/taskmgmt_internal_model.TaskUpdate'
+                    $ref: '#/definitions/model.TaskUpdate'
                   type: array
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Lịch sử báo cáo tiến độ
@@ -2248,7 +2757,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_tasks.CreateTaskUpdateRequest'
+          $ref: '#/definitions/tasks.CreateTaskUpdateRequest'
       produces:
       - application/json
       responses:
@@ -2256,15 +2765,15 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/taskmgmt_internal_model.TaskUpdate'
+                  $ref: '#/definitions/model.TaskUpdate'
               type: object
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.ErrorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Báo cáo tiến độ
@@ -2306,11 +2815,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/internal_modules_users.UserListItem'
+                    $ref: '#/definitions/users.UserListItem'
                   type: array
               type: object
       security:
@@ -2329,7 +2838,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_users.CreateUserRequest'
+          $ref: '#/definitions/users.CreateUserRequest'
       produces:
       - application/json
       responses:
@@ -2337,10 +2846,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+                  $ref: '#/definitions/users.UserDetailResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2364,10 +2873,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+                  $ref: '#/definitions/users.UserDetailResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2389,7 +2898,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_users.UpdateUserRequest'
+          $ref: '#/definitions/users.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -2397,10 +2906,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+                  $ref: '#/definitions/users.UserDetailResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2423,14 +2932,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_users.ResetPasswordRequest'
+          $ref: '#/definitions/users.ResetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            $ref: '#/definitions/response.SuccessResponse'
       security:
       - BearerAuth: []
       summary: Đặt lại mật khẩu người dùng
@@ -2451,7 +2960,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
@@ -2478,7 +2987,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_modules_users.SetUserRolesRequest'
+          $ref: '#/definitions/users.SetUserRolesRequest'
       produces:
       - application/json
       responses:
@@ -2486,10 +2995,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+                  $ref: '#/definitions/users.UserDetailResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2507,11 +3016,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - $ref: '#/definitions/response.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/internal_modules_users.UserOption'
+                    $ref: '#/definitions/users.UserOption'
                   type: array
               type: object
       security:
