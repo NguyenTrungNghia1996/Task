@@ -15,3 +15,4 @@ func TestSetupTestDB(t *testing.T) {
 	assert.NotEmpty(t, user.ID)
 	assert.Equal(t, "admin", user.Username)
 }
+

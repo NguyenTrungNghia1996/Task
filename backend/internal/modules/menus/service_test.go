@@ -132,3 +132,4 @@ func TestMenus_CRUD(t *testing.T) {
 	err = svc.DeleteMenu(m.ID)
 	require.NoError(t, err)
 }
+

@@ -122,3 +122,4 @@ func TestMiddleware_RequirePermission(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp4.StatusCode)
 }
+

@@ -157,3 +157,4 @@ func TestRBAC_SystemAdmin_Bypass(t *testing.T) {
 	assert.Contains(t, perms, "tasks:view")
 	assert.Contains(t, perms, "system:settings")
 }
+

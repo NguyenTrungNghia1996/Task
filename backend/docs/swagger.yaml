@@ -367,6 +367,144 @@ definitions:
     required:
     - version
     type: object
+  internal_modules_users.CreateUserRequest:
+    properties:
+      department_id:
+        type: string
+      email:
+        maxLength: 255
+        type: string
+      full_name:
+        maxLength: 255
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+      position_title:
+        maxLength: 100
+        type: string
+      role_codes:
+        items:
+          type: string
+        type: array
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - full_name
+    - password
+    - username
+    type: object
+  internal_modules_users.DepartmentInfo:
+    properties:
+      id:
+        type: string
+      is_primary:
+        type: boolean
+      name:
+        type: string
+      position_title:
+        type: string
+    type: object
+  internal_modules_users.ResetPasswordRequest:
+    properties:
+      new_password:
+        maxLength: 100
+        minLength: 6
+        type: string
+    required:
+    - new_password
+    type: object
+  internal_modules_users.SetUserRolesRequest:
+    properties:
+      role_codes:
+        items:
+          type: string
+        type: array
+    required:
+    - role_codes
+    type: object
+  internal_modules_users.UpdateUserRequest:
+    properties:
+      department_id:
+        type: string
+      email:
+        maxLength: 255
+        type: string
+      full_name:
+        maxLength: 255
+        type: string
+      is_active:
+        type: boolean
+      position_title:
+        maxLength: 100
+        type: string
+    type: object
+  internal_modules_users.UserDetailResponse:
+    properties:
+      created_at:
+        type: string
+      departments:
+        items:
+          $ref: '#/definitions/internal_modules_users.DepartmentInfo'
+        type: array
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      roles:
+        items:
+          type: string
+        type: array
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_modules_users.UserListItem:
+    properties:
+      created_at:
+        type: string
+      department:
+        $ref: '#/definitions/internal_modules_users.DepartmentInfo'
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  internal_modules_users.UserOption:
+    properties:
+      department_name:
+        type: string
+      full_name:
+        type: string
+      label:
+        description: Họ tên (Username)
+        type: string
+      position_title:
+        type: string
+      username:
+        type: string
+      value:
+        description: ID dùng cho <a-select>
+        type: string
+    type: object
   taskmgmt_internal_model.Department:
     properties:
       children:
@@ -2132,6 +2270,255 @@ paths:
       summary: Báo cáo tiến độ
       tags:
       - Tasks
+  /users:
+    get:
+      description: Lấy danh sách người dùng trong đơn vị có phân trang, tìm kiếm và
+        lọc
+      parameters:
+      - description: Trang hiện tại (mặc định 1)
+        in: query
+        name: page
+        type: integer
+      - description: Số lượng mỗi trang (mặc định 20)
+        in: query
+        name: page_size
+        type: integer
+      - description: Từ khóa tìm kiếm (tên đăng nhập, họ tên, email)
+        in: query
+        name: q
+        type: string
+      - description: Lọc theo phòng ban
+        in: query
+        name: department_id
+        type: string
+      - description: Lọc theo mã vai trò
+        in: query
+        name: role
+        type: string
+      - description: Lọc theo trạng thái hoạt động
+        in: query
+        name: is_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/internal_modules_users.UserListItem'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách người dùng
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Quản trị viên thêm nhân sự mới vào hệ thống kèm vai trò và phòng
+        ban
+      parameters:
+      - description: Thông tin người dùng mới
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_users.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tạo người dùng mới
+      tags:
+      - Users
+  /users/{userId}:
+    get:
+      description: Lấy thông tin chi tiết của người dùng kèm danh sách vai trò và
+        phòng ban
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Chi tiết người dùng
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      description: Chỉnh sửa họ tên, email, trạng thái hoạt động hoặc phòng ban
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Thông tin cần sửa
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_users.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Cập nhật thông tin người dùng
+      tags:
+      - Users
+  /users/{userId}/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Quản trị viên cấp lại mật khẩu mới cho người dùng
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Mật khẩu mới
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_users.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Đặt lại mật khẩu người dùng
+      tags:
+      - Users
+  /users/{userId}/roles:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    type: string
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Xem danh sách vai trò của người dùng
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Thay thế toàn bộ vai trò hiện tại bằng danh sách vai trò mới
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Danh sách mã vai trò
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_users.SetUserRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_users.UserDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Cập nhật danh sách vai trò của người dùng
+      tags:
+      - Users
+  /users/options:
+    get:
+      description: Lấy danh sách người dùng đang hoạt động để gán việc trong thẻ a-select
+        của Ant Design
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/taskmgmt_internal_platform_response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/internal_modules_users.UserOption'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách người dùng rút gọn cho Select
+      tags:
+      - Users
 schemes:
 - http
 - https

@@ -2577,6 +2577,423 @@
           }
         }
       }
+    },
+    "/users": {
+      "get": {
+        "description": "Lấy danh sách người dùng trong đơn vị có phân trang, tìm kiếm và lọc",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Danh sách người dùng",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Trang hiện tại (mặc định 1)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Số lượng mỗi trang (mặc định 20)",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Từ khóa tìm kiếm (tên đăng nhập, họ tên, email)",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Lọc theo phòng ban",
+            "name": "department_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Lọc theo mã vai trò",
+            "name": "role",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "Lọc theo trạng thái hoạt động",
+            "name": "is_active",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/internal_modules_users.UserListItem"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Quản trị viên thêm nhân sự mới vào hệ thống kèm vai trò và phòng ban",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Tạo người dùng mới",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_users.UserDetailResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Thông tin người dùng mới",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_users.CreateUserRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/options": {
+      "get": {
+        "description": "Lấy danh sách người dùng đang hoạt động để gán việc trong thẻ a-select của Ant Design",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Danh sách người dùng rút gọn cho Select",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/internal_modules_users.UserOption"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "description": "Lấy thông tin chi tiết của người dùng kèm danh sách vai trò và phòng ban",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Chi tiết người dùng",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_users.UserDetailResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Chỉnh sửa họ tên, email, trạng thái hoạt động hoặc phòng ban",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Cập nhật thông tin người dùng",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_users.UserDetailResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Thông tin cần sửa",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_users.UpdateUserRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/reset-password": {
+      "post": {
+        "description": "Quản trị viên cấp lại mật khẩu mới cho người dùng",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Đặt lại mật khẩu người dùng",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Mật khẩu mới",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_users.ResetPasswordRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/roles": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Xem danh sách vai trò của người dùng",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Thay thế toàn bộ vai trò hiện tại bằng danh sách vai trò mới",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Users"
+        ],
+        "summary": "Cập nhật danh sách vai trò của người dùng",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/taskmgmt_internal_platform_response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/internal_modules_users.UserDetailResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "Danh sách mã vai trò",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_modules_users.SetUserRolesRequest"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3120,6 +3537,209 @@
             "description": "Optimistic Locking",
             "type": "integer",
             "minimum": 1
+          }
+        }
+      },
+      "internal_modules_users.CreateUserRequest": {
+        "type": "object",
+        "required": [
+          "full_name",
+          "password",
+          "username"
+        ],
+        "properties": {
+          "department_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 6
+          },
+          "position_title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "role_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 3
+          }
+        }
+      },
+      "internal_modules_users.DepartmentInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "is_primary": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position_title": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_users.ResetPasswordRequest": {
+        "type": "object",
+        "required": [
+          "new_password"
+        ],
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 6
+          }
+        }
+      },
+      "internal_modules_users.SetUserRolesRequest": {
+        "type": "object",
+        "required": [
+          "role_codes"
+        ],
+        "properties": {
+          "role_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "internal_modules_users.UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "department_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "position_title": {
+            "type": "string",
+            "maxLength": 100
+          }
+        }
+      },
+      "internal_modules_users.UserDetailResponse": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_modules_users.DepartmentInfo"
+            }
+          },
+          "email": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_users.UserListItem": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "department": {
+            "$ref": "#/components/schemas/internal_modules_users.DepartmentInfo"
+          },
+          "email": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_modules_users.UserOption": {
+        "type": "object",
+        "properties": {
+          "department_name": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "label": {
+            "description": "Họ tên (Username)",
+            "type": "string"
+          },
+          "position_title": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "value": {
+            "description": "ID dùng cho <a-select>",
+            "type": "string"
           }
         }
       },

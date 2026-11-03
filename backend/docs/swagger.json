@@ -76,7 +76,8 @@
                             "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
-                }
+                },
+                "security": []
             }
         },
         "/auth/logout": {
@@ -121,16 +122,12 @@
                             ]
                         }
                     }
-                }
+                },
+                "security": []
             }
         },
         "/auth/me": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy thông tin cá nhân và vai trò của người dùng đang đăng nhập",
                 "produces": [
                     "application/json"
@@ -222,16 +219,12 @@
                             "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
                         }
                     }
-                }
+                },
+                "security": []
             }
         },
         "/menus": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy toàn bộ cây menu không lọc quyền để phục vụ màn hình cấu hình Menu",
                 "produces": [
                     "application/json"
@@ -265,11 +258,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Quản trị viên thêm menu mới vào cây điều hướng",
                 "consumes": [
                     "application/json"
@@ -322,11 +310,6 @@
         },
         "/menus/user-menus": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách menu dạng cây phân cấp đã được lọc theo quyền của user, định dạng chuẩn :items của Ant Design a-menu",
                 "produces": [
                     "application/json"
@@ -362,11 +345,6 @@
         },
         "/menus/{menuId}": {
             "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Xóa menu khỏi cây điều hướng (chỉ xóa được menu lá không có menu con)",
                 "produces": [
                     "application/json"
@@ -406,11 +384,6 @@
                 }
             },
             "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Sửa tên, icon, đường dẫn, quyền yêu cầu hoặc vị trí của menu",
                 "consumes": [
                     "application/json"
@@ -476,11 +449,6 @@
         },
         "/notifications": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách thông báo của người dùng hiện tại có phân trang và lọc chưa đọc",
                 "produces": [
                     "application/json"
@@ -545,11 +513,6 @@
         },
         "/notifications/read-all": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Chuyển toàn bộ thông báo chưa đọc của người dùng sang trạng thái đã đọc",
                 "produces": [
                     "application/json"
@@ -588,11 +551,6 @@
         },
         "/notifications/stream": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Mở kết nối SSE lắng nghe thông báo tức thời",
                 "produces": [
                     "text/event-stream"
@@ -606,11 +564,6 @@
         },
         "/notifications/unread-count": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy tổng số thông báo chưa đọc của người dùng hiện tại",
                 "produces": [
                     "application/json"
@@ -649,11 +602,6 @@
         },
         "/notifications/{notificationId}": {
             "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Đánh dấu thông báo cụ thể là đã đọc",
                 "produces": [
                     "application/json"
@@ -713,11 +661,6 @@
         },
         "/permissions": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách quyền được gom nhóm theo phân hệ (module) cho bảng ma trận phân quyền",
                 "produces": [
                     "application/json"
@@ -757,11 +700,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Quản trị viên đăng ký thêm mã quyền mới vào hệ thống",
                 "consumes": [
                     "application/json"
@@ -814,11 +752,6 @@
         },
         "/permissions/options": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách quyền {value, label, module} cho component a-select khi tạo/sửa Menu",
                 "produces": [
                     "application/json"
@@ -854,11 +787,6 @@
         },
         "/roles": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách các vai trò để quản lý phân quyền",
                 "produces": [
                     "application/json"
@@ -894,11 +822,6 @@
         },
         "/roles/{roleId}/permissions": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy chi tiết vai trò kèm toàn bộ các quyền chức năng đang được gán",
                 "produces": [
                     "application/json"
@@ -944,11 +867,6 @@
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Thay thế toàn bộ danh sách quyền của một vai trò bằng danh sách mã quyền mới",
                 "consumes": [
                     "application/json"
@@ -996,11 +914,6 @@
         },
         "/tasks": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách công việc có lọc, phân trang và sắp xếp",
                 "produces": [
                     "application/json"
@@ -1093,11 +1006,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Tạo một nhiệm vụ gốc mới và khởi tạo phân công ban đầu",
                 "consumes": [
                     "application/json"
@@ -1162,11 +1070,6 @@
         },
         "/tasks/{taskId}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy thông tin chi tiết một công việc kèm phân công",
                 "produces": [
                     "application/json"
@@ -1212,11 +1115,6 @@
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Xóa mềm hoặc hủy công việc theo chính sách RESTful",
                 "produces": [
                     "application/json"
@@ -1268,11 +1166,6 @@
                 }
             },
             "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Sửa thông tin công việc, bắt buộc truyền trường version để chống ghi đè đồng thời",
                 "consumes": [
                     "application/json"
@@ -1344,11 +1237,6 @@
         },
         "/tasks/{taskId}/assignments": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách người hoặc phòng ban được giao việc",
                 "produces": [
                     "application/json"
@@ -1403,11 +1291,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Giao công việc cho người hoặc phòng ban mới",
                 "consumes": [
                     "application/json"
@@ -1479,11 +1362,6 @@
         },
         "/tasks/{taskId}/assignments/{assignmentId}": {
             "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Gỡ bỏ một phân công khỏi công việc",
                 "produces": [
                     "application/json"
@@ -1532,11 +1410,6 @@
         },
         "/tasks/{taskId}/cancellations": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Hủy công việc theo thẩm quyền có kèm lý do",
                 "consumes": [
                     "application/json"
@@ -1608,11 +1481,6 @@
         },
         "/tasks/{taskId}/children": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách các công việc con trực tiếp của một nhiệm vụ",
                 "produces": [
                     "application/json"
@@ -1655,11 +1523,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Tạo công việc con theo cây phân cấp (ràng buộc thời hạn nằm trong hạn cha)",
                 "consumes": [
                     "application/json"
@@ -1737,11 +1600,6 @@
         },
         "/tasks/{taskId}/comments": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy danh sách trao đổi, bình luận trong công việc",
                 "produces": [
                     "application/json"
@@ -1796,11 +1654,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Thêm bình luận mới vào công việc",
                 "consumes": [
                     "application/json"
@@ -1872,11 +1725,6 @@
         },
         "/tasks/{taskId}/events": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy toàn bộ lịch sử sự kiện kiểm toán nghiệp vụ của công việc",
                 "produces": [
                     "application/json"
@@ -1933,11 +1781,6 @@
         },
         "/tasks/{taskId}/reopen": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Chỉ người nghiệm thu gần nhất hoặc cấp quản lý cao hơn được phép; bắt buộc có lý do",
                 "consumes": [
                     "application/json"
@@ -2015,11 +1858,6 @@
         },
         "/tasks/{taskId}/reviews": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy toàn bộ lịch sử các lần nghiệm thu hoặc yêu cầu bổ sung",
                 "produces": [
                     "application/json"
@@ -2074,11 +1912,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Đánh giá kết quả công việc (chỉ approved khi toàn bộ việc con bắt buộc đã hoàn thành)",
                 "consumes": [
                     "application/json"
@@ -2156,11 +1989,6 @@
         },
         "/tasks/{taskId}/tree": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy cây phân cấp hoàn chỉnh từ công việc hiện tại xuống các cấp con cháu",
                 "produces": [
                     "application/json"
@@ -2202,11 +2030,6 @@
         },
         "/tasks/{taskId}/updates": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Lấy toàn bộ các lần báo cáo tiến độ kèm người gửi và tệp đính kèm",
                 "produces": [
                     "application/json"
@@ -2261,11 +2084,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Gửi báo cáo tiến độ và kích hoạt tự động tính toán tổng hợp tiến độ cha",
                 "consumes": [
                     "application/json"
@@ -2318,6 +2136,385 @@
                         "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/taskmgmt_internal_platform_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Lấy danh sách người dùng trong đơn vị có phân trang, tìm kiếm và lọc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Danh sách người dùng",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Trang hiện tại (mặc định 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Số lượng mỗi trang (mặc định 20)",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Từ khóa tìm kiếm (tên đăng nhập, họ tên, email)",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Lọc theo phòng ban",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Lọc theo mã vai trò",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Lọc theo trạng thái hoạt động",
+                        "name": "is_active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/internal_modules_users.UserListItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Quản trị viên thêm nhân sự mới vào hệ thống kèm vai trò và phòng ban",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Tạo người dùng mới",
+                "parameters": [
+                    {
+                        "description": "Thông tin người dùng mới",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_users.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/users/options": {
+            "get": {
+                "description": "Lấy danh sách người dùng đang hoạt động để gán việc trong thẻ a-select của Ant Design",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Danh sách người dùng rút gọn cho Select",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/internal_modules_users.UserOption"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}": {
+            "get": {
+                "description": "Lấy thông tin chi tiết của người dùng kèm danh sách vai trò và phòng ban",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Chi tiết người dùng",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Chỉnh sửa họ tên, email, trạng thái hoạt động hoặc phòng ban",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cập nhật thông tin người dùng",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Thông tin cần sửa",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_users.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/reset-password": {
+            "post": {
+                "description": "Quản trị viên cấp lại mật khẩu mới cho người dùng",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Đặt lại mật khẩu người dùng",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Mật khẩu mới",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_users.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/roles": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Xem danh sách vai trò của người dùng",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Thay thế toàn bộ vai trò hiện tại bằng danh sách vai trò mới",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cập nhật danh sách vai trò của người dùng",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Danh sách mã vai trò",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_users.SetUserRolesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/taskmgmt_internal_platform_response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_users.UserDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2859,6 +3056,209 @@
                 }
             }
         },
+        "internal_modules_users.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "full_name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "department_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "full_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 6
+                },
+                "position_title": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "role_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
+                }
+            }
+        },
+        "internal_modules_users.DepartmentInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_users.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "new_password"
+            ],
+            "properties": {
+                "new_password": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 6
+                }
+            }
+        },
+        "internal_modules_users.SetUserRolesRequest": {
+            "type": "object",
+            "required": [
+                "role_codes"
+            ],
+            "properties": {
+                "role_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "internal_modules_users.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "full_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "position_title": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "internal_modules_users.UserDetailResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
+                    }
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_users.UserListItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "department": {
+                    "$ref": "#/definitions/internal_modules_users.DepartmentInfo"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_users.UserOption": {
+            "type": "object",
+            "properties": {
+                "department_name": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "label": {
+                    "description": "Họ tên (Username)",
+                    "type": "string"
+                },
+                "position_title": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "value": {
+                    "description": "ID dùng cho <a-select>",
+                    "type": "string"
+                }
+            }
+        },
         "taskmgmt_internal_model.Department": {
             "type": "object",
             "properties": {
@@ -3192,7 +3592,7 @@
                     "type": "integer"
                 },
                 "status": {
-                    "description": "pending -\u003e active",
+                    "description": "pending -> active",
                     "type": "string"
                 },
                 "task_id": {
@@ -3430,5 +3830,10 @@
             "name": "Authorization",
             "in": "header"
         }
-    }
+    },
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ]
 }
