@@ -5,8 +5,8 @@ bin/
 *.dll
 *.so
 *.dylib
-api
-seed
+/api
+/seed
 tmp/
 build-errors.log
 

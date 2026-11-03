@@ -734,6 +734,98 @@ definitions:
     required:
     - permission_codes
     type: object
+  reports.DashboardSummaryResponse:
+    properties:
+      assigned_tasks:
+        type: integer
+      avg_progress:
+        type: number
+      blocked_tasks:
+        type: integer
+      cancelled_tasks:
+        type: integer
+      completed_tasks:
+        type: integer
+      completion_rate:
+        type: number
+      in_progress_tasks:
+        type: integer
+      overdue_tasks:
+        type: integer
+      revision_required_tasks:
+        type: integer
+      total_tasks:
+        type: integer
+      upcoming_deadline_tasks:
+        type: integer
+    type: object
+  reports.DepartmentPerformanceItem:
+    properties:
+      avg_progress:
+        type: number
+      completed_tasks:
+        type: integer
+      completion_rate:
+        type: number
+      department_code:
+        type: string
+      department_id:
+        type: string
+      department_name:
+        type: string
+      in_progress_tasks:
+        type: integer
+      overdue_tasks:
+        type: integer
+      total_tasks:
+        type: integer
+    type: object
+  reports.MyTaskItem:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      due_at:
+        type: string
+      id:
+        type: string
+      is_overdue:
+        type: boolean
+      parent_title:
+        type: string
+      priority:
+        type: integer
+      progress:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  reports.TaskReportResponse:
+    properties:
+      avg_progress:
+        type: number
+      by_priority:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      by_status:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      completed_tasks:
+        type: integer
+      completion_rate:
+        type: number
+      overdue_tasks:
+        type: integer
+      total_tasks:
+        type: integer
+    type: object
   response.ErrorDetails:
     properties:
       code:
@@ -1216,6 +1308,55 @@ paths:
       summary: Làm mới Access Token
       tags:
       - Auth
+  /dashboard/my-tasks:
+    get:
+      description: Lấy danh sách việc của tôi sắp xếp theo mức độ khẩn cấp (quá hạn,
+        ưu tiên cao lên đầu)
+      parameters:
+      - description: Số lượng lấy tối đa (mặc định 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/reports.MyTaskItem'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Danh sách công việc cần xử lý của tôi
+      tags:
+      - Dashboard
+  /dashboard/summary:
+    get:
+      description: Thống kê chỉ số KPI tổng quan công việc theo phạm vi quyền của
+        người dùng hiện tại
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/reports.DashboardSummaryResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tổng quan số liệu Dashboard
+      tags:
+      - Dashboard
   /departments:
     post:
       consumes:
@@ -1889,6 +2030,63 @@ paths:
       summary: Danh sách quyền dạng Options cho Ant Design Select
       tags:
       - RBAC
+  /reports/departments:
+    get:
+      description: Đánh giá tổng hợp khối lượng công việc, tỷ lệ hoàn thành và quá
+        hạn theo từng phòng ban
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/reports.DepartmentPerformanceItem'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Báo cáo hiệu suất theo phòng ban
+      tags:
+      - Reports
+  /reports/tasks:
+    get:
+      description: Thống kê tổng hợp số liệu công việc theo trạng thái, mức độ ưu
+        tiên và thời gian
+      parameters:
+      - description: Từ ngày (ISO 8601)
+        in: query
+        name: from_date
+        type: string
+      - description: Đến ngày (ISO 8601)
+        in: query
+        name: to_date
+        type: string
+      - description: ID phòng ban lọc
+        in: query
+        name: department_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/reports.TaskReportResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Báo cáo thống kê tiến độ công việc
+      tags:
+      - Reports
   /roles:
     get:
       description: Lấy danh sách các vai trò để quản lý phân quyền

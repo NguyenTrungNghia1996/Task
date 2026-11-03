@@ -575,3 +575,51 @@ func TestAPI_Departments_And_Organizations(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, respDelDept.StatusCode)
 }
+
+func TestAPI_Dashboard_And_Reports(t *testing.T) {
+	ctx := setupAPITest(t)
+
+	// Create a task
+	now := time.Now().UTC()
+	due := now.Add(48 * time.Hour)
+	createTask := tasks.CreateTaskRequest{
+		Title:    "Nhiệm vụ kiểm thử Dashboard",
+		Priority: 1,
+		StartAt:  &now,
+		DueAt:    &due,
+		InitialAssignment: tasks.AssignmentInput{
+			Type: "user",
+			ID:   ctx.admin.ID,
+		},
+	}
+	respTask, _, err := doRequest(ctx.app, "POST", "/api/v1/tasks", createTask, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, respTask.StatusCode)
+
+	// 1. GET /dashboard/summary
+	respSumm, dataSumm, err := doRequest(ctx.app, "GET", "/api/v1/dashboard/summary", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respSumm.StatusCode)
+	summ := dataSumm["data"].(map[string]interface{})
+	assert.GreaterOrEqual(t, summ["total_tasks"].(float64), float64(1))
+
+	// 2. GET /dashboard/my-tasks
+	respMy, dataMy, err := doRequest(ctx.app, "GET", "/api/v1/dashboard/my-tasks?limit=5", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respMy.StatusCode)
+	myList := dataMy["data"].([]interface{})
+	assert.NotEmpty(t, myList)
+
+	// 3. GET /reports/tasks
+	respRep, dataRep, err := doRequest(ctx.app, "GET", "/api/v1/reports/tasks", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respRep.StatusCode)
+	rep := dataRep["data"].(map[string]interface{})
+	assert.GreaterOrEqual(t, rep["total_tasks"].(float64), float64(1))
+
+	// 4. GET /reports/departments
+	respPerf, dataPerf, err := doRequest(ctx.app, "GET", "/api/v1/reports/departments", nil, ctx.adminToken)
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusOK, respPerf.StatusCode)
+	assert.NotNil(t, dataPerf["data"])
+}

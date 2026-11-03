@@ -264,6 +264,89 @@
         }
       }
     },
+    "/dashboard/my-tasks": {
+      "get": {
+        "description": "Lấy danh sách việc của tôi sắp xếp theo mức độ khẩn cấp (quá hạn, ưu tiên cao lên đầu)",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Danh sách công việc cần xử lý của tôi",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Số lượng lấy tối đa (mặc định 10)",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/reports.MyTaskItem"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/summary": {
+      "get": {
+        "description": "Thống kê chỉ số KPI tổng quan công việc theo phạm vi quyền của người dùng hiện tại",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Tổng quan số liệu Dashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/reports.DashboardSummaryResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/departments": {
       "post": {
         "description": "Thêm phòng ban hoặc tổ/đội mới vào cơ cấu đơn vị",
@@ -1423,6 +1506,101 @@
                           "items": {
                             "$ref": "#/components/schemas/rbac.PermissionOption"
                           }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/departments": {
+      "get": {
+        "description": "Đánh giá tổng hợp khối lượng công việc, tỷ lệ hoàn thành và quá hạn theo từng phòng ban",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Báo cáo hiệu suất theo phòng ban",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/reports.DepartmentPerformanceItem"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/tasks": {
+      "get": {
+        "description": "Thống kê tổng hợp số liệu công việc theo trạng thái, mức độ ưu tiên và thời gian",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Báo cáo thống kê tiến độ công việc",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Từ ngày (ISO 8601)",
+            "name": "from_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Đến ngày (ISO 8601)",
+            "name": "to_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "ID phòng ban lọc",
+            "name": "department_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/response.SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/reports.TaskReportResponse"
                         }
                       }
                     }
@@ -4599,6 +4777,145 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "reports.DashboardSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "assigned_tasks": {
+            "type": "integer"
+          },
+          "avg_progress": {
+            "type": "number"
+          },
+          "blocked_tasks": {
+            "type": "integer"
+          },
+          "cancelled_tasks": {
+            "type": "integer"
+          },
+          "completed_tasks": {
+            "type": "integer"
+          },
+          "completion_rate": {
+            "type": "number"
+          },
+          "in_progress_tasks": {
+            "type": "integer"
+          },
+          "overdue_tasks": {
+            "type": "integer"
+          },
+          "revision_required_tasks": {
+            "type": "integer"
+          },
+          "total_tasks": {
+            "type": "integer"
+          },
+          "upcoming_deadline_tasks": {
+            "type": "integer"
+          }
+        }
+      },
+      "reports.DepartmentPerformanceItem": {
+        "type": "object",
+        "properties": {
+          "avg_progress": {
+            "type": "number"
+          },
+          "completed_tasks": {
+            "type": "integer"
+          },
+          "completion_rate": {
+            "type": "number"
+          },
+          "department_code": {
+            "type": "string"
+          },
+          "department_id": {
+            "type": "string"
+          },
+          "department_name": {
+            "type": "string"
+          },
+          "in_progress_tasks": {
+            "type": "integer"
+          },
+          "overdue_tasks": {
+            "type": "integer"
+          },
+          "total_tasks": {
+            "type": "integer"
+          }
+        }
+      },
+      "reports.MyTaskItem": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "due_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_overdue": {
+            "type": "boolean"
+          },
+          "parent_title": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "progress": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "reports.TaskReportResponse": {
+        "type": "object",
+        "properties": {
+          "avg_progress": {
+            "type": "number"
+          },
+          "by_priority": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "by_status": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "completed_tasks": {
+            "type": "integer"
+          },
+          "completion_rate": {
+            "type": "number"
+          },
+          "overdue_tasks": {
+            "type": "integer"
+          },
+          "total_tasks": {
+            "type": "integer"
           }
         }
       },

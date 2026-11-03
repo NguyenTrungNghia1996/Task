@@ -16,6 +16,7 @@ import (
 	menuModule "taskmgmt/internal/modules/menus"
 	notifModule "taskmgmt/internal/modules/notifications"
 	rbacModule "taskmgmt/internal/modules/rbac"
+	reportsModule "taskmgmt/internal/modules/reports"
 	taskModule "taskmgmt/internal/modules/tasks"
 	userModule "taskmgmt/internal/modules/users"
 	"taskmgmt/internal/platform/response"
@@ -106,5 +107,12 @@ func Setup(app *fiber.App, db *gorm.DB, cfg *config.Config) {
 	deptHdl := deptModule.NewHandler(deptSvc)
 	deptModule.RegisterRoutes(api, deptHdl, authCheck)
 	deptModule.RegisterRoutes(app, deptHdl, authCheck)
+
+	// Dashboard & Reports Module
+	reportsRepo := reportsModule.NewRepository(db)
+	reportsSvc := reportsModule.NewService(reportsRepo)
+	reportsHdl := reportsModule.NewHandler(reportsSvc)
+	reportsModule.RegisterRoutes(api, reportsHdl, authCheck)
+	reportsModule.RegisterRoutes(app, reportsHdl, authCheck)
 }
 

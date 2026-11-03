@@ -12,8 +12,8 @@ tmp/
 *.dll
 *.so
 *.dylib
-api
-seed
+/api
+/seed
 build-errors.log
 
 # Dependencies

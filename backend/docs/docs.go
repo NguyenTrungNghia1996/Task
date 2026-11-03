@@ -228,6 +228,81 @@ const docTemplate = `{
                 "security": []
             }
         },
+        "/dashboard/my-tasks": {
+            "get": {
+                "description": "L\u1ea5y danh s\u00e1ch vi\u1ec7c c\u1ee7a t\u00f4i s\u1eafp x\u1ebfp theo m\u1ee9c \u0111\u1ed9 kh\u1ea9n c\u1ea5p (qu\u00e1 h\u1ea1n, \u01b0u ti\u00ean cao l\u00ean \u0111\u1ea7u)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Danh s\u00e1ch c\u00f4ng vi\u1ec7c c\u1ea7n x\u1eed l\u00fd c\u1ee7a t\u00f4i",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "S\u1ed1 l\u01b0\u1ee3ng l\u1ea5y t\u1ed1i \u0111a (m\u1eb7c \u0111\u1ecbnh 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/reports.MyTaskItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/summary": {
+            "get": {
+                "description": "Th\u1ed1ng k\u00ea ch\u1ec9 s\u1ed1 KPI t\u1ed5ng quan c\u00f4ng vi\u1ec7c theo ph\u1ea1m vi quy\u1ec1n c\u1ee7a ng\u01b0\u1eddi d\u00f9ng hi\u1ec7n t\u1ea1i",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "T\u1ed5ng quan s\u1ed1 li\u1ec7u Dashboard",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/reports.DashboardSummaryResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/departments": {
             "post": {
                 "description": "Th\u00eam ph\u00f2ng ban ho\u1eb7c t\u1ed5/\u0111\u1ed9i m\u1edbi v\u00e0o c\u01a1 c\u1ea5u \u0111\u01a1n v\u1ecb",
@@ -1237,6 +1312,93 @@ const docTemplate = `{
                                             "items": {
                                                 "$ref": "#/definitions/rbac.PermissionOption"
                                             }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/departments": {
+            "get": {
+                "description": "\u0110\u00e1nh gi\u00e1 t\u1ed5ng h\u1ee3p kh\u1ed1i l\u01b0\u1ee3ng c\u00f4ng vi\u1ec7c, t\u1ef7 l\u1ec7 ho\u00e0n th\u00e0nh v\u00e0 qu\u00e1 h\u1ea1n theo t\u1eebng ph\u00f2ng ban",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "B\u00e1o c\u00e1o hi\u1ec7u su\u1ea5t theo ph\u00f2ng ban",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/reports.DepartmentPerformanceItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/tasks": {
+            "get": {
+                "description": "Th\u1ed1ng k\u00ea t\u1ed5ng h\u1ee3p s\u1ed1 li\u1ec7u c\u00f4ng vi\u1ec7c theo tr\u1ea1ng th\u00e1i, m\u1ee9c \u0111\u1ed9 \u01b0u ti\u00ean v\u00e0 th\u1eddi gian",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "B\u00e1o c\u00e1o th\u1ed1ng k\u00ea ti\u1ebfn \u0111\u1ed9 c\u00f4ng vi\u1ec7c",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "T\u1eeb ng\u00e0y (ISO 8601)",
+                        "name": "from_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "\u0110\u1ebfn ng\u00e0y (ISO 8601)",
+                        "name": "to_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID ph\u00f2ng ban l\u1ecdc",
+                        "name": "department_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/reports.TaskReportResponse"
                                         }
                                     }
                                 }
@@ -4070,6 +4232,145 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "reports.DashboardSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "assigned_tasks": {
+                    "type": "integer"
+                },
+                "avg_progress": {
+                    "type": "number"
+                },
+                "blocked_tasks": {
+                    "type": "integer"
+                },
+                "cancelled_tasks": {
+                    "type": "integer"
+                },
+                "completed_tasks": {
+                    "type": "integer"
+                },
+                "completion_rate": {
+                    "type": "number"
+                },
+                "in_progress_tasks": {
+                    "type": "integer"
+                },
+                "overdue_tasks": {
+                    "type": "integer"
+                },
+                "revision_required_tasks": {
+                    "type": "integer"
+                },
+                "total_tasks": {
+                    "type": "integer"
+                },
+                "upcoming_deadline_tasks": {
+                    "type": "integer"
+                }
+            }
+        },
+        "reports.DepartmentPerformanceItem": {
+            "type": "object",
+            "properties": {
+                "avg_progress": {
+                    "type": "number"
+                },
+                "completed_tasks": {
+                    "type": "integer"
+                },
+                "completion_rate": {
+                    "type": "number"
+                },
+                "department_code": {
+                    "type": "string"
+                },
+                "department_id": {
+                    "type": "string"
+                },
+                "department_name": {
+                    "type": "string"
+                },
+                "in_progress_tasks": {
+                    "type": "integer"
+                },
+                "overdue_tasks": {
+                    "type": "integer"
+                },
+                "total_tasks": {
+                    "type": "integer"
+                }
+            }
+        },
+        "reports.MyTaskItem": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "due_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_overdue": {
+                    "type": "boolean"
+                },
+                "parent_title": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "reports.TaskReportResponse": {
+            "type": "object",
+            "properties": {
+                "avg_progress": {
+                    "type": "number"
+                },
+                "by_priority": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "by_status": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "completed_tasks": {
+                    "type": "integer"
+                },
+                "completion_rate": {
+                    "type": "number"
+                },
+                "overdue_tasks": {
+                    "type": "integer"
+                },
+                "total_tasks": {
+                    "type": "integer"
                 }
             }
         },
