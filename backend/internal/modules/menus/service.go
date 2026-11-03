@@ -72,14 +72,28 @@ func (s *Service) GetUserMenus(userPerms []string, isSystemAdmin bool) ([]AntdMe
 			}
 		}
 
+		if result == nil {
+			result = []AntdMenuItem{}
+		}
 		return result
 	}
 
-	return filterAndTransform(rootMenus), nil
+	res := filterAndTransform(rootMenus)
+	if res == nil {
+		res = []AntdMenuItem{}
+	}
+	return res, nil
 }
 
 func (s *Service) GetAllMenus() ([]model.Menu, error) {
-	return s.repo.GetAllRootMenus()
+	menus, err := s.repo.GetAllRootMenus()
+	if err != nil {
+		return nil, err
+	}
+	if menus == nil {
+		menus = []model.Menu{}
+	}
+	return menus, nil
 }
 
 func (s *Service) CreateMenu(req CreateMenuRequest) (*model.Menu, error) {
